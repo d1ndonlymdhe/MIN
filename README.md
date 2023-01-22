@@ -4,6 +4,7 @@
 2. Create your branch
 3. Switch to your branch
 4. Run npm install
+5. create a folder files for storing local files
 5. Edit code
 6. Push code
 
