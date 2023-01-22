@@ -5,17 +5,38 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// for local testing use this
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
 
-//for local testing use this
 // datasource db {
-//   provider = "sqlite"
-//   url      = env("DATABASE_URL")
+//   provider     = "mysql"
+//   url          = env("DATABASE_URL")
+//   // relationMode = "prisma"
 // }
 
-datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
-  relationMode = "prisma"
+model User {
+  id           String  @id @default(cuid())
+  username     String
+  salt         String
+  passwordHash String
+  role         Role[]
+  tokens       Token[]
+}
+
+model Role {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Token {
+  id     String @id @default(cuid())
+  userId String
+  value  String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Example {

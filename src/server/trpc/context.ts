@@ -14,8 +14,9 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
+  const req = opts.req
   return {
-    prisma,
+    prisma, req
   };
 };
 
