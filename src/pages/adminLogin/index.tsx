@@ -23,6 +23,7 @@ export default function Main() {
   const loginPasswordRef = useRef<HTMLInputElement>(null);
   const signupUsernameRef = useRef<HTMLInputElement>(null);
   const signupPasswordRef = useRef<HTMLInputElement>(null);
+  const signupNameRef = useRef<HTMLInputElement>(null);
   return (
     <main className="grid h-screen w-screen grid-rows-[2fr_8fr]">
       <div className="h-full w-full text-center">
@@ -79,11 +80,12 @@ export default function Main() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!loginMutation.isLoading && !signUpMutaion.isLoading) {
-              if (signupPasswordRef && signupUsernameRef) {
+              if (signupPasswordRef && signupUsernameRef && signupNameRef) {
+                const name = signupNameRef.current?.value;
                 const username = signupUsernameRef.current?.value;
                 const password = signupPasswordRef.current?.value;
-                if (username && password) {
-                  signUpMutaion.mutate({ username, password });
+                if (username && password && name) {
+                  signUpMutaion.mutate({ username, password, name });
                 }
               }
             }
@@ -96,6 +98,14 @@ export default function Main() {
               <input
                 ref={signupUsernameRef}
                 type={"text"}
+                className="border border-solid border-black"
+              ></input>
+            </label>
+            <label>
+              Full Name:
+              <input
+                type={"text"}
+                ref={signupNameRef}
                 className="border border-solid border-black"
               ></input>
             </label>
@@ -129,10 +139,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       include: { user: true },
     });
     if (dbToken) {
+      const user = dbToken.user;
       //if logged in redirect to homepage (admin page)
       return {
         redirect: {
-          destination: "/",
+          destination: `/admin`,
           permanent: false,
         },
       };

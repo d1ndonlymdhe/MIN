@@ -39,8 +39,8 @@ export const authRouter = router({
             })
         }
     }),
-    signupMutation: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
-        const { username, password } = input
+    signupMutation: publicProcedure.input(z.object({ username: z.string(), password: z.string(), name: z.string() })).mutation(async ({ input, ctx }) => {
+        const { username, password, name } = input
         const { prisma } = ctx
         if (username && password) {
             //find if user exists
@@ -53,7 +53,7 @@ export const authRouter = router({
             } else {
                 const salt = hash(username + new Date().getTime())
                 const passwordHash = hash(password + salt)
-                const newUser = await prisma.user.create({ data: { username: username, passwordHash: passwordHash, salt: salt } })
+                const newUser = await prisma.user.create({ data: { username: username, passwordHash: passwordHash, salt: salt, name: name } })
                 //create a directory for storing future files need to use storage service like amazon s3
                 fs.mkdir(`./files/${newUser.id}`)
                 return {
