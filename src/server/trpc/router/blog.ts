@@ -19,8 +19,40 @@ export const blogRouter = router({
             }
         }
         throw new TRPCError({
-            code:"BAD_REQUEST",
-            message:"Error"
+            code: "BAD_REQUEST",
+            message: "Error"
         })
     })
+    ,
+    addComment: publicProcedure.input(z.object({ content: z.string(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
+        const { prisma } = ctx
+        const { content, blogId } = input
+
+        const token = ctx.req.cookies?.token
+        if (token) {
+            const dbToken = await prisma.token.findFirst({ where: { value: token } })
+            if (dbToken) {
+                const blog = await prisma.blog.findFirst({ where: { id: blogId } })
+                if (blog) {
+                    const newComment = await prisma.comment.create({
+                        data: {
+                            content,
+                            authorId: dbToken.userId,
+                            blogId,
+                        }
+                    })
+                    return {
+                        success: true,
+                        content,
+                        blogId,
+                        commentId: newComment.id
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code: "BAD_REQUEST"
+        })
+    })
+
 })
