@@ -11,7 +11,7 @@ module.exports = {
       },
       fontFamily: {
         lato: ["'Lato'", '"sans-serif"'],
-        montserrat: ["'Montserrat", 'sans-serif'],
+        montserrat: ["'Montserrat'", 'sans-serif'],
         playfair: ["'PLayfair Display", 'serif'],
         poppins: ["'Poppins'", "sans-serif"]
       }
