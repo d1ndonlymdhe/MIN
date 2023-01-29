@@ -7,7 +7,7 @@ import { trpc } from "../../../utils/trpc";
 export default function Main(props: PageProps) {
   const { blog, loggedIn, author, comments } = props;
   const commentRef = useRef<HTMLInputElement>(null);
-  const addCommentMutation = trpc.blog.addComment.useMutation({
+  const addCommentMutation = trpc.blog.comment.addComment.useMutation({
     onSuccess: () => {
       window.location.reload();
     },
