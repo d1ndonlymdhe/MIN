@@ -6,12 +6,7 @@ import { trpc } from "../../../utils/trpc";
 
 export default function Main(props: PageProps) {
   const { blog, loggedIn, author, comments } = props;
-  const commentRef = useRef<HTMLInputElement>(null);
-  const addCommentMutation = trpc.blog.comment.addComment.useMutation({
-    onSuccess: () => {
-      window.location.reload();
-    },
-  });
+
   return (
     <main className="grid grid-rows-[2fr_8fr]">
       <div>
@@ -23,46 +18,74 @@ export default function Main(props: PageProps) {
         </div>
         <div className="flex flex-col gap-2">
           <p>Comments</p>
-          {(loggedIn && (
-            <form
-              className="flex flex-col gap-2 border border-solid border-black"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (commentRef) {
-                  const content = commentRef.current?.value;
-                  if (content) {
-                    addCommentMutation.mutate({ content, blogId: blog.id });
-                  }
-                }
-              }}
-            >
-              <label>
-                Add your comment
-                <input
-                  className="border border-solid border-black"
-                  type="text"
-                  ref={commentRef}
-                ></input>
-              </label>
-              <button
-                type="submit"
-                className="w-fit border border-solid border-black p-2"
-              >
-                Submit
-              </button>
-            </form>
-          )) || <div> You need to log in to add comments </div>}
+          {(loggedIn && <AddComment {...{ blog }}></AddComment>) || (
+            <div> You need to log in to add comments </div>
+          )}
           {comments.map((c) => {
-            return (
-              <div className=" flex flex-col gap-2 border border-solid border-black" key={uuid()}>
-                <p>{c.author} :</p>
-                <p className=" p-2">{c.content}</p>
-              </div>
-            );
+            return <Comment key={uuid()} {...{ comment: c }}></Comment>;
           })}
         </div>
       </div>
     </main>
+  );
+}
+
+type CommentProp = {
+  comment: Comment & {
+    author: string;
+  };
+};
+
+function Comment(props: CommentProp) {
+  const { comment: c } = props;
+  return (
+    <div className=" flex flex-col gap-2 border border-solid border-black">
+      <p>{c.author} :</p>
+      <p className=" p-2">{c.content}</p>
+    </div>
+  );
+}
+
+type AddCommentProp = {
+  blog: Blog;
+};
+
+function AddComment(props: AddCommentProp) {
+  const { blog } = props;
+  const commentRef = useRef<HTMLInputElement>(null);
+  const addCommentMutation = trpc.blog.comment.addComment.useMutation({
+    onSuccess: () => {
+      window.location.reload();
+    },
+  });
+  return (
+    <form
+      className="flex flex-col gap-2 border border-solid border-black"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (commentRef) {
+          const content = commentRef.current?.value;
+          if (content) {
+            addCommentMutation.mutate({ content, blogId: blog.id });
+          }
+        }
+      }}
+    >
+      <label>
+        Add your comment
+        <input
+          className="border border-solid border-black"
+          type="text"
+          ref={commentRef}
+        ></input>
+      </label>
+      <button
+        type="submit"
+        className="w-fit border border-solid border-black p-2"
+      >
+        Submit
+      </button>
+    </form>
   );
 }
 
