@@ -37,22 +37,23 @@ export const blogRouter = router({
                 if (blog) {
                     //find user reaction
                     const reactions = await prisma.blogReaction.findMany({ where: { AND: [{ blogId, userId: user.id }] } })
-                    if (reactions) {
-                        //user can have a single reaction in a blog
-                        const userReaction = reactions[0]
-                        if (userReaction) {
-                            const updatedReaction = await prisma.blogReaction.update({
-                                where: { id: userReaction.id }, data: {
-                                    ...userReaction,
-                                    type
-                                }
-                            })
-                            return {
-                                success: true,
-                                reaction: updatedReaction
+                    const userReaction = reactions[0]
+
+                    // if (reactions) {
+                    //user can have a single reaction in a blog
+                    if (userReaction) {
+                        const updatedReaction = await prisma.blogReaction.update({
+                            where: { id: userReaction.id }, data: {
+                                ...userReaction,
+                                type
                             }
+                        })
+                        return {
+                            success: true,
+                            reaction: updatedReaction
                         }
-                    } else {
+                    }
+                    else {
                         const newReaction = await prisma.blogReaction.create({
                             data: {
                                 type,
@@ -65,12 +66,20 @@ export const blogRouter = router({
                             reaction: newReaction
                         }
                     }
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: "reaction create error"
+                    })
                 }
-
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "no blog"
+                })
             }
         }
         throw new TRPCError({
             code: "BAD_REQUEST",
+            message: "no token"
         })
     })
 })
