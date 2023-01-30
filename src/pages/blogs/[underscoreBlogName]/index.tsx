@@ -271,7 +271,6 @@ export const getServerSideProps: GetServerSideProps<
           },
           reactions,
           comments: comments.map((c) => {
-            // console.log(commentReactions.filter((r)=> r. == c.id))
             return {
               author: c.author.name,
               authorId: c.authorId,
