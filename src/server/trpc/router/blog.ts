@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { publicProcedure, router } from "../trpc"
+import { commentRouter } from "./comment"
 export const blogRouter = router({
     createBlog: publicProcedure.input(z.object({ title: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx
@@ -21,38 +22,60 @@ export const blogRouter = router({
         throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Error"
-        })
-    })
-    ,
-    addComment: publicProcedure.input(z.object({ content: z.string(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
+        });
+    }),
+    comment: commentRouter,
+    reaction: publicProcedure.input(z.object({ type: z.boolean(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx
-        const { content, blogId } = input
-
+        const { type, blogId } = input
         const token = ctx.req.cookies?.token
         if (token) {
-            const dbToken = await prisma.token.findFirst({ where: { value: token } })
+            const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } })
             if (dbToken) {
+                const user = dbToken.user;
                 const blog = await prisma.blog.findFirst({ where: { id: blogId } })
                 if (blog) {
-                    const newComment = await prisma.comment.create({
-                        data: {
-                            content,
-                            authorId: dbToken.userId,
-                            blogId,
+                    //find user reaction
+                    const reactions = await prisma.blogReaction.findMany({ where: { AND: [{ blogId, userId: user.id }] } })
+                    const userReaction = reactions[0]
+
+                    //user can have a single reaction in a blog
+                    if (userReaction) {
+                        const updatedReaction = await prisma.blogReaction.update({
+                            where: { id: userReaction.id }, data: {
+                                ...userReaction,
+                                type
+                            }
+                        })
+                        return {
+                            success: true,
+                            reaction: updatedReaction
                         }
-                    })
-                    return {
-                        success: true,
-                        content,
-                        blogId,
-                        commentId: newComment.id
                     }
+                    else {
+                        const newReaction = await prisma.blogReaction.create({
+                            data: {
+                                type,
+                                blogId,
+                                userId: user.id,
+                            }
+                        })
+                        return {
+                            success: true,
+                            reaction: newReaction
+                        }
+                    }
+
                 }
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "no blog"
+                })
             }
         }
         throw new TRPCError({
-            code: "BAD_REQUEST"
+            code: "BAD_REQUEST",
+            message: "no token"
         })
     })
-
 })
