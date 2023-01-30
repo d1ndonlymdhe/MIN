@@ -5,8 +5,10 @@
 3. Switch to your branch
 4. Run npm install
 5. create a folder files for storing local files
-5. Edit code
-6. Push code
+6. for first time create a .env file
+7. copy content from .env.example
+8. Edit code
+9. Push code
 
 # Create T3 App
 

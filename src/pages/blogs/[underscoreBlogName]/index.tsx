@@ -1,7 +1,7 @@
 import {
   Blog,
   BlogReaction,
-  Comment,
+  Comment as CommentRenderer,
   CommentReaction,
   PrismaClient,
   User,
@@ -78,10 +78,10 @@ export default function Main(props: PageProps) {
           )}
           {comments.map((c) => {
             return (
-              <Comment
+              <CommentRenderer
                 key={uuid()}
                 {...{ comment: c, userId, blogId: blog.id }}
-              ></Comment>
+              ></CommentRenderer>
             );
           })}
         </div>
@@ -96,7 +96,7 @@ type CommentProp = {
   userId?: string;
 };
 
-function Comment(props: CommentProp) {
+function CommentRenderer(props: CommentProp) {
   const { comment: c, userId, blogId } = props;
   const [isLiked, setIsLiked] = useState(
     (c.reactions.filter((r) => r.userId == userId)[0]?.type && true) || false
@@ -200,7 +200,7 @@ function AddComment(props: AddCommentProp) {
   );
 }
 
-type ClientComment = Comment & {
+type ClientComment = CommentRenderer & {
   author: string;
   reactions: CommentReaction[];
 };
