@@ -7,6 +7,7 @@
 5. create a folder files for storing local files
 6. for first time create a .env file
 7. copy content from .env.example
+9. run npx prisma db push (run this when you change schema)
 8. Edit code
 9. Push code
 
