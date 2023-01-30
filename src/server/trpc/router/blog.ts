@@ -22,7 +22,7 @@ export const blogRouter = router({
         throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Error"
-        })
+        });
     }),
     comment: commentRouter,
     reaction: publicProcedure.input(z.object({ type: z.boolean(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
@@ -39,7 +39,6 @@ export const blogRouter = router({
                     const reactions = await prisma.blogReaction.findMany({ where: { AND: [{ blogId, userId: user.id }] } })
                     const userReaction = reactions[0]
 
-                    // if (reactions) {
                     //user can have a single reaction in a blog
                     if (userReaction) {
                         const updatedReaction = await prisma.blogReaction.update({
@@ -66,10 +65,7 @@ export const blogRouter = router({
                             reaction: newReaction
                         }
                     }
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                        message: "reaction create error"
-                    })
+
                 }
                 throw new TRPCError({
                     code: "BAD_REQUEST",

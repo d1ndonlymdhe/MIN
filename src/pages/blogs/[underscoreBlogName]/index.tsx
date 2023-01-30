@@ -2,6 +2,7 @@ import {
   Blog,
   BlogReaction,
   Comment,
+  CommentReaction,
   PrismaClient,
   User,
 } from "@prisma/client";
@@ -76,7 +77,12 @@ export default function Main(props: PageProps) {
             <div> You need to log in to add comments </div>
           )}
           {comments.map((c) => {
-            return <Comment key={uuid()} {...{ comment: c }}></Comment>;
+            return (
+              <Comment
+                key={uuid()}
+                {...{ comment: c, userId, blogId: blog.id }}
+              ></Comment>
+            );
           })}
         </div>
       </div>
@@ -85,17 +91,68 @@ export default function Main(props: PageProps) {
 }
 
 type CommentProp = {
-  comment: Comment & {
-    author: string;
-  };
+  comment: ClientComment;
+  blogId: string;
+  userId?: string;
 };
 
 function Comment(props: CommentProp) {
-  const { comment: c } = props;
+  const { comment: c, userId, blogId } = props;
+  const [isLiked, setIsLiked] = useState(
+    (c.reactions.filter((r) => r.userId == userId)[0]?.type && true) || false
+  );
+  const [likes, setLikes] = useState(c.reactions.filter((r) => r.type).length);
+  const commentReactionMutation = trpc.blog.comment.reaction.useMutation({
+    onMutate: (variables) => {
+      const { blogId, commentId, type } = variables;
+      setIsLiked(type);
+      if (type) {
+        setLikes(likes + 1);
+      } else {
+        setLikes(likes - 1);
+      }
+    },
+    onSuccess: (data) => {
+      const { reaction, success } = data;
+      //may need it
+    },
+    onError: (data, context) => {
+      const { blogId, commentId, type } = context;
+      setIsLiked(!type);
+      if (type) {
+        setLikes(likes - 1);
+      } else {
+        setLikes(likes + 1);
+      }
+    },
+  });
   return (
     <div className=" flex flex-col gap-2 border border-solid border-black">
       <p>{c.author} :</p>
       <p className=" p-2">{c.content}</p>
+      <div className="flex w-fit flex-row gap-2 ">
+        <button
+          onClick={() => {
+            if (userId) {
+              if (!commentReactionMutation.isLoading) {
+                commentReactionMutation.mutate({
+                  blogId,
+                  commentId: c.id,
+                  type: !isLiked,
+                });
+              }
+            } else {
+              alert("You need to log in to react");
+            }
+          }}
+          className={`${
+            isLiked && "font-bold"
+          } border border-solid border-black px-2`}
+        >
+          {isLiked ? "Liked" : "Like"}
+        </button>
+        <p>{likes} likes</p>
+      </div>
     </div>
   );
 }
@@ -143,14 +200,17 @@ function AddComment(props: AddCommentProp) {
   );
 }
 
+type ClientComment = Comment & {
+  author: string;
+  reactions: CommentReaction[];
+};
+
 type PageProps = {
   loggedIn: boolean;
   blog: Blog;
   reactions: BlogReaction[];
   author: string;
-  comments: (Comment & {
-    author: string;
-  })[];
+  comments: ClientComment[];
   userId?: string;
   username?: string;
   isLiked?: boolean;
@@ -161,13 +221,11 @@ export const getServerSideProps: GetServerSideProps<
   { underscoreBlogName: string }
 > = async (context) => {
   const underScoreBlogName = context.params?.underscoreBlogName;
-  console.log(context.req.cookies);
   const token = context.req.cookies.token;
   const prisma = new PrismaClient();
   let loggedIn = false;
   let username: string | undefined;
   let userId: string | undefined;
-  console.log(token);
   if (token) {
     const dbToken = await prisma.token.findFirst({
       where: { value: token },
@@ -178,7 +236,6 @@ export const getServerSideProps: GetServerSideProps<
       (username = dbToken.user.username), (userId = dbToken.userId);
     }
   }
-  console.log(underScoreBlogName);
   if (underScoreBlogName) {
     const blogName = underScoreBlogName.split("_").join(" ");
     const blog = await prisma.blog.findFirst({
@@ -194,18 +251,15 @@ export const getServerSideProps: GetServerSideProps<
       });
       const reactions = await prisma.blogReaction.findMany({
         where: {
-          AND: [{ blogId: blog.id }],
+          blogId: blog.id,
         },
       });
-      console.log(reactions);
-      console.log(
-        userId,
-        reactions.filter((r) => {
-          return r.userId == userId;
-        })[0]?.type
-          ? true
-          : false
-      );
+      //find all comment reactions
+      const commentReactions = await prisma.commentReaction.findMany({
+        where: {
+          commentId: { in: comments.map((r) => r.id) },
+        },
+      });
       return {
         props: {
           author: blog.author.name,
@@ -217,12 +271,14 @@ export const getServerSideProps: GetServerSideProps<
           },
           reactions,
           comments: comments.map((c) => {
+            // console.log(commentReactions.filter((r)=> r. == c.id))
             return {
               author: c.author.name,
               authorId: c.authorId,
               blogId: c.blogId,
               content: c.content,
               id: c.id,
+              reactions: commentReactions.filter((r) => r.commentId == c.id),
             };
           }),
           loggedIn,
