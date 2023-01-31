@@ -9,7 +9,7 @@ export default function Main() {
     onSuccess: (data) => {
       const { token, success } = data;
       //set a uniquely generated token for future login
-      cookie.set("token", token);
+      cookie.set("token", token, { expires: 30 });
       window.location.reload();
     },
   });
