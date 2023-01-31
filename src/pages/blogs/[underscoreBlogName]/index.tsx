@@ -43,6 +43,7 @@ export default function Main(props: PageProps) {
   });
   return (
     <main className="grid grid-rows-[2fr_8fr]">
+      {/* <Comment ></Comment> */}
       <div>
         MIN blog {blog.title} by {author}{" "}
       </div>

@@ -18,14 +18,14 @@ datasource db {
 // }
 
 model User {
-  id              String            @id @default(cuid())
-  name            String
-  username        String
-  salt            String
-  passwordHash    String
-  role            Role[]
-  tokens          Token[]
-  blogs           Blog[]
+  id               String            @id @default(cuid())
+  name             String
+  username         String
+  salt             String
+  passwordHash     String
+  role             Role[]
+  tokens           Token[]
+  blogs            Blog[]
   comments         Comment[]
   blogReactions    BlogReaction[]
   commentReactions CommentReaction[]
@@ -38,13 +38,23 @@ model Role {
 }
 
 model Blog {
-  id        String         @id @default(cuid())
-  title     String
-  content   String
-  authorId  String
-  author    User           @relation(fields: [authorId], references: [id])
-  comments  Comment[]
-  reactions BlogReaction[]
+  id             String         @id @default(cuid())
+  title          String
+  content        String
+  authorId       String
+  author         User           @relation(fields: [authorId], references: [id])
+  comments       Comment[]
+  reactions      BlogReaction[]
+  images         BlogImage[]
+  coverImageid   String         @default(cuid())
+  coverFulfilled Boolean
+}
+
+model BlogImage {
+  id        String  @id @default(cuid())
+  blogId    String
+  fulfilled Boolean
+  blog      Blog    @relation(fields: [blogId], references: [id])
 }
 
 model Comment {

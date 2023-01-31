@@ -39,7 +39,7 @@ function CreateBlog() {
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const blogCreateMutation = trpc.blog.createBlog.useMutation({
     onSuccess: (data) => {
-      // update the blogs state no need to reload 
+      // update the blogs state no need to reload
       window.location.reload();
     },
   });
@@ -73,6 +73,10 @@ function CreateBlog() {
             ref={contentRef}
           ></textarea>
         </label>
+        <label className="w-fit border border-solid border-black p-2">
+          Select a cover photo
+          <input type={"file"} accept="image/*" hidden></input>
+        </label>
         <button
           type="submit"
           className="w-fit border border-solid border-black"
@@ -84,6 +88,9 @@ function CreateBlog() {
   );
 }
 
+function BlogDeme() {
+  
+}
 type PageProps = {
   username: string;
   blogs: Blog[];
