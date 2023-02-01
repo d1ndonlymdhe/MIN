@@ -1,6 +1,6 @@
 import { Blog, PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { useRef, useState } from "react";
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import uuid from "react-uuid";
 import { trpc } from "../../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
@@ -39,6 +39,7 @@ export default function Main(props: PageProps) {
             <button
               onClick={() => {
                 setCreateMode(true);
+                SetBlogView(false);
               }}
               className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold"
             >
@@ -50,6 +51,7 @@ export default function Main(props: PageProps) {
         {blogView && currentBlog && (
           <BlogView {...{ blog: currentBlog }}></BlogView>
         )}
+        {createMode && <CreateBlogView></CreateBlogView>}
       </div>
     </main>
   );
@@ -89,16 +91,147 @@ function BlogView(props: BlogViewProps) {
 }
 
 function CreateBlogView() {
+  const [title, setTitle] = useState("Title");
+  const [paragraphs, setParagraphs] = useState<string[]>([]);
   return (
     <form>
       <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
         <div className="h-[15vh] w-full rounded-t-md bg-yellow-200 text-black">
           IMAGE HERE
         </div>
-        {/* <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-        <p className="px-2 font-secondary text-2xl">{blog.content}</p> */}
+        <input
+          value={title}
+          type="text"
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key == "Enter") {
+              //will auto submit
+              e.preventDefault();
+            }
+          }}
+          className="mx-2 rounded-xl bg-secondary px-2 font-primary text-5xl font-bold focus:border-4 focus:border-complementary focus:outline-none active:outline-none"
+        ></input>
+        <div className="flex flex-row justify-between gap-2 px-10">
+          <button
+            onClick={(e) => {
+              setParagraphs([...paragraphs, "Add Your content"]);
+            }}
+            type="button"
+            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
+          >
+            Add Paragraph
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              // setCreateMode(true);
+            }}
+            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
+          >
+            Add Image
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              // setCreateMode(true);
+            }}
+            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
+          >
+            Add Math
+          </button>
+        </div>
+        {paragraphs.map((p, i) => {
+          return (
+            <ParagraphEdit {...{ paragraph: p }} key={uuid()}></ParagraphEdit>
+          );
+        })}
       </div>
     </form>
+  );
+}
+
+function ParagraphEdit(props: { paragraph: string }) {
+  const { paragraph } = props;
+  // const paragraphRef = useRef<HTMLTextAreaElement>(null);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [lines, setLines] = useState([paragraph]);
+  // const [currentLineContent, setCurrentLineContent] = useState(0);
+  // useEffect(() => {}, [lines]);
+  return (
+    <div className="border-complementary px-2 group-focus:border-2">
+      {lines.map((l, i) => {
+        return (
+          <Line
+            {...{
+              line: lines[i] || "",
+              lines,
+              setLines,
+              setCurrentLineIndex,
+              currentLineIndex,
+            }}
+            key={uuid()}
+            focus={currentLineIndex == i}
+          ></Line>
+        );
+      })}
+    </div>
+  );
+}
+
+type LineProps = {
+  line: string;
+  lines: string[];
+  setLines: Set<string[]>;
+  focus: boolean;
+  currentLineIndex: number;
+  setCurrentLineIndex: Set<number>;
+};
+
+type Set<T> = React.Dispatch<SetStateAction<T>>;
+
+function Line(props: LineProps) {
+  const {
+    line,
+    lines,
+    setLines,
+    focus,
+    currentLineIndex,
+    setCurrentLineIndex,
+  } = props;
+  const [l, setL] = useState(line);
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (focus) {
+      console.log(ref.current);
+      if (ref && ref.current) {
+        ref.current.focus();
+      }
+    }
+  }, []);
+  return (
+    <input
+      ref={ref}
+      className="w-full bg-secondary focus:outline-none active:outline-none"
+      value={l}
+      onChange={(e) => {
+        setL(e.target.value);
+      }}
+      onKeyDown={(e) => {
+        if (e.key == "Enter") {
+          const copyLines = [...lines]
+          copyLines[currentLineIndex] = l;
+          copyLines.push("")
+          setLines(copyLines)
+          setCurrentLineIndex(currentLineIndex + 1);
+        }else if(e.key == "Backspace"){
+          if(l == ""){
+          }
+        }
+        // if(l.length)
+      }}
+    ></input>
   );
 }
 
