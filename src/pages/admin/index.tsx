@@ -90,9 +90,13 @@ function BlogView(props: BlogViewProps) {
   );
 }
 
+type line = string;
+type paragraph = line[];
+
 function CreateBlogView() {
   const [title, setTitle] = useState("Title");
-  const [paragraphs, setParagraphs] = useState<string[]>([]);
+  const [paragraphs, setParagraphs] = useState<paragraph[]>([]);
+  // const [currentParagraphIndex,setpa]
   return (
     <form>
       <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
@@ -116,7 +120,8 @@ function CreateBlogView() {
         <div className="flex flex-row justify-between gap-2 px-10">
           <button
             onClick={(e) => {
-              setParagraphs([...paragraphs, "Add Your content"]);
+              setParagraphs([...paragraphs,["Add Your content"]])
+              // setParagraphs([...paragraphs, "Add Your content"]);
             }}
             type="button"
             className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
@@ -152,11 +157,11 @@ function CreateBlogView() {
   );
 }
 
-function ParagraphEdit(props: { paragraph: string }) {
+function ParagraphEdit(props: { paragraph: paragraph }) {
   const { paragraph } = props;
   // const paragraphRef = useRef<HTMLTextAreaElement>(null);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
-  const [lines, setLines] = useState([paragraph]);
+  const [lines, setLines] = useState<line[]>(paragraph || []);
   // const [currentLineContent, setCurrentLineContent] = useState(0);
   // useEffect(() => {}, [lines]);
   return (
@@ -220,13 +225,13 @@ function Line(props: LineProps) {
       }}
       onKeyDown={(e) => {
         if (e.key == "Enter") {
-          const copyLines = [...lines]
+          const copyLines = [...lines];
           copyLines[currentLineIndex] = l;
-          copyLines.push("")
-          setLines(copyLines)
+          copyLines.push("");
+          setLines(copyLines);
           setCurrentLineIndex(currentLineIndex + 1);
-        }else if(e.key == "Backspace"){
-          if(l == ""){
+        } else if (e.key == "Backspace") {
+          if (l == "") {
           }
         }
         // if(l.length)
