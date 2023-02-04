@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <>
       
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      {/* <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
@@ -43,7 +43,57 @@ const Home: NextPage = () => {
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
         </div>
-      </main>
+      </main> */}
+      <section className="grid grid-cols-1 gap-0 bg-blue-100 bg-opacity-25 md:grid-cols-2">
+            <div className="flex flex-col items-start justify-center px-4 py-24 lg:px-20">
+                <span className="mb-3 text-white bg-blue-900 badge rounded-md px-1 py-1">MIN</span>
+                <h1 className="mb-6 text-4xl font-bold leading-tight text-blue-900 md:text-4xl lg:text-5xl">
+                Subscribe Now to Our Newsletter
+                </h1>
+                <form className="w-full mb-6">
+                <label className="sr-only">Your Email</label>
+                <div className="block lg:hidden">
+                    <input
+                    className="text-blue-900 form-input form-input-lg rounded-md px-4 py-4"
+                    type="email"
+                    placeholder="Enter your email..."
+                    required={true}
+                    />
+                    <button
+                    className="w-full mt-2 text-white bg-blue-900 hover:bg-blue-800 btn btn-lg rounded-md px-4 py-4"
+                    type="submit"
+                    >
+                    Get Started
+                    </button>
+                </div>
+                <div className="hidden w-full form-append lg:flex">
+                    <input
+                    className="text-blue-900 form-input form-input-lg"
+                    type="email"
+                    placeholder="Enter your email..."
+                    required={true}
+                    />
+                    <button
+                    className="text-white bg-blue-900 hover:bg-blue-800 btn btn-lg rounded-md px-1 py-1"
+                    type="submit"
+                    >
+                    Get Started
+                    </button>
+                </div>
+                </form>
+                <p className="pr-0 mb-4 text-sm text-blue-800 tracking-relaxed lg:pr-16">
+                MIN is a blab Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, ducimus?
+                </p>
+            </div>
+            <div>
+                <img
+                src="https://images.unsplash.com/photo-1531548731165-c6ae86ff6491?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80"
+                alt="3 women looking at a laptop"
+                className="object-cover w-full h-64 bg-gray-100 md:h-full"
+                loading="lazy"
+                />
+            </div>
+         </section>
     </>
   );
 };
