@@ -11,6 +11,16 @@
 8. Edit code
 9. Push code
 
+## Start Your Own Server
+
+    ```bash
+    git clone {this repo link}
+    cd {repo name}
+    npm install
+    npx prisma db push
+    npm run dev
+    ```
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
