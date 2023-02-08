@@ -12,7 +12,7 @@ module.exports = {
       fontFamily: {
         primary: ["'Lato'", '"sans-serif"'],
         complementry: ["'Montserrat'", 'sans-serif'],
-        white: ["'PLayfair Display", 'serif'],
+        white: ["'Playfair Display'", 'serif'],
         secondary: ["'Poppins'", "sans-serif"]
       }
     },

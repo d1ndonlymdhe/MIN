@@ -117,10 +117,10 @@ function CreateBlogView() {
           }}
           className="mx-2 rounded-xl bg-secondary px-2 font-primary text-5xl font-bold focus:border-4 focus:border-complementary focus:outline-none active:outline-none"
         ></input>
-        <div className="flex flex-row justify-between gap-2 px-10">
+        {/* <div className="flex flex-row justify-between gap-2 px-10">
           <button
             onClick={(e) => {
-              setParagraphs([...paragraphs,["Add Your content"]])
+              setParagraphs([...paragraphs, ["Add Your content"]])
               // setParagraphs([...paragraphs, "Add Your content"]);
             }}
             type="button"
@@ -146,12 +146,16 @@ function CreateBlogView() {
           >
             Add Math
           </button>
+        </div> */}
+        <div className="text-2xl  font-bold font-primary px-2">
+          <p>Content Input Under Construction 🛠️🛠️</p>
+          <p>Make yourself familiar with markdown <a className="hover:underline text-blue-400">Cheatsheet</a></p>
+          <p>Use a markdown editor like <a href="https://stackedit.io/" className="hover:underline text-blue-400">StackEdit</a></p>
+          <p>Paste Markdown code below</p>
         </div>
-        {paragraphs.map((p, i) => {
-          return (
-            <ParagraphEdit {...{ paragraph: p }} key={uuid()}></ParagraphEdit>
-          );
-        })}
+        <div>
+
+        </div>
       </div>
     </form>
   );
@@ -294,7 +298,7 @@ function CreateBlog() {
   );
 }
 
-function BlogDeme() {}
+function BlogDeme() { }
 type PageProps = {
   username: string;
   blogs: Blog[];
