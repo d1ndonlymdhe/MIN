@@ -4,10 +4,14 @@ import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import uuid from "react-uuid";
 import { trpc } from "../../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import Button from "../../globalComponents/Button";
+import Spinner from "../../globalComponents/Spinner";
 export default function Main(props: PageProps) {
   //may need to create a global context for blogs
   const { username, blogs } = props;
   const [showBlogEdit, setShowBlogEdit] = useState(false);
+  const [publishedBlogs, setPublishedBlogs] = useState(blogs.filter(b => !b.isTemp))
+  const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
   const [blogView, SetBlogView] = useState(false);
   const [currentBlog, setCurrentBlog] = useState<Blog | undefined>();
   const [createMode, setCreateMode] = useState(false);
@@ -17,10 +21,10 @@ export default function Main(props: PageProps) {
       <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4 md:grid-cols-2 ">
         <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
           <p className="text-center font-complementry text-4xl text-complementary">
-            Your Blogs
+            Published Blogs
           </p>
           <ul className="flex flex-col gap-2 px-8 text-2xl">
-            {blogs.map((b) => {
+            {publishedBlogs.map((b) => {
               return (
                 <li
                   className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
@@ -46,6 +50,29 @@ export default function Main(props: PageProps) {
               Create New Blog
             </button>
           </div>
+        </div>
+        <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
+          <p className="text-center font-complementry text-4xl text-complementary">
+            Your Blogs
+          </p>
+          <ul className="flex flex-col gap-2 px-8 text-2xl">
+            {unPublishedBlogs.map((b) => {
+              return (
+                <li
+                  className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
+                  key={uuid()}
+                  onClick={() => {
+                    setCurrentBlog(b);
+                    SetBlogView(true);
+                  }}
+                >
+                  {b.title}
+                </li>
+                //add blog controls delete, publish , show
+              );
+            })}
+          </ul>
+
         </div>
         {/* blog demo */}
         {blogView && currentBlog && (
@@ -97,206 +124,80 @@ function CreateBlogView() {
   const [title, setTitle] = useState("Title");
   const [paragraphs, setParagraphs] = useState<paragraph[]>([]);
   // const [currentParagraphIndex,setpa]
-  return (
-    <form>
-      <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
-        <div className="h-[15vh] w-full rounded-t-md bg-yellow-200 text-black">
-          IMAGE HERE
-        </div>
-        <input
-          value={title}
-          type="text"
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-          onKeyDown={(e) => {
-            if (e.key == "Enter") {
-              //will auto submit
-              e.preventDefault();
-            }
-          }}
-          className="mx-2 rounded-xl bg-secondary px-2 font-primary text-5xl font-bold focus:border-4 focus:border-complementary focus:outline-none active:outline-none"
-        ></input>
-        {/* <div className="flex flex-row justify-between gap-2 px-10">
-          <button
-            onClick={(e) => {
-              setParagraphs([...paragraphs, ["Add Your content"]])
-              // setParagraphs([...paragraphs, "Add Your content"]);
-            }}
-            type="button"
-            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
-          >
-            Add Paragraph
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              // setCreateMode(true);
-            }}
-            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
-          >
-            Add Image
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              // setCreateMode(true);
-            }}
-            className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold focus:border-4 focus:outline-none"
-          >
-            Add Math
-          </button>
-        </div> */}
-        <div className="text-2xl  font-bold font-primary px-2">
-          <p>Content Input Under Construction 🛠️🛠️</p>
-          <p>Make yourself familiar with markdown <a className="hover:underline text-blue-400">Cheatsheet</a></p>
-          <p>Use a markdown editor like <a href="https://stackedit.io/" className="hover:underline text-blue-400">StackEdit</a></p>
-          <p>Paste Markdown code below</p>
-        </div>
-        <div>
+  const [imgSet, setImageSet] = useState(false)
+  const [imgSrc, setImgSrc] = useState("")
+  const imgInputRef = useRef<HTMLInputElement>(null)
+  const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
 
+  })
+  return (
+    <form onSubmit={(e) => {
+      e.preventDefault()
+      if (imgSet && title) {
+        createTempBlogMutation.mutate({
+          title: title,
+          hasImage: true
+        })
+      }
+    }}>
+      <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw] hover:cursor-pointer">
+        <label onChange={(e) => {
+          if (imgInputRef && imgInputRef.current) {
+            const files = imgInputRef.current.files
+            if (files && files[0]) {
+              console.log(URL.createObjectURL(files[0]))
+              setImgSrc(URL.createObjectURL(files[0]))
+              setImageSet(true)
+            }
+          }
+        }}>
+          <div style={
+            {
+              backgroundImage: `url(${imgSrc})`,
+              backgroundSize: "cover"
+            }
+          } className="h-[15vh] w-full grid place-items-center rounded-t-md bg-yellow-200 text-black">
+            {!imgSet && <p>IMAGE HERE</p>}
+          </div>
+          <input hidden type={"file"} accept="image/*" ref={imgInputRef}></input>
+        </label>
+        <div className="grid grid-cols-[8fr_2fr] gap-2 mx-2">
+          <div className="h-full w-full">
+            <input
+              value={title}
+              type="text"
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
+              className="rounded-xl w-full pl-2 bg-secondary font-primary text-5xl font-bold focus:outline-4 focus:outline-complementary"
+            ></input>
+          </div>
+          <Button type="submit">
+            {
+              createTempBlogMutation.isLoading && <Spinner></Spinner> ||
+              <div>Create Blog</div>
+            }
+          </Button>
         </div>
+        <div className="text-2xl  font-bold font-primary mx-2">
+          <p>Content Input Under Construction 🛠️🛠️</p>
+          <p>Make yourself familiar with markdown <a className="hover:underline text-blue-400" href="https://www.markdownguide.org/cheat-sheet/">Cheatsheet</a></p>
+          <p>Use a markdown editor like <a href="https://stackedit.io/" className="hover:underline text-blue-400">StackEdit</a></p>
+        </div>
+        <label>
+          <p className="text-2xl  font-bold font-primary mx-2">Paste Markdown code below:</p>
+          <div className="grid place-items-center mt-2">
+            <textarea className="w-[90%] h-full mb-2 px-2 text-black">
+            </textarea>
+          </div>
+          <Button>Submit</Button>
+        </label>
       </div>
     </form>
   );
 }
 
-function ParagraphEdit(props: { paragraph: paragraph }) {
-  const { paragraph } = props;
-  // const paragraphRef = useRef<HTMLTextAreaElement>(null);
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
-  const [lines, setLines] = useState<line[]>(paragraph || []);
-  // const [currentLineContent, setCurrentLineContent] = useState(0);
-  // useEffect(() => {}, [lines]);
-  return (
-    <div className="border-complementary px-2 group-focus:border-2">
-      {lines.map((l, i) => {
-        return (
-          <Line
-            {...{
-              line: lines[i] || "",
-              lines,
-              setLines,
-              setCurrentLineIndex,
-              currentLineIndex,
-            }}
-            key={uuid()}
-            focus={currentLineIndex == i}
-          ></Line>
-        );
-      })}
-    </div>
-  );
-}
-
-type LineProps = {
-  line: string;
-  lines: string[];
-  setLines: Set<string[]>;
-  focus: boolean;
-  currentLineIndex: number;
-  setCurrentLineIndex: Set<number>;
-};
-
 type Set<T> = React.Dispatch<SetStateAction<T>>;
-
-function Line(props: LineProps) {
-  const {
-    line,
-    lines,
-    setLines,
-    focus,
-    currentLineIndex,
-    setCurrentLineIndex,
-  } = props;
-  const [l, setL] = useState(line);
-  const ref = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (focus) {
-      console.log(ref.current);
-      if (ref && ref.current) {
-        ref.current.focus();
-      }
-    }
-  }, []);
-  return (
-    <input
-      ref={ref}
-      className="w-full bg-secondary focus:outline-none active:outline-none"
-      value={l}
-      onChange={(e) => {
-        setL(e.target.value);
-      }}
-      onKeyDown={(e) => {
-        if (e.key == "Enter") {
-          const copyLines = [...lines];
-          copyLines[currentLineIndex] = l;
-          copyLines.push("");
-          setLines(copyLines);
-          setCurrentLineIndex(currentLineIndex + 1);
-        } else if (e.key == "Backspace") {
-          if (l == "") {
-          }
-        }
-        // if(l.length)
-      }}
-    ></input>
-  );
-}
-
-function CreateBlog() {
-  const titleRef = useRef<HTMLInputElement>(null);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  const blogCreateMutation = trpc.blog.createBlog.useMutation({
-    onSuccess: (data) => {
-      // update the blogs state no need to reload
-      window.location.reload();
-    },
-  });
-  return (
-    <div>
-      <form
-        className="flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (titleRef && contentRef) {
-            const title = titleRef.current?.value;
-            const content = contentRef.current?.value;
-            if (title && content) {
-              blogCreateMutation.mutate({ title, content });
-            }
-          }
-        }}
-      >
-        <label>
-          Title:
-          <input
-            type={"text"}
-            className=" border border-solid border-black"
-            ref={titleRef}
-          ></input>
-        </label>
-        <label>
-          Content:
-          <textarea
-            className="h-40 border border-solid border-black"
-            ref={contentRef}
-          ></textarea>
-        </label>
-        <label className="w-fit border border-solid border-black p-2">
-          Select a cover photo
-          <input type={"file"} accept="image/*" hidden></input>
-        </label>
-        <button
-          type="submit"
-          className="w-fit border border-solid border-black"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-  );
-}
 
 function BlogDeme() { }
 type PageProps = {

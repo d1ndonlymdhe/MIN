@@ -38,16 +38,17 @@ model Role {
 }
 
 model Blog {
-  id             String         @id @default(cuid())
-  title          String
-  content        String
-  authorId       String
-  author         User           @relation(fields: [authorId], references: [id])
-  comments       Comment[]
-  reactions      BlogReaction[]
-  images         BlogImage[]
-  coverImageid   String         @default(cuid())
-  coverFulfilled Boolean
+  id           String         @id @default(cuid())
+  title        String
+  titleLowered String
+  content      String
+  authorId     String
+  author       User           @relation(fields: [authorId], references: [id])
+  comments     Comment[]
+  reactions    BlogReaction[]
+  images       BlogImage[]
+  coverImageid String         @default(cuid())
+  isTemp       Boolean        @default(false)
 }
 
 model BlogImage {

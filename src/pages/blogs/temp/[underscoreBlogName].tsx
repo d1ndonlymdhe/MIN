@@ -54,9 +54,8 @@ export default function Main(props: PageProps) {
         <div className="flex w-fit flex-row gap-2">
           {/* like and dislike */}
           <button
-            className={`${
-              isLiked && "font-bold"
-            } border border-solid border-black px-2`}
+            className={`${isLiked && "font-bold"
+              } border border-solid border-black px-2`}
             onClick={() => {
               if (loggedIn) {
                 likeMutation.mutate({
@@ -146,9 +145,8 @@ function Comment(props: CommentProp) {
               alert("You need to log in to react");
             }
           }}
-          className={`${
-            isLiked && "font-bold"
-          } border border-solid border-black px-2`}
+          className={`${isLiked && "font-bold"
+            } border border-solid border-black px-2`}
         >
           {isLiked ? "Liked" : "Like"}
         </button>
@@ -238,9 +236,9 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
   if (underScoreBlogName) {
-    const blogName = underScoreBlogName.split("_").join(" ");
+    const blogName = underScoreBlogName.split("_").join(" ").toLocaleLowerCase();
     const blog = await prisma.blog.findFirst({
-      where: { title: blogName },
+      where: { AND: [{ titleLowered: blogName }, {}] },
       include: { author: true },
     });
     if (blog) {
