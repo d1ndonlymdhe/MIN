@@ -18,14 +18,14 @@ datasource db {
 // }
 
 model User {
-  id              String            @id @default(cuid())
-  name            String
-  username        String
-  salt            String
-  passwordHash    String
-  role            Role[]
-  tokens          Token[]
-  blogs           Blog[]
+  id               String            @id @default(cuid())
+  name             String
+  username         String
+  salt             String
+  passwordHash     String
+  role             Role[]
+  tokens           Token[]
+  blogs            Blog[]
   comments         Comment[]
   blogReactions    BlogReaction[]
   commentReactions CommentReaction[]
@@ -38,13 +38,15 @@ model Role {
 }
 
 model Blog {
-  id        String         @id @default(cuid())
-  title     String
-  content   String
-  authorId  String
-  author    User           @relation(fields: [authorId], references: [id])
-  comments  Comment[]
-  reactions BlogReaction[]
+  id           String         @id @default(cuid())
+  title        String
+  //url doesnot support uppercase character while using blog/blog_name errors while using uppercase characters
+  titleLowered String
+  content      String
+  authorId     String
+  author       User           @relation(fields: [authorId], references: [id])
+  comments     Comment[]
+  reactions    BlogReaction[]
 }
 
 model Comment {
