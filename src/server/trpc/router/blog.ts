@@ -11,7 +11,7 @@ export const blogRouter = router({
             const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } })
             if (dbToken) {
                 const user = dbToken.user
-                const newBlog = await prisma.blog.create({ data: { title: title, content: content, authorId: user.id } })
+                const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id } })
                 return {
                     success: true,
                     title: title,

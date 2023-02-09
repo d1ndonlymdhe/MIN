@@ -218,7 +218,7 @@ type PageProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<
-  PageProps,
+  any,
   { underscoreBlogName: string }
 > = async (context) => {
   const underScoreBlogName = context.params?.underscoreBlogName;
