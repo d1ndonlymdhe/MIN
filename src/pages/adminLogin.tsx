@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../utils/trpc";
 import cookie from "js-cookie";
 import { GetServerSideProps } from "next";
 import { PrismaClient } from "@prisma/client";
@@ -9,7 +9,7 @@ export default function Main() {
     onSuccess: (data) => {
       const { token, success } = data;
       //set a uniquely generated token for future login
-      cookie.set("token", token);
+      cookie.set("token", token, { expires: 30 });
       window.location.reload();
     },
   });

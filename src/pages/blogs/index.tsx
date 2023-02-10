@@ -86,6 +86,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context)
   };
 };
 
-function underscore(str:string){
-    return str.split(" ").join("_")
+function underscore(str: string) {
+  return str.split(" ").join("_")
 }

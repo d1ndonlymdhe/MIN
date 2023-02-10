@@ -43,6 +43,7 @@ export default function Main(props: PageProps) {
   });
   return (
     <main className="grid grid-rows-[2fr_8fr]">
+      {/* <Comment ></Comment> */}
       <div>
         MIN blog {blog.title} by {author}{" "}
       </div>
@@ -237,7 +238,7 @@ export const getServerSideProps: GetServerSideProps<
   if (underScoreBlogName) {
     const blogName = underScoreBlogName.split("_").join(" ").toLocaleLowerCase();
     const blog = await prisma.blog.findFirst({
-      where: { titleLowered: blogName },
+      where: { AND: [{ titleLowered: blogName }, {}] },
       include: { author: true },
     });
     if (blog) {

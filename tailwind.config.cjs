@@ -10,10 +10,10 @@ module.exports = {
         minWhite: "#FCFDF2"
       },
       fontFamily: {
-        lato: ["'Lato'", '"sans-serif"'],
-        montserrat: ["'Montserrat'", 'sans-serif'],
-        playfair: ["'PLayfair Display'", 'serif'],
-        poppins: ["'Poppins'", "sans-serif"]
+        primary: ["'Lato'", '"sans-serif"'],
+        complementry: ["'Montserrat'", 'sans-serif'],
+        white: ["'Playfair Display'", 'serif'],
+        secondary: ["'Poppins'", "sans-serif"]
       }
     },
   },

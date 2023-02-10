@@ -2,7 +2,41 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { publicProcedure, router } from "../trpc"
 import { commentRouter } from "./comment"
+import fs from "node:fs/promises"
 export const blogRouter = router({
+    createTempBlog: publicProcedure.input(z.object({ title: z.string(), hasImage: z.boolean() })).mutation((async ({ input, ctx }) => {
+        const { prisma } = ctx
+        const { title, hasImage } = input
+        const token = ctx.req.cookies?.token;
+        if (title && hasImage) {
+            if (token) {
+                const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } });
+                if (dbToken) {
+                    const user = dbToken.user;
+                    const newTempBlog = await prisma.blog.create({
+                        data: {
+                            content: "",
+                            title: title,
+                            titleLowered: title.toLowerCase(),
+                            authorId: user.id,
+                            isTemp: true
+                        }
+                    })
+                    await fs.mkdir(`./files/${user.id}/blogs/${newTempBlog.id}`)
+                    await fs.mkdir(`./files/${user.id}/blogs/${newTempBlog.id}/images`)
+                    if (newTempBlog) {
+                        return {
+                            newBlog: newTempBlog
+                        }
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code: "BAD_REQUEST"
+        })
+    }
+    )),
     createBlog: publicProcedure.input(z.object({ title: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx
         const { title, content } = input
@@ -12,6 +46,8 @@ export const blogRouter = router({
             if (dbToken) {
                 const user = dbToken.user
                 const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id } })
+                await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}`)
+                await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}/images`)
                 return {
                     success: true,
                     title: title,
