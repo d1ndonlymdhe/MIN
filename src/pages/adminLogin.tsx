@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../utils/trpc";
 import cookie from "js-cookie";
 import { GetServerSideProps } from "next";
 import { PrismaClient } from "@prisma/client";

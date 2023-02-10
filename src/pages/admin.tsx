@@ -2,10 +2,10 @@ import { Blog, PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import uuid from "react-uuid";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
-import Button from "../../globalComponents/Button";
-import Spinner from "../../globalComponents/Spinner";
+import Button from "../globalComponents/Button";
+import Spinner from "../globalComponents/Spinner";
 export default function Main(props: PageProps) {
   //may need to create a global context for blogs
   const { username, blogs } = props;
