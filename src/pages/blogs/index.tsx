@@ -12,7 +12,7 @@ export default function Main(props: PageProps) {
         {blogs.map((b) => {
           return (
             <div key={uuid()} className="flex flex-col">
-                {/* use next link */}
+              {/* use next link */}
               <a href={`/blogs/${underscore(b.title)}`}>
                 <div className="font-bold">{b.title}</div>
               </a>
@@ -52,6 +52,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context)
   };
 };
 
-function underscore(str:string){
-    return str.split(" ").join("_")
+function underscore(str: string) {
+  return str.split(" ").join("_")
 }

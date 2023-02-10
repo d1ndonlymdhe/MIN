@@ -53,7 +53,7 @@ export default function Main(props: PageProps) {
         </div>
         <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
           <p className="text-center font-complementry text-4xl text-complementary">
-            Your Blogs
+            Pending Blogs
           </p>
           <ul className="flex flex-col gap-2 px-8 text-2xl">
             {unPublishedBlogs.map((b) => {
@@ -108,7 +108,9 @@ function BlogView(props: BlogViewProps) {
   const { blog } = props;
   return (
     <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
-      <div className="h-[15vh] w-full rounded-t-md bg-yellow-200 text-black">
+      <div style={{
+        backgroundImage: `url(api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`
+      }} className="h-[15vh] w-full rounded-t-md  text-black">
         IMAGE HERE
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
@@ -122,14 +124,33 @@ type paragraph = line[];
 
 function CreateBlogView() {
   const [title, setTitle] = useState("Title");
-  const [paragraphs, setParagraphs] = useState<paragraph[]>([]);
-  // const [currentParagraphIndex,setpa]
+  const [newBlog, setNewBlog] = useState<Blog | undefined>()
   const [imgSet, setImageSet] = useState(false)
   const [imgSrc, setImgSrc] = useState("")
   const imgInputRef = useRef<HTMLInputElement>(null)
-  const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
 
+  const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
+    onSuccess: async (data) => {
+      setNewBlog(data.newBlog)
+      const form = new FormData()
+      const blogImage = await (await fetch(imgSrc)).blob()
+      form.append("blogId", data.newBlog.id);
+      form.append("blogImage", blogImage)
+      setImgUploadLoading(true)
+      fetch("/api/handleBlogImage", {
+        method: "POST",
+        body: form
+      }).then((res) => {
+        setImgUploadLoading(false)
+        return res.json()
+      }).then((data) => {
+        console.log(data)
+      }
+      )
+    }
   })
+  const [imgUploadLoading, setImgUploadLoading] = useState(false)
+  const [loading, setLoading] = useState(createTempBlogMutation.isLoading || imgUploadLoading)
   return (
     <form onSubmit={(e) => {
       e.preventDefault()
@@ -148,6 +169,27 @@ function CreateBlogView() {
               console.log(URL.createObjectURL(files[0]))
               setImgSrc(URL.createObjectURL(files[0]))
               setImageSet(true)
+              if (newBlog && !loading) {
+                const form = new FormData()
+                fetch(imgSrc).then(res => {
+                  return res.blob()
+                }).then((blob) => {
+                  const blogImage = blob
+                  form.append("blogId", newBlog.id);
+                  form.append("blogImage", blogImage)
+                  setImgUploadLoading(true)
+                  fetch("/api/handleBlogImage", {
+                    method: "POST",
+                    body: form
+                  }).then((res) => {
+                    setImgUploadLoading(false)
+                    return res.json()
+                  }).then((data) => {
+                    console.log(data)
+                  }
+                  )
+                })
+              }
             }
           }
         }}>
