@@ -1,4 +1,5 @@
-import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon as HandThumbUpIconOutline } from "@heroicons/react/24/outline"
 import {
   Blog,
   BlogReaction,
@@ -9,6 +10,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRef, useState } from "react";
 import uuid from "react-uuid";
+import Button from "../../globalComponents/Button";
 import { trpc } from "../../utils/trpc";
 import { BlogView } from "../admin"
 export default function Main2(props: PageProps) {
@@ -31,21 +33,65 @@ export default function Main2(props: PageProps) {
       setLikeCount(context.type ? likeCount - 1 : likeCount + 1);
     },
   });
-  return <main className="w-screen h-screen bg-primary text-white">
+  return <main className="w-screen min-h-screen bg-primary text-white">
     <TopBar></TopBar>
-    <div className="h-full w-full py-2 px-2 flex flex-row ">
-
+    <div className="h-full w-full py-2 px-2 grid grid-cols-[6fr_4fr] gap-4">
+      <div className="w-full min-h-[85vh]  grid place-items-center">
+        <div className="h-fit w-fit">
+          <BlogView blog={blog}></BlogView>
+        </div>
+      </div>
+      <div className="w-full min-h-[85vh] flex flex-col px-8 gap-8">
+        {/* userinfo */}
+        <div className="flex flex-col gap-4">
+          <h3 className="text-2xl">Posted by :</h3>
+          <div className="flex flex-row gap-4">
+            <UserCircleIcon className="h-10 w-10"></UserCircleIcon>
+            <p className="text-4xl font-bold">{
+              author
+            }</p>
+          </div>
+        </div>
+        {/* comments */}
+        <div className="flex flex-col gap-4">
+          <div>Like this blog <div className="p-2 flex w-fit flex-row gap-2 ">
+            <p>{likeCount}</p>
+            <button
+              onClick={() => {
+                if (userId) {
+                  if (!likeMutation.isLoading) {
+                    likeMutation.mutate({
+                      blogId: blog.id,
+                      type: !isLiked
+                    });
+                  }
+                } else {
+                  alert("You need to log in to react");
+                }
+              }}
+              className={`${isLiked && "font-bold"
+                } `}
+            >
+              {isLiked ? <HandThumbUpIcon className="w-6 h-6"></HandThumbUpIcon> : <HandThumbUpIconOutline className="w-6 h-6"></HandThumbUpIconOutline>}
+            </button>
+          </div></div>
+          <p className="text-2xl">Comments :</p>
+          {
+            loggedIn &&
+            <AddComment blog={blog}></AddComment>
+          }
+          {
+            comments.map(c => {
+              return <Comment comment={c} blogId={blog.id} userId={userId}></Comment>
+            })
+          }
+        </div>
+      </div>
     </div>
   </main>
 
 
 }
-
-
-
-
-
-
 
 function TopBar() {
   return (
@@ -63,86 +109,6 @@ function TopBar() {
   )
 }
 
-
-
-function Main(props: PageProps) {
-  const {
-    blog,
-    loggedIn,
-    author,
-    comments,
-    reactions,
-    userId,
-    username,
-    isLiked: liked,
-  } = props;
-  const [isLiked, setIsLiked] = useState(liked);
-  //select all true
-  const [likeCount, setLikeCount] = useState(
-    reactions.filter((r) => r.type).length
-  );
-  const likeMutation = trpc.blog.reaction.useMutation({
-    // read this https://tanstack.com/query/v4/docs/react/guides/optimistic-updates
-    onMutate: (variables) => {
-      setIsLiked(variables.type);
-      setLikeCount(variables.type ? likeCount + 1 : likeCount - 1);
-    },
-    onSuccess: (data) => {
-      setIsLiked(data.reaction.type);
-    },
-    onError: (data, context) => {
-      setIsLiked(!context.type);
-      setLikeCount(context.type ? likeCount - 1 : likeCount + 1);
-    },
-  });
-  return (
-    <main className="grid grid-rows-[2fr_8fr]">
-      {/* <Comment ></Comment> */}
-      <div>
-        MIN blog {blog.title} by {author}{" "}
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="border border-solid border-black p-2">
-          {blog.content}
-        </div>
-        <div className="flex w-fit flex-row gap-2">
-          {/* like and dislike */}
-          <button
-            className={`${isLiked && "font-bold"
-              } border border-solid border-black px-2`}
-            onClick={() => {
-              if (loggedIn) {
-                likeMutation.mutate({
-                  blogId: blog.id,
-                  type: !isLiked,
-                });
-              } else {
-                alert("You need to log in");
-              }
-            }}
-          >
-            {(isLiked && "Liked") || "Like"}
-          </button>
-          <p>{likeCount} likes</p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <p>Comments</p>
-          {(loggedIn && <AddComment {...{ blog }}></AddComment>) || (
-            <div> You need to log in to add comments </div>
-          )}
-          {comments.map((c) => {
-            return (
-              <Comment
-                key={uuid()}
-                {...{ comment: c, userId, blogId: blog.id }}
-              ></Comment>
-            );
-          })}
-        </div>
-      </div>
-    </main>
-  );
-}
 
 type CommentProp = {
   comment: ClientComment;
@@ -181,30 +147,37 @@ function Comment(props: CommentProp) {
     },
   });
   return (
-    <div className=" flex flex-col gap-2 border border-solid border-black">
-      <p>{c.author} :</p>
-      <p className=" p-2">{c.content}</p>
-      <div className="flex w-fit flex-row gap-2 ">
-        <button
-          onClick={() => {
-            if (userId) {
-              if (!commentReactionMutation.isLoading) {
-                commentReactionMutation.mutate({
-                  blogId,
-                  commentId: c.id,
-                  type: !isLiked,
-                });
+    <div className=" flex flex-col gap-2">
+      <div className="w-fit flex flex-row gap-2">
+        <div className="h-full grid content-start">
+          <UserCircleIcon className="w-6 h-6"></UserCircleIcon>
+        </div>
+        <p className="text-2xl">{c.author} :</p>
+      </div>
+      <div>
+        <p className=" p-2 text-4xl">{c.content}</p>
+        <div className="p-2 flex w-fit flex-row gap-2 ">
+          <p>{likes}</p>
+          <button
+            onClick={() => {
+              if (userId) {
+                if (!commentReactionMutation.isLoading) {
+                  commentReactionMutation.mutate({
+                    blogId,
+                    commentId: c.id,
+                    type: !isLiked,
+                  });
+                }
+              } else {
+                alert("You need to log in to react");
               }
-            } else {
-              alert("You need to log in to react");
-            }
-          }}
-          className={`${isLiked && "font-bold"
-            } border border-solid border-black px-2`}
-        >
-          {isLiked ? "Liked" : "Like"}
-        </button>
-        <p>{likes} likes</p>
+            }}
+            className={`${isLiked && "font-bold"
+              } `}
+          >
+            {isLiked ? <HandThumbUpIcon className="w-6 h-6"></HandThumbUpIcon> : <HandThumbUpIconOutline className="w-6 h-6"></HandThumbUpIconOutline>}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -224,7 +197,7 @@ function AddComment(props: AddCommentProp) {
   });
   return (
     <form
-      className="flex flex-col gap-2 border border-solid border-black"
+      className="flex flex-row w-fit gap-2"
       onSubmit={(e) => {
         e.preventDefault();
         if (commentRef) {
@@ -236,19 +209,24 @@ function AddComment(props: AddCommentProp) {
       }}
     >
       <label>
-        Add your comment
         <input
-          className="border border-solid border-black"
+          className="form-control block w-full px-4 py-2 mb-2 md:mb-0 md:mr-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:outline-secondary focus:outline-[3px] focus:outline-none "
           type="text"
           ref={commentRef}
         ></input>
       </label>
-      <button
+      <Button
         type="submit"
-        className="w-fit border border-solid border-black p-2"
+        className="bg-secondary"
       >
         Submit
-      </button>
+      </Button>
+      {/* <button
+        type="submit"
+        className="w-fit  p-2"
+      >
+        Submit
+      </button> */}
     </form>
   );
 }
