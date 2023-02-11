@@ -104,14 +104,14 @@ type BlogViewProps = {
   blog: Blog;
 };
 
-function BlogView(props: BlogViewProps) {
+export function BlogView(props: BlogViewProps) {
   const { blog } = props;
   return (
     <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
       <div style={{
-        backgroundImage: `url(api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`
+        backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`
       }} className="h-[15vh] w-full rounded-t-md  text-black">
-        IMAGE HERE
+
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
       <p className="px-2 font-secondary text-2xl">{blog.content}</p>

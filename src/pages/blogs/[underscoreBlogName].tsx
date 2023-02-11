@@ -1,3 +1,4 @@
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import {
   Blog,
   BlogReaction,
@@ -9,8 +10,62 @@ import { GetServerSideProps } from "next";
 import { useRef, useState } from "react";
 import uuid from "react-uuid";
 import { trpc } from "../../utils/trpc";
+import { BlogView } from "../admin"
+export default function Main2(props: PageProps) {
+  const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
+  const [isLiked, setIsLiked] = useState(liked);
+  const [likeCount, setLikeCount] = useState(
+    reactions.filter(r => r.type).length
+  )
+  const likeMutation = trpc.blog.reaction.useMutation({
+    // read this https://tanstack.com/query/v4/docs/react/guides/optimistic-updates
+    onMutate: (variables) => {
+      setIsLiked(variables.type);
+      setLikeCount(variables.type ? likeCount + 1 : likeCount - 1);
+    },
+    onSuccess: (data) => {
+      setIsLiked(data.reaction.type);
+    },
+    onError: (data, context) => {
+      setIsLiked(!context.type);
+      setLikeCount(context.type ? likeCount - 1 : likeCount + 1);
+    },
+  });
+  return <main className="w-screen h-screen bg-primary text-white">
+    <TopBar></TopBar>
+    <div className="h-full w-full py-2 px-2 flex flex-row ">
 
-export default function Main(props: PageProps) {
+    </div>
+  </main>
+
+
+}
+
+
+
+
+
+
+
+function TopBar() {
+  return (
+    <div className="text-md grid h-[10vh] w-screen grid-cols-3 place-items-center gap-2 border-b-8 border-complementary md:grid-cols-[2fr_6fr_2fr] md:text-4xl">
+      <div className="place-items-center text-center font-primary  font-bold">
+        MIN
+      </div>
+      <div className="w-full place-items-center text-center font-complementry ">
+
+      </div>
+      <div className="grid w-full  place-items-end justify-end gap-2">
+        <UserCircleIcon className="mr-2 h-8 w-8"></UserCircleIcon>
+      </div>
+    </div>
+  )
+}
+
+
+
+function Main(props: PageProps) {
   const {
     blog,
     loggedIn,
