@@ -6,6 +6,9 @@ import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import Button from "../globalComponents/Button";
 import Spinner from "../globalComponents/Spinner";
+import { remark } from "remark";
+import html from "remark-html"
+import remarkMath from "remark-math";
 export default function Main(props: PageProps) {
   //may need to create a global context for blogs
   const { username, blogs } = props;
@@ -114,8 +117,7 @@ export function BlogView(props: BlogViewProps) {
 
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-      <p className="px-2 font-secondary text-2xl">
-        {blog.content}
+      <p className="px-2 font-secondary text-2xl" dangerouslySetInnerHTML={{ __html: blog.content }}>
       </p>
     </div>
   );
@@ -286,11 +288,24 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     });
     if (dbToken) {
       const user = dbToken.user;
+      const parsedBlogs: Blog[] = []
+      for (let i = 0; i < user.blogs.length; i++) {
+        const curBlog = user.blogs[i]
+        if (curBlog) {
+          const processedContent = await remark()
+            .use(remarkMath)
+            .use(html)
+            .process(curBlog.content)
+          const contentHtml = processedContent.toString();
+          console.log(contentHtml)
+          parsedBlogs.push({ ...curBlog, content: contentHtml })
+        }
+      }
       if (user) {
         return {
           props: {
             username: user.username,
-            blogs: user.blogs,
+            blogs: parsedBlogs,
           },
         };
       }

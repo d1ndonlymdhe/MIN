@@ -13,6 +13,9 @@ import uuid from "react-uuid";
 import Button from "../../globalComponents/Button";
 import { trpc } from "../../utils/trpc";
 import { BlogView } from "../admin"
+import { remark } from "remark";
+import html from "remark-html"
+import remarkMath from "remark-math";
 export default function Main2(props: PageProps) {
   const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
   const [isLiked, setIsLiked] = useState(liked);
@@ -273,7 +276,12 @@ export const getServerSideProps: GetServerSideProps<
       where: { titleLowered: blogName },
       include: { author: true },
     });
+
     if (blog) {
+
+      const processedContent = await remark().use(html).use(remarkMath).process(blog.content)
+      blog.content = processedContent.toString()
+
       const comments = await prisma.comment.findMany({
         where: { blogId: blog.id },
         include: {
