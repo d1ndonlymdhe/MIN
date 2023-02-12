@@ -114,7 +114,9 @@ export function BlogView(props: BlogViewProps) {
 
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-      <p className="px-2 font-secondary text-2xl">{blog.content}</p>
+      <p className="px-2 font-secondary text-2xl">
+        {blog.content}
+      </p>
     </div>
   );
 }
@@ -149,8 +151,12 @@ function CreateBlogView() {
       )
     }
   })
+
+  const addContentMutation = trpc.blog.addContent.useMutation()
+  const contentRef = useRef<HTMLTextAreaElement>(null)
   const [imgUploadLoading, setImgUploadLoading] = useState(false)
   const [loading, setLoading] = useState(createTempBlogMutation.isLoading || imgUploadLoading)
+  // text area ra title update garne seperate form huna parne refacor garna jhau lageko cha
   return (
     <form onSubmit={(e) => {
       e.preventDefault()
@@ -162,37 +168,39 @@ function CreateBlogView() {
       }
     }}>
       <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw] hover:cursor-pointer">
-        <label onChange={(e) => {
-          if (imgInputRef && imgInputRef.current) {
-            const files = imgInputRef.current.files
-            if (files && files[0]) {
-              console.log(URL.createObjectURL(files[0]))
-              setImgSrc(URL.createObjectURL(files[0]))
-              setImageSet(true)
-              if (newBlog && !loading) {
-                const form = new FormData()
-                fetch(imgSrc).then(res => {
-                  return res.blob()
-                }).then((blob) => {
-                  const blogImage = blob
-                  form.append("blogId", newBlog.id);
-                  form.append("blogImage", blogImage)
-                  setImgUploadLoading(true)
-                  fetch("/api/handleBlogImage", {
-                    method: "POST",
-                    body: form
-                  }).then((res) => {
-                    setImgUploadLoading(false)
-                    return res.json()
-                  }).then((data) => {
-                    console.log(data)
-                  }
-                  )
-                })
+        <label
+          className="hover:cursor-pointer"
+          onChange={(e) => {
+            if (imgInputRef && imgInputRef.current) {
+              const files = imgInputRef.current.files
+              if (files && files[0]) {
+                console.log(URL.createObjectURL(files[0]))
+                setImgSrc(URL.createObjectURL(files[0]))
+                setImageSet(true)
+                if (newBlog && !loading) {
+                  const form = new FormData()
+                  fetch(imgSrc).then(res => {
+                    return res.blob()
+                  }).then((blob) => {
+                    const blogImage = blob
+                    form.append("blogId", newBlog.id);
+                    form.append("blogImage", blogImage)
+                    setImgUploadLoading(true)
+                    fetch("/api/handleBlogImage", {
+                      method: "POST",
+                      body: form
+                    }).then((res) => {
+                      setImgUploadLoading(false)
+                      return res.json()
+                    }).then((data) => {
+                      console.log(data)
+                    }
+                    )
+                  })
+                }
               }
             }
-          }
-        }}>
+          }}>
           <div style={
             {
               backgroundImage: `url(${imgSrc})`,
@@ -214,7 +222,7 @@ function CreateBlogView() {
               className="rounded-xl w-full pl-2 bg-secondary font-primary text-5xl font-bold focus:outline-4 focus:outline-complementary"
             ></input>
           </div>
-          <Button type="submit">
+          <Button type="submit" className="bg-primary">
             {
               createTempBlogMutation.isLoading && <Spinner></Spinner> ||
               <div>Create Blog</div>
@@ -222,6 +230,7 @@ function CreateBlogView() {
           </Button>
         </div>
         <div className="text-2xl  font-bold font-primary mx-2">
+          <p>First create a blog from above</p>
           <p>Content Input Under Construction 🛠️🛠️</p>
           <p>Make yourself familiar with markdown <a className="hover:underline text-blue-400" href="https://www.markdownguide.org/cheat-sheet/">Cheatsheet</a></p>
           <p>Use a markdown editor like <a href="https://stackedit.io/" className="hover:underline text-blue-400">StackEdit</a></p>
@@ -229,10 +238,22 @@ function CreateBlogView() {
         <label>
           <p className="text-2xl  font-bold font-primary mx-2">Paste Markdown code below:</p>
           <div className="grid place-items-center mt-2">
-            <textarea className="w-[90%] h-full mb-2 px-2 text-black">
+            <textarea className="w-[90%] h-full mb-2 px-2 text-black" ref={contentRef}>
             </textarea>
           </div>
-          <Button>Submit</Button>
+          <Button onClick={() => {
+            if (!addContentMutation.isLoading) {
+              if (contentRef && contentRef.current && newBlog) {
+                const content = contentRef.current.value;
+                if (content) {
+                  addContentMutation.mutate({ blogId: newBlog.id, content })
+                }
+              }
+              addContentMutation.mutate
+            }
+          }}
+            className="bg-primary"
+          >Submit</Button>
         </label>
       </div>
     </form>
@@ -265,7 +286,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     });
     if (dbToken) {
       const user = dbToken.user;
-
       if (user) {
         return {
           props: {

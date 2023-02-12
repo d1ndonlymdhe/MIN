@@ -37,6 +37,33 @@ export const blogRouter = router({
         })
     }
     )),
+    addContent: publicProcedure.input(z.object({ blogId: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
+        const { prisma } = ctx;
+        const { blogId, content } = input;
+        const token = ctx.req.cookies?.token;
+        if (token) {
+            const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } });
+            if (dbToken) {
+                const blogs = await prisma.blog.findMany({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } })
+                if (blogs && blogs[0]) {
+                    const blog = blogs[0];
+                    const newBlog = await prisma.blog.update({
+                        where: { id: blogId }, data: {
+                            ...blog,
+                            content
+                        }
+                    })
+                    return {
+                        success: true,
+                        newBlog: newBlog
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code: "NOT_FOUND"
+        })
+    }),
     createBlog: publicProcedure.input(z.object({ title: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx
         const { title, content } = input
