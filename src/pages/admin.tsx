@@ -9,6 +9,8 @@ import Spinner from "../globalComponents/Spinner";
 import { remark } from "remark";
 import html from "remark-html"
 import remarkMath from "remark-math";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
 export default function Main(props: PageProps) {
   //may need to create a global context for blogs
   const { username, blogs } = props;
@@ -117,8 +119,12 @@ export function BlogView(props: BlogViewProps) {
 
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-      <p className="px-2 font-secondary text-2xl" dangerouslySetInnerHTML={{ __html: blog.content }}>
-      </p>
+      {/* <p className="px-2 font-secondary text-2xl" dangerouslySetInnerHTML={{ __html: blog.content }}> */}
+
+      {/* </p> */}
+      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+        {blog.content}
+      </ReactMarkdown>
     </div>
   );
 }
@@ -288,24 +294,24 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     });
     if (dbToken) {
       const user = dbToken.user;
-      const parsedBlogs: Blog[] = []
-      for (let i = 0; i < user.blogs.length; i++) {
-        const curBlog = user.blogs[i]
-        if (curBlog) {
-          const processedContent = await remark()
-            .use(remarkMath)
-            .use(html)
-            .process(curBlog.content)
-          const contentHtml = processedContent.toString();
-          console.log(contentHtml)
-          parsedBlogs.push({ ...curBlog, content: contentHtml })
-        }
-      }
+      // const parsedBlogs: Blog[] = []
+      // for (let i = 0; i < user.blogs.length; i++) {
+      //   const curBlog = user.blogs[i]
+      //   if (curBlog) {
+      //     const processedContent = await remark()
+      //       .use(remarkMath)
+      //       .use(html)
+      //       .process(curBlog.content)
+      //     const contentHtml = processedContent.toString();
+      //     console.log(contentHtml)
+      //     parsedBlogs.push({ ...curBlog, content: contentHtml })
+      //   }
+      // }
       if (user) {
         return {
           props: {
             username: user.username,
-            blogs: parsedBlogs,
+            blogs: user.blogs,
           },
         };
       }
