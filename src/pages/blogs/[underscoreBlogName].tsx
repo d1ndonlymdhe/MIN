@@ -85,7 +85,7 @@ export default function Main2(props: PageProps) {
           }
           {
             comments.map(c => {
-              return <Comment comment={c} blogId={blog.id} userId={userId}></Comment>
+              return <Comment comment={c} blogId={blog.id} userId={userId} key={uuid()}></Comment>
             })
           }
         </div>

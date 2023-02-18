@@ -11,6 +11,15 @@ import html from "remark-html"
 import remarkMath from "remark-math";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
+// import MDEditor from "@uiw/react-md-editor";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import dynamic from "next/dist/shared/lib/dynamic";
+const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor"),
+  { ssr: false }
+);
+const MDPreview = dynamic(() => import("@uiw/react-markdown-preview"), { ssr: false })
 export default function Main(props: PageProps) {
   //may need to create a global context for blogs
   const { username, blogs } = props;
@@ -23,61 +32,62 @@ export default function Main(props: PageProps) {
   return (
     <main className="w-screen bg-primary text-white">
       <TopBar></TopBar>
-      <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4 md:grid-cols-2 ">
-        <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
-          <p className="text-center font-complementry text-4xl text-complementary">
-            Published Blogs
-          </p>
-          <ul className="flex flex-col gap-2 px-8 text-2xl">
-            {publishedBlogs.map((b) => {
-              return (
-                <li
-                  className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
-                  key={uuid()}
-                  onClick={() => {
-                    setCurrentBlog(b);
-                    SetBlogView(true);
-                  }}
-                >
-                  {b.title}
-                </li>
-              );
-            })}
-          </ul>
-          <div className="flex w-full items-center justify-center">
-            <button
-              onClick={() => {
-                setCreateMode(true);
-                SetBlogView(false);
-              }}
-              className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold"
-            >
-              Create New Blog
-            </button>
+      <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4  ">
+        <div className="flex flex-row gap-10">
+          <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
+            <p className="text-center font-complementry text-4xl text-complementary">
+              Published Blogs
+            </p>
+            <ul className="flex flex-col gap-2 px-8 text-2xl">
+              {publishedBlogs.map((b) => {
+                return (
+                  <li
+                    className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
+                    key={uuid()}
+                    onClick={() => {
+                      setCurrentBlog(b);
+                      SetBlogView(true);
+                    }}
+                  >
+                    {b.title}
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="flex w-full items-center justify-center">
+              <button
+                onClick={() => {
+                  setCreateMode(true);
+                  SetBlogView(false);
+                }}
+                className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold"
+              >
+                Create New Blog
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
-          <p className="text-center font-complementry text-4xl text-complementary">
-            Pending Blogs
-          </p>
-          <ul className="flex flex-col gap-2 px-8 text-2xl">
-            {unPublishedBlogs.map((b) => {
-              return (
-                <li
-                  className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
-                  key={uuid()}
-                  onClick={() => {
-                    setCurrentBlog(b);
-                    SetBlogView(true);
-                  }}
-                >
-                  {b.title}
-                </li>
-                //add blog controls delete, publish , show
-              );
-            })}
-          </ul>
-
+          <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
+            <p className="text-center font-complementry text-4xl text-complementary">
+              Pending Blogs
+            </p>
+            <ul className="flex flex-col gap-2 px-8 text-2xl">
+              {unPublishedBlogs.map((b) => {
+                return (
+                  <li
+                    className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
+                    key={uuid()}
+                    onClick={() => {
+                      setCurrentBlog(b);
+                      SetBlogView(true);
+                    }}
+                  >
+                    {b.title}
+                  </li>
+                  //add blog controls delete, publish , show
+                );
+              })}
+            </ul>
+          </div>
         </div>
         {/* blog demo */}
         {blogView && currentBlog && (
@@ -122,9 +132,13 @@ export function BlogView(props: BlogViewProps) {
       {/* <p className="px-2 font-secondary text-2xl" dangerouslySetInnerHTML={{ __html: blog.content }}> */}
 
       {/* </p> */}
-      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-        {blog.content}
-      </ReactMarkdown>
+      <div className="text-left">
+        <MDPreview style={{
+          background: "black",
+          color: "white",
+          overflow: "scroll"
+        }} source={blog.content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+      </div>
     </div>
   );
 }
@@ -138,7 +152,7 @@ function CreateBlogView() {
   const [imgSet, setImageSet] = useState(false)
   const [imgSrc, setImgSrc] = useState("")
   const imgInputRef = useRef<HTMLInputElement>(null)
-
+  const [content, setContent] = useState("");
   const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
     onSuccess: async (data) => {
       setNewBlog(data.newBlog)
@@ -175,7 +189,7 @@ function CreateBlogView() {
         })
       }
     }}>
-      <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw] hover:cursor-pointer">
+      <div className="flex h-[85vh] w-[95vw] flex-col gap-2 overflow-auto rounded-md bg-secondary hover:cursor-pointer">
         <label
           className="hover:cursor-pointer"
           onChange={(e) => {
@@ -214,7 +228,7 @@ function CreateBlogView() {
               backgroundImage: `url(${imgSrc})`,
               backgroundSize: "cover"
             }
-          } className="h-[15vh] w-full grid place-items-center rounded-t-md bg-yellow-200 text-black">
+          } className="h-[25vh] w-full grid place-items-center rounded-t-md bg-yellow-200 text-black">
             {!imgSet && <p>IMAGE HERE</p>}
           </div>
           <input hidden type={"file"} accept="image/*" ref={imgInputRef}></input>
@@ -237,28 +251,30 @@ function CreateBlogView() {
             }
           </Button>
         </div>
-        <div className="text-2xl  font-bold font-primary mx-2">
-          <p>First create a blog from above</p>
-          <p>Content Input Under Construction 🛠️🛠️</p>
-          <p>Make yourself familiar with markdown <a className="hover:underline text-blue-400" href="https://www.markdownguide.org/cheat-sheet/">Cheatsheet</a></p>
-          <p>Use a markdown editor like <a href="https://stackedit.io/" className="hover:underline text-blue-400">StackEdit</a></p>
-        </div>
+
         <label>
-          <p className="text-2xl  font-bold font-primary mx-2">Paste Markdown code below:</p>
-          <div className="grid place-items-center mt-2">
-            <textarea className="w-[90%] h-full mb-2 px-2 text-black" ref={contentRef}>
-            </textarea>
+          <div className="grid grid-cols-2 gap-4 mx-2 my-4">
+            <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
+            <div className="text-left">
+              <MDPreview style={{
+                background: "black",
+                color: "white",
+                overflow: "scroll"
+              }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+            </div>
           </div>
           <Button onClick={() => {
-            if (!addContentMutation.isLoading) {
-              if (contentRef && contentRef.current && newBlog) {
-                const content = contentRef.current.value;
-                if (content) {
-                  addContentMutation.mutate({ blogId: newBlog.id, content })
-                }
+            // if (!addContentMutation.isLoading) {
+            // if (contentRef && contentRef.current && newBlog) {
+            // const content = contentRef.current.value;
+            if (newBlog) {
+
+              if (content) {
+                addContentMutation.mutate({ blogId: newBlog.id, content })
               }
-              addContentMutation.mutate
             }
+            // }
+            // }
           }}
             className="bg-primary"
           >Submit</Button>
@@ -270,7 +286,6 @@ function CreateBlogView() {
 
 type Set<T> = React.Dispatch<SetStateAction<T>>;
 
-function BlogDeme() { }
 type PageProps = {
   username: string;
   blogs: Blog[];

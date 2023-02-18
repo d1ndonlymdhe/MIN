@@ -42,7 +42,7 @@ import {
       },
     });
     return (
-
+      "Hello"
         );
     }
     
@@ -127,7 +127,7 @@ import {
       });
       return (
         <>
-            <article className="px-4 py-24 mx-auto max-w-7xl" itemid="#" itemscope itemtype="http://schema.org/BlogPosting">
+          <article className="px-4 py-24 mx-auto max-w-7xl" itemType="http://schema.org/BlogPosting">
         
                 <div className="w-full mx-auto mb-8 text-left md:w-3/4 lg:w-1/2">
                     <img src="https://images.unsplash.com/photo-1596496181871-9681eacf9764?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=886&q=80" className="object-cover w-full h-64 bg-center rounded-lg" alt="something" />
@@ -171,7 +171,7 @@ import {
     };
     
     export const getServerSideProps: GetServerSideProps<
-      PageProps,
+      any,
       { underscoreBlogName: string }
     > = async (context) => {
       const underScoreBlogName = context.params?.underscoreBlogName;
