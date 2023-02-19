@@ -132,12 +132,7 @@ export function BlogView(props: BlogViewProps) {
 
       </div>
       <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-      {/* <p className="px-2 font-secondary text-2xl" dangerouslySetInnerHTML={{ __html: blog.content }}> */}
-
-      {/* </p> */}
       <div className="text-left">
-
-        {/* <ReactMarkdown className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} children={content}></ReactMarkdown> */}
         <MDPreview style={{
           background: "black",
           color: "white",
