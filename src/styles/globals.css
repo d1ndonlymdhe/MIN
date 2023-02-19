@@ -2,10 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+.prose :where(code):not(:where([class~="not-prose"] *))::after {
+    content: "" !important
+}
+
+.prose :where(code):not(:where([class~="not-prose"] *))::before {
+    content: "" !important
+}
 .blogContent strong {
     @apply text-white
 }
+.blogContent p {
+    @apply text-white
+}
 
+.blogContent ul {
+    @apply list-disc
+}
+
+.blogContent ol {
+    @apply list-decimal
+}
+
+.blogContent li {
+    @apply text-white
+}
+
+.blogContent li::marker {
+    @apply text-white
+}
 .blogContent h1 {
     @apply text-white font-primary
 }
@@ -34,9 +59,17 @@
     @apply rounded-md
 }
 
+.blogContent a {
+    --color-accent-fg: rgb(29, 210, 216);
+    /* @apply text-blue-700 */
+}
 
 .blogContent {
-    text-align: left;
+    @apply px-4 text-left bg-transparent !important
+    }
+    
+    .blogContent .base {
+        @apply hidden
 }
 /* latin-ext */
 @font-face {

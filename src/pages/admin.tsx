@@ -121,6 +121,9 @@ type BlogViewProps = {
 
 export function BlogView(props: BlogViewProps) {
   const { blog } = props;
+  console.log("content = ", blog.content)
+  const content = blog.content;
+  console.log(typeof content)
   return (
     <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
       <div style={{
@@ -133,11 +136,13 @@ export function BlogView(props: BlogViewProps) {
 
       {/* </p> */}
       <div className="text-left">
+
+        {/* <ReactMarkdown className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} children={content}></ReactMarkdown> */}
         <MDPreview style={{
           background: "black",
           color: "white",
           overflow: "scroll"
-        }} source={blog.content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+        }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
       </div>
     </div>
   );
@@ -252,33 +257,32 @@ function CreateBlogView() {
           </Button>
         </div>
 
-        <label>
-          <div className="grid grid-cols-2 gap-4 mx-2 my-4">
-            <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
-            <div className="text-left">
-              <MDPreview style={{
-                background: "black",
-                color: "white",
-                overflow: "scroll"
-              }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
-            </div>
+        <div className="grid grid-cols-2 gap-4 mx-2 my-4">
+          <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
+          <div className="text-left">
+            <MDPreview style={{
+              background: "black",
+              color: "white",
+              overflow: "scroll"
+            }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+            {/* <ReactMarkdown className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} children={content}></ReactMarkdown> */}
           </div>
-          <Button onClick={() => {
-            // if (!addContentMutation.isLoading) {
-            // if (contentRef && contentRef.current && newBlog) {
-            // const content = contentRef.current.value;
-            if (newBlog) {
+        </div>
+        <Button onClick={() => {
+          // if (!addContentMutation.isLoading) {
+          // if (contentRef && contentRef.current && newBlog) {
+          // const content = contentRef.current.value;
+          if (newBlog) {
 
-              if (content) {
-                addContentMutation.mutate({ blogId: newBlog.id, content })
-              }
+            if (content) {
+              addContentMutation.mutate({ blogId: newBlog.id, content })
             }
-            // }
-            // }
-          }}
-            className="bg-primary"
-          >Submit</Button>
-        </label>
+          }
+          // }
+          // }
+        }}
+          className="bg-primary"
+        >Submit</Button>
       </div>
     </form>
   );
