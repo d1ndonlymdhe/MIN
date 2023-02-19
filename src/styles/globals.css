@@ -61,6 +61,7 @@
 
 .blogContent a {
     --color-accent-fg: rgb(29, 210, 216);
+    overflow: hidden !important;
     /* @apply text-blue-700 */
 }
 

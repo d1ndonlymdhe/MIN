@@ -12,10 +12,10 @@ import { useRef, useState } from "react";
 import uuid from "react-uuid";
 import Button from "../../globalComponents/Button";
 import { trpc } from "../../utils/trpc";
-import { BlogView } from "../admin"
 import { remark } from "remark";
 import html from "remark-html"
 import remarkMath from "remark-math";
+import BlogRenderer from "../../globalComponents/BlogRenderer";
 export default function Main2(props: PageProps) {
   const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
   const [isLiked, setIsLiked] = useState(liked);
@@ -41,7 +41,8 @@ export default function Main2(props: PageProps) {
     <div className="h-full w-full py-2 px-2 grid grid-cols-[6fr_4fr] gap-4">
       <div className="w-full min-h-[85vh]  grid place-items-center">
         <div className="h-fit w-fit">
-          <BlogView blog={blog}></BlogView>
+          {/* <BlogView blog={blog}></BlogView> */}
+          <BlogRenderer blog={blog}></BlogRenderer>
         </div>
       </div>
       <div className="w-full min-h-[85vh] flex flex-col px-8 gap-8">
@@ -279,8 +280,6 @@ export const getServerSideProps: GetServerSideProps<
 
     if (blog) {
 
-      const processedContent = await remark().use(html).use(remarkMath).process(blog.content)
-      blog.content = processedContent.toString()
 
       const comments = await prisma.comment.findMany({
         where: { blogId: blog.id },

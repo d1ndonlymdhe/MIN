@@ -11,10 +11,11 @@ import html from "remark-html"
 import remarkMath from "remark-math";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
-// import MDEditor from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+
 import dynamic from "next/dist/shared/lib/dynamic";
+import BlogRenderer from "../globalComponents/BlogRenderer";
+import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
 const MDEditor = dynamic(
   () => import("@uiw/react-md-editor"),
   { ssr: false }
@@ -91,7 +92,7 @@ export default function Main(props: PageProps) {
         </div>
         {/* blog demo */}
         {blogView && currentBlog && (
-          <BlogView {...{ blog: currentBlog }}></BlogView>
+          <BlogRenderer {...{ blog: currentBlog }}></BlogRenderer>
         )}
         {createMode && <CreateBlogView></CreateBlogView>}
       </div>
@@ -115,33 +116,6 @@ function TopBar() {
   );
 }
 
-type BlogViewProps = {
-  blog: Blog;
-};
-
-export function BlogView(props: BlogViewProps) {
-  const { blog } = props;
-  console.log("content = ", blog.content)
-  const content = blog.content;
-  console.log(typeof content)
-  return (
-    <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
-      <div style={{
-        backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`
-      }} className="h-[15vh] w-full rounded-t-md  text-black">
-
-      </div>
-      <p className="px-2 font-primary text-5xl font-bold">{blog.title}</p>
-      <div className="text-left">
-        <MDPreview style={{
-          background: "black",
-          color: "white",
-          overflow: "scroll"
-        }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
-      </div>
-    </div>
-  );
-}
 
 type line = string;
 type paragraph = line[];
@@ -153,6 +127,7 @@ function CreateBlogView() {
   const [imgSrc, setImgSrc] = useState("")
   const imgInputRef = useRef<HTMLInputElement>(null)
   const [content, setContent] = useState("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
     onSuccess: async (data) => {
       setNewBlog(data.newBlog)
@@ -190,6 +165,7 @@ function CreateBlogView() {
       }
     }}>
       <div className="flex h-[85vh] w-[95vw] flex-col gap-2 overflow-auto rounded-md bg-secondary hover:cursor-pointer">
+
         <label
           className="hover:cursor-pointer"
           onChange={(e) => {
@@ -251,7 +227,6 @@ function CreateBlogView() {
             }
           </Button>
         </div>
-
         <div className="grid grid-cols-2 gap-4 mx-2 my-4">
           <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
           <div className="text-left">
@@ -260,24 +235,46 @@ function CreateBlogView() {
               color: "white",
               overflow: "scroll"
             }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
-            {/* <ReactMarkdown className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]} children={content}></ReactMarkdown> */}
           </div>
         </div>
+        {showConfirmDialog &&
+          <ModalWithBackdrop title="Are You sure" onClick={() => {
+            if (!addContentMutation.isLoading) {
+              setShowConfirmDialog(false);
+            }
+          }}>
+            <p>
+              Your blog will be added to the pending queue where you can inspect it.
+            </p>
+            <Button onClick={() => {
+              if (newBlog && !addContentMutation.isLoading) {
+                if (content) {
+                  setShowConfirmDialog(true)
+                  addContentMutation.mutate({ blogId: newBlog.id, content })
+                }
+              }
+            }}
+              className="bg-primary w-fit mx-4"
+            > {
+                addContentMutation.isLoading && "Loading" || "Ok"
+              }
+            </Button>
+            <Button onClick={() => { setShowConfirmDialog(false) }}>
+              Cancel
+            </Button>
+          </ModalWithBackdrop>}
         <Button onClick={() => {
-          // if (!addContentMutation.isLoading) {
-          // if (contentRef && contentRef.current && newBlog) {
-          // const content = contentRef.current.value;
-          if (newBlog) {
-
+          if (newBlog && !addContentMutation.isLoading) {
             if (content) {
-              addContentMutation.mutate({ blogId: newBlog.id, content })
+              setShowConfirmDialog(true)
+              // addContentMutation.mutate({ blogId: newBlog.id, content })
             }
           }
-          // }
-          // }
         }}
-          className="bg-primary"
-        >Submit</Button>
+          className="bg-primary w-fit mx-4"
+        >
+          Continue
+        </Button>
       </div>
     </form>
   );
@@ -308,19 +305,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     });
     if (dbToken) {
       const user = dbToken.user;
-      // const parsedBlogs: Blog[] = []
-      // for (let i = 0; i < user.blogs.length; i++) {
-      //   const curBlog = user.blogs[i]
-      //   if (curBlog) {
-      //     const processedContent = await remark()
-      //       .use(remarkMath)
-      //       .use(html)
-      //       .process(curBlog.content)
-      //     const contentHtml = processedContent.toString();
-      //     console.log(contentHtml)
-      //     parsedBlogs.push({ ...curBlog, content: contentHtml })
-      //   }
-      // }
       if (user) {
         return {
           props: {
