@@ -223,17 +223,6 @@ function CreateBlogView() {
       </>
     }
     return <div>
-      {
-        images.filter((img, i) => {
-          if (i < 5) {
-            return img
-          }
-        }).map(img => {
-          return <p onClick={() => {
-            navigator.clipboard.writeText(img.src).then(() => { console.log("written ", img.src) })
-          }}>{img.name}</p>
-        })
-      }
 
       {upModal && <ModalWithBackdrop title="Add image" onClick={() => { SetUpModal(false) }}>
         <ModalChild></ModalChild>

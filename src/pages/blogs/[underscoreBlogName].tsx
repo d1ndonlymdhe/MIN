@@ -12,9 +12,6 @@ import { useRef, useState } from "react";
 import uuid from "react-uuid";
 import Button from "../../globalComponents/Button";
 import { trpc } from "../../utils/trpc";
-import { remark } from "remark";
-import html from "remark-html"
-import remarkMath from "remark-math";
 import BlogRenderer from "../../globalComponents/BlogRenderer";
 export default function Main2(props: PageProps) {
   const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
@@ -38,10 +35,9 @@ export default function Main2(props: PageProps) {
   });
   return <main className="w-screen min-h-screen bg-primary text-white">
     <TopBar></TopBar>
-    <div className="h-full w-full py-2 px-2 grid grid-cols-[6fr_4fr] gap-4">
+    <div className="h-full w-full py-2 px-2 grid grid-flow-rows md:grid-cols-[6fr_4fr] gap-4">
       <div className="w-full min-h-[85vh]  grid place-items-center">
         <div className="h-fit w-fit">
-          {/* <BlogView blog={blog}></BlogView> */}
           <BlogRenderer blog={blog}></BlogRenderer>
         </div>
       </div>
