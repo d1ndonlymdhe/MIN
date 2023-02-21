@@ -54,6 +54,7 @@ model Blog {
 
 model BlogImage {
   id        String  @id @default(cuid())
+  name      String
   blogId    String
   fulfilled Boolean
   blog      Blog    @relation(fields: [blogId], references: [id])

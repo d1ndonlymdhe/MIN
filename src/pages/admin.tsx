@@ -16,6 +16,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import dynamic from "next/dist/shared/lib/dynamic";
 import BlogRenderer from "../globalComponents/BlogRenderer";
 import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
+import Input from "../globalComponents/Input";
 const MDEditor = dynamic(
   () => import("@uiw/react-md-editor"),
   { ssr: false }
@@ -56,6 +57,7 @@ export default function Main(props: PageProps) {
               })}
             </ul>
             <div className="flex w-full items-center justify-center">
+              {/* when button is clicked create a new temp blog and pass it as the blog */}
               <button
                 onClick={() => {
                   setCreateMode(true);
@@ -94,6 +96,7 @@ export default function Main(props: PageProps) {
         {blogView && currentBlog && (
           <BlogRenderer {...{ blog: currentBlog }}></BlogRenderer>
         )}
+
         {createMode && <CreateBlogView></CreateBlogView>}
       </div>
     </main>
@@ -119,6 +122,11 @@ function TopBar() {
 
 type line = string;
 type paragraph = line[];
+
+type Image = {
+  name: string,
+  src: string
+}
 
 function CreateBlogView() {
   const [title, setTitle] = useState("Title");
@@ -148,11 +156,94 @@ function CreateBlogView() {
       )
     }
   })
-
+  const [images, setImages] = useState<Image[]>([])
   const addContentMutation = trpc.blog.addContent.useMutation()
   const contentRef = useRef<HTMLTextAreaElement>(null)
   const [imgUploadLoading, setImgUploadLoading] = useState(false)
   const [loading, setLoading] = useState(createTempBlogMutation.isLoading || imgUploadLoading)
+  const AddImages = () => {
+
+    const [upModal, SetUpModal] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
+
+    const ModalChild = () => {
+      // const textRef = useRef<HTMLInputElement>(null)
+      const nameRef = useRef<HTMLInputElement>(null)
+      const srcRef = useRef<HTMLInputElement>(null)
+      const fileRef = useRef<HTMLInputElement>(null)
+      return <>
+        <p>Add image from internet</p>
+        <Input ref={nameRef} name="imageMame" placeholder="Enter image name"></Input>
+        <Input ref={srcRef} name="imageSrc" placeholder="Paste link here"></Input>
+        <hr></hr>
+        <p>or</p>
+        <p>Add local image</p>
+        <Input ref={fileRef} type="file" accept="image/*"></Input>
+        <Button className="bg-secondary border-complementary" onClick={(e) => {
+          if (!uploadLoading) {
+            if (fileRef && fileRef.current) {
+              const files = fileRef.current.files
+              if (files && files[0] && newBlog) {
+                const formData = new FormData();
+                formData.append("blogId", newBlog.id);
+                formData.append("blogImage", files[0]);
+                setUploadLoading(true)
+                if (nameRef && nameRef.current && srcRef && srcRef.current) {
+                  nameRef.current.readOnly = true
+                  srcRef.current.readOnly = true
+                }
+                fetch(`/api/handleBlogContentImage`, {
+                  method: "POST",
+                  body: formData,
+                  credentials: "include"
+                }).then(res => res.json()).then((data: { success: boolean, newImgId: string, blogId: string, imgName: string }) => {
+                  console.log(data)
+                  const { blogId, newImgId, success, imgName } = data;
+                  if (success) {
+                    console.log("here")
+                    console.log(nameRef, srcRef)
+                    setContent(`${content} \n ![${imgName}](${`/api/getBlogContentImage?blogId=${blogId}&imageId=${newImgId}&authorId=${newBlog.authorId}`})`);
+                    setUploadLoading(false)
+                    SetUpModal(false)
+                  }
+                })
+              }
+              else {
+                if (nameRef && nameRef.current && srcRef && srcRef.current) {
+                  const imgName = nameRef.current.value;
+                  const imgSrc = srcRef.current.value;
+                  setContent(`${content} \n ![${imgName}](${imgSrc})`);
+                  SetUpModal(false)
+                }
+              }
+            }
+          }
+
+        }}>{uploadLoading && "Loading" || "Add This"}</Button>
+      </>
+    }
+    return <div>
+      {
+        images.filter((img, i) => {
+          if (i < 5) {
+            return img
+          }
+        }).map(img => {
+          return <p onClick={() => {
+            navigator.clipboard.writeText(img.src).then(() => { console.log("written ", img.src) })
+          }}>{img.name}</p>
+        })
+      }
+
+      {upModal && <ModalWithBackdrop title="Add image" onClick={() => { SetUpModal(false) }}>
+        <ModalChild></ModalChild>
+      </ModalWithBackdrop>}
+
+      <Button className="bg-emerald-500 mx-4" onClick={() => {
+        SetUpModal(true);
+      }}>Add image</Button>
+    </div>
+  }
   // text area ra title update garne seperate form huna parne refacor garna jhau lageko cha
   return (
     <form onSubmit={(e) => {
@@ -228,7 +319,10 @@ function CreateBlogView() {
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-4 mx-2 my-4">
-          <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
+          <div className="grid grid-cols-[8fr_2fr]">
+            <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
+            <AddImages></AddImages>
+          </div>
           <div className="text-left">
             <MDPreview style={{
               background: "black",
