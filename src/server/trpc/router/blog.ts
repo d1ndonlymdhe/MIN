@@ -88,7 +88,7 @@ export const blogRouter = router({
         });
     }),
     comment: commentRouter,
-    //testing
+    //testing again
     reaction: publicProcedure.input(z.object({ type: z.boolean(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx
         const { type, blogId } = input
