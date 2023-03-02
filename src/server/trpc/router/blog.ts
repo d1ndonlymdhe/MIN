@@ -1,9 +1,39 @@
 import { TRPCError } from "@trpc/server"
-import { z } from "zod"
+import { z, ZodAny, ZodArray, ZodString } from "zod"
 import { publicProcedure, router } from "../trpc"
 import { commentRouter } from "./comment"
 import fs from "node:fs/promises"
+import { Blog } from "@prisma/client"
+
 export const blogRouter = router({
+    createEmptyBlog: publicProcedure.mutation((async ({ ctx }) => {
+        const { prisma } = ctx
+        const token = ctx.req.cookies?.token;
+        if (token) {
+            const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } })
+            if (dbToken) {
+                const blogCount = await prisma.blog.count({ where: { authorId: dbToken.userId } })
+                const newEblog = await prisma.blog.create({
+                    data: {
+                        content: "",
+                        title: `Blog ${blogCount + 1}`,
+                        titleLowered: `blog ${blogCount + 1}`,
+                        authorId: dbToken.userId,
+                        coverFulfilled: false,
+                        isTemp: true,
+                    }
+                })
+                await fs.mkdir(`./files/${dbToken.userId}/blogs/${newEblog.id}`)
+                await fs.mkdir(`./files/${dbToken.userId}/blogs/${newEblog.id}/images`)
+                return {
+                    newBlog: newEblog
+                }
+            }
+        }
+        throw new TRPCError({
+            code: "BAD_REQUEST"
+        })
+    })),
     createTempBlog: publicProcedure.input(z.object({ title: z.string(), hasImage: z.boolean() })).mutation((async ({ input, ctx }) => {
         const { prisma } = ctx
         const { title, hasImage } = input
@@ -13,7 +43,7 @@ export const blogRouter = router({
                 const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } });
                 if (dbToken) {
                     const user = dbToken.user;
-                    const newTempBlog = await prisma.blog.create({
+                    const newTempBlog:Blog = await prisma.blog.create({
                         data: {
                             content: "",
                             title: title,
@@ -37,20 +67,21 @@ export const blogRouter = router({
         })
     }
     )),
-    addContent: publicProcedure.input(z.object({ blogId: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
+    addContent: publicProcedure.input(z.object({ blogId: z.string(), content: z.string().or(z.undefined()), title: z.string().or(z.undefined()), hasImage: z.boolean() })).mutation(async ({ input, ctx }) => {
         const { prisma } = ctx;
-        const { blogId, content } = input;
+        const { blogId, content, title, hasImage } = input;
         const token = ctx.req.cookies?.token;
         if (token) {
             const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } });
             if (dbToken) {
-                const blogs = await prisma.blog.findMany({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } })
-                if (blogs && blogs[0]) {
-                    const blog = blogs[0];
+                const blog = await prisma.blog.findFirst({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } })
+                if (blog) {
                     const newBlog = await prisma.blog.update({
                         where: { id: blogId }, data: {
                             ...blog,
-                            content
+                            content: content ? content : blog.content,
+                            title: title ? title : blog.title,
+                            coverFulfilled: hasImage,
                         }
                     })
                     return {
@@ -62,6 +93,46 @@ export const blogRouter = router({
         }
         throw new TRPCError({
             code: "NOT_FOUND"
+        })
+    }),
+    deleteBlog: publicProcedure.input(z.object({ blogId: z.string() })).mutation(async ({ input, ctx }) => {
+        const { blogId } = input;
+        const { prisma } = ctx;
+        const token = ctx.req.cookies?.token;
+        if (token) {
+            const dbToken = await prisma.token.findFirst({ where: { value: token } })
+            if (dbToken) {
+                const blog = await prisma.blog.findFirst({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } });
+                if(blog){
+                    const dBlog = await prisma.blog.delete({where:{id:blog.id}});
+                    return {
+                        blog:dBlog
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code:"BAD_REQUEST"
+        })
+    }),
+    publishBlog: publicProcedure.input(z.object({blogId:z.string()})).mutation(async ({input,ctx})=>{
+        const prisma = ctx.prisma;
+        const {blogId} = input;
+        const token = ctx.req.cookies?.token;
+        if(token){
+            const dbToken = await prisma.token.findFirst({where:{value:token}})
+            if(dbToken){
+                const blog = await prisma.blog.findFirst({where:{AND:[{id:blogId},{authorId:dbToken.userId}]}});
+                if(blog && blog.coverImageid && blog.content && blog.title){
+                    const pBlog = await prisma.blog.update({where:{id:blogId},data:{...blog,isTemp:false}})
+                    return {
+                        blog:pBlog
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code:"BAD_REQUEST"
         })
     }),
     createBlog: publicProcedure.input(z.object({ title: z.string(), content: z.string() })).mutation(async ({ input, ctx }) => {
