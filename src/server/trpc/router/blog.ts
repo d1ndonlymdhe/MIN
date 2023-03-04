@@ -81,7 +81,7 @@ export const blogRouter = router({
                             ...blog,
                             content: content ? content : blog.content,
                             title: title ? title : blog.title,
-                            coverFulfilled: hasImage,
+                            coverFulfilled: !hasImage,
                         }
                     })
                     return {
