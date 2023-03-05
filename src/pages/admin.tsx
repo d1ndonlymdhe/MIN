@@ -151,27 +151,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
     const imgInputRef = useRef<HTMLInputElement>(null)
     const [content, setContent] = useState("");
     const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-    const createTempBlogMutation = trpc.blog.createTempBlog.useMutation({
-        onSuccess: async (data) => {
-            setNewBlog(data.newBlog)
-            const form = new FormData()
-            const blogImage = await (await fetch(imgSrc)).blob()
-            form.append("blogId", data.newBlog.id);
-            form.append("blogImage", blogImage)
-            setImgUploadLoading(true)
-            fetch("/api/handleBlogImage", {
-                method: "POST",
-                body: form
-            }).then((res) => {
-                setImgUploadLoading(false)
-                return res.json()
-            }).then((data) => {
-                console.log(data)
-            }
-            )
-        }
-    })
-    const [images, setImages] = useState<Image[]>([])
     const addContentMutation = trpc.blog.addContent.useMutation({
         onSuccess:
             (data) => {
@@ -191,7 +170,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                                 body: form
                             }).then(res => {
                                 setImgUploadLoading(false)
-                                setShowConfirmDialog(false);
+                                // setShowConfirmDialog(false);
                                 return res.json()
                             }).then(data => {
                                 //TODO error handling
@@ -205,37 +184,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                 }
             }
     })
-    const contentRef = useRef<HTMLTextAreaElement>(null)
     const [imgUploadLoading, setImgUploadLoading] = useState(false)
-    const [loading, setLoading] = useState(createTempBlogMutation.isLoading || imgUploadLoading)
-    // const addContentUpdateMutation = trpc.blog.addContent.useMutation({
-    //     onSuccess:(data)=>{
-    //         if(!data.newBlog.coverFulfilled){
-    //             if(imgSrc){
-    //                 fetch(imgSrc).then(res=>{
-    //                     return res.blob()
-    //                 }).then((blob)=>{
-    //                     const image = blob;
-    //                     const form = new FormData()
-    //                     form.append("blogId",newBlog.id);
-    //                     form.append("blogImage",image);
-    //                     setImgUploadLoading(true);
-    //                     fetch("/api/handleBlogImage",{
-    //                         method:"POST",
-    //                         body:form
-    //                     }).then(res=>{
-    //                         setImgUploadLoading(false)
-    //                         return res.json()
-    //                     }).then(data=>{
-    //                         //TODO error handling
-    //                         console.log(data)
-    //                     })
-
-    //                 })
-    //             }
-    //         }
-    //     }
-    // })
     const AddImages = () => {
 
         const [upModal, SetUpModal] = useState(false);
@@ -308,7 +257,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
             }}>Add image</Button>
         </div>
     }
-    // text area ra title update garne seperate form huna parne refacor garna jhau lageko cha
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
@@ -332,27 +280,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
                                 console.log(URL.createObjectURL(files[0]))
                                 setImgSrc(URL.createObjectURL(files[0]))
                                 setImageSet(true)
-                                // if (newBlog && !loading) {
-                                //     const form = new FormData()
-                                //     fetch(imgSrc).then(res => {
-                                //         return res.blob()
-                                //     }).then((blob) => {
-                                //         const blogImage = blob
-                                //         form.append("blogId", newBlog.id);
-                                //         form.append("blogImage", blogImage)
-                                //         setImgUploadLoading(true)
-                                //         fetch("/api/handleBlogImage", {
-                                //             method: "POST",
-                                //             body: form
-                                //         }).then((res) => {
-                                //             setImgUploadLoading(false)
-                                //             return res.json()
-                                //         }).then((data) => {
-                                //             console.log(data)
-                                //         }
-                                //         )
-                                //     })
-                                // }
                             }
                         }
                     }}>
@@ -367,7 +294,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
                     <input hidden type={"file"} accept="image/*" ref={imgInputRef}></input>
                 </label>
                 <div className="mx-2">
-                    {/* <div className="grid grid-cols-[8] gap-2 mx-2"> */}
                     <div className="h-full w-full">
                         <input
                             value={title}
@@ -378,12 +304,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                             className="rounded-xl w-full pl-2 bg-secondary font-primary text-5xl font-bold focus:outline-4 focus:outline-complementary"
                         ></input>
                     </div>
-                    {/* <Button type="submit" className="bg-primary">
-                        {
-                            createTempBlogMutation.isLoading && <Spinner></Spinner> ||
-                            <div>Create Blog</div>
-                        }
-                    </Button> */}
+
                 </div>
                 <div className="grid grid-cols-2 gap-4 mx-2 my-4">
                     <div className="grid grid-cols-[8fr_2fr]">
@@ -400,7 +321,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                 </div>
                 {showConfirmDialog &&
                     <ModalWithBackdrop title="Are You sure" onClick={() => {
-                        if (!addContentMutation.isLoading) {
+                        if (!addContentMutation.isLoading && !imgUploadLoading) {
                             setShowConfirmDialog(false);
                         }
                     }}>
@@ -408,17 +329,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
                             Your blog will be added to the pending queue where you can inspect it.
                         </p>
                         <Button type={"submit"}
-                            // onClick={() => {
-                            //     if (newBlog && !addContentMutation.isLoading) {
-                            //         if (content) {
-                            //             setShowConfirmDialog(true)
-                            //             addContentMutation.mutate({ blogId: newBlog.id, content })
-                            //         }
-                            //     }
-                            // }}
-                            className="bg-primary w-fit mx-4"
-                        > {
-                                addContentMutation.isLoading && "Loading" || "Ok"
+                            className="bg-primary w-fit mx-4"> {
+                                (addContentMutation.isLoading || imgUploadLoading) && "Loading" || "Ok"
                             }
                         </Button>
                         <Button onClick={() => { setShowConfirmDialog(false) }}>
@@ -429,7 +341,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
                     if (newBlog && !addContentMutation.isLoading) {
                         if (content) {
                             setShowConfirmDialog(true)
-                            // addContentMutation.mutate({ blogId: newBlog.id, content })
                         }
                     }
                 }}
