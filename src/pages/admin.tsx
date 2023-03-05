@@ -39,6 +39,7 @@ export default function Main(props: PageProps) {
         onSuccess: (data) => {
             setCreateMode(true)
             setNblog(data.newBlog);
+            setUnPublishedBlogs([...unPublishedBlogs,data.newBlog])
         }
     })
     return (
@@ -112,7 +113,7 @@ export default function Main(props: PageProps) {
                     <BlogRenderer {...{ blog: currentBlog }}></BlogRenderer>
                 )}
 
-                {createMode && nBlog && <CreateBlogView blog={nBlog}></CreateBlogView>}
+                {createMode && nBlog && <CreateBlogView blog={nBlog} setUnPlishedBlogs={setUnPublishedBlogs} unPublishedBlogs={unPublishedBlogs}></CreateBlogView>}
             </div>
         </main>
     );
@@ -145,12 +146,14 @@ type Image = {
 
 type CreateBlogViewProps = {
     blog: Blog;
+    unPublishedBlogs: Blog[];
+    setUnPlishedBlogs: Set<Blog[]>
 }
 
 function CreateBlogView(props: CreateBlogViewProps) {
-    const { blog } = props
+    const { blog, unPublishedBlogs, setUnPlishedBlogs } = props
     const [newBlog, setNewBlog] = useState(blog)
-    const [title, setTitle] = useState(newBlog.title ? newBlog.title :"Title");
+    const [title, setTitle] = useState(newBlog.title ? newBlog.title : "Title");
     const [imgSet, setImageSet] = useState(newBlog.coverFulfilled)
     const [imgSrc, setImgSrc] = useState(newBlog.coverFulfilled ? `/api/getBlogImage?blogId=${newBlog.id}&authorId=${newBlog.authorId}` : "")
     const imgInputRef = useRef<HTMLInputElement>(null)
@@ -179,14 +182,19 @@ function CreateBlogView(props: CreateBlogViewProps) {
                                 return res.json()
                             }).then(data => {
                                 //TODO error handling
+                                setShowConfirmDialog(false)
                                 console.log(data)
                             })
-
                         })
                     }
                 } else {
                     setShowConfirmDialog(false);
                 }
+                const temp = unPublishedBlogs.map(b => {
+                    return b.id == data.newBlog.id ? data.newBlog : b
+
+                })
+                setUnPlishedBlogs(temp)
             }
     })
     const [imgUploadLoading, setImgUploadLoading] = useState(false)
@@ -265,7 +273,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
-            console.log("imgset && title :",imgSet && title)
+            console.log("imgset && title :", imgSet && title)
             if (imgSet && title) {
                 addContentMutation.mutate({
                     blogId: newBlog.id,
@@ -339,7 +347,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
                                 (addContentMutation.isLoading || imgUploadLoading) && "Loading" || "Ok"
                             }
                         </Button>
-                        <Button onClick={() => { setShowConfirmDialog(false) }}>
+                        {/* TODO add visual cues that button unavialabe */}
+                        <Button onClick={() => { if (!imgUploadLoading && addContentMutation.isLoading) { setShowConfirmDialog(false) } }}>
                             Cancel
                         </Button>
                     </ModalWithBackdrop>}
