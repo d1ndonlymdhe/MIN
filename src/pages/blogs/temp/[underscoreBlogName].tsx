@@ -95,7 +95,7 @@ export default function Main2(props: PageProps) {
                     }
                 }}>Publish</Button>
                 {/* TODO href to admin and add extra serversideprops for editing */}
-                <Button className="bg-secondary">Edit</Button>
+                <a href={`/admin?editThis=${blog.id}`} target="_blank"><Button className="bg-secondary">Edit</Button></a>
                 {deleteWarning && <DeleteWarning></DeleteWarning>}
                 <Button className="bg-secondary" onClick={() => {
                     if (!deleteMutation.isLoading) {

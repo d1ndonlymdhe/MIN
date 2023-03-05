@@ -24,16 +24,20 @@ const MDEditor = dynamic(
 const MDPreview = dynamic(() => import("@uiw/react-markdown-preview"), { ssr: false })
 export default function Main(props: PageProps) {
     //may need to create a global context for blogs
-    const { username, blogs } = props;
+    const { username, blogs, editThis, hasEdit } = props;
     const [showBlogEdit, setShowBlogEdit] = useState(false);
     const [publishedBlogs, setPublishedBlogs] = useState(blogs.filter(b => !b.isTemp))
     const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
     const [blogView, SetBlogView] = useState(false);
-    const [currentBlog, setCurrentBlog] = useState<Blog | undefined>();
-    const [createMode, setCreateMode] = useState(false);
-    const [nBlog, setNblog] = useState<Blog | undefined>()
+    const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
+    console.log(hasEdit)
+    const [createMode, setCreateMode] = useState(hasEdit);
+    console.log(createMode)
+    const [nBlog, setNblog] = useState<Blog | null>(hasEdit ? editThis : null)
+
     const createEBlog = trpc.blog.createEmptyBlog.useMutation({
         onSuccess: (data) => {
+            setCreateMode(true)
             setNblog(data.newBlog);
         }
     })
@@ -69,8 +73,9 @@ export default function Main(props: PageProps) {
                             {/* when button is clicked create a new temp blog and pass it as the blog */}
                             <button
                                 onClick={() => {
-                                    setCreateMode(true);
+                                    setCreateMode(false)
                                     SetBlogView(false);
+                                    setNblog(null)
                                     createEBlog.mutate()
                                 }}
                                 className="w-fit rounded-md border-2 border-complementary bg-secondary px-2 py-2 font-complementry font-bold"
@@ -144,12 +149,12 @@ type CreateBlogViewProps = {
 
 function CreateBlogView(props: CreateBlogViewProps) {
     const { blog } = props
-    const [title, setTitle] = useState("Title");
     const [newBlog, setNewBlog] = useState(blog)
-    const [imgSet, setImageSet] = useState(false)
-    const [imgSrc, setImgSrc] = useState("")
+    const [title, setTitle] = useState(newBlog.title ? newBlog.title :"Title");
+    const [imgSet, setImageSet] = useState(newBlog.coverFulfilled)
+    const [imgSrc, setImgSrc] = useState(newBlog.coverFulfilled ? `/api/getBlogImage?blogId=${newBlog.id}&authorId=${newBlog.authorId}` : "")
     const imgInputRef = useRef<HTMLInputElement>(null)
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(newBlog.content);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false)
     const addContentMutation = trpc.blog.addContent.useMutation({
         onSuccess:
@@ -260,6 +265,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
+            console.log("imgset && title :",imgSet && title)
             if (imgSet && title) {
                 addContentMutation.mutate({
                     blogId: newBlog.id,
@@ -358,12 +364,15 @@ type Set<T> = React.Dispatch<SetStateAction<T>>;
 type PageProps = {
     username: string;
     blogs: Blog[];
+    hasEdit: boolean;
+    editThis: Blog | null;
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
     context
 ) => {
     const token = context.req.cookies.token;
+    const editBlogId = context.query?.editThis as string | undefined;
     const prisma = new PrismaClient();
     if (token) {
         const dbToken = await prisma.token.findFirst({
@@ -378,11 +387,17 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         });
         if (dbToken) {
             const user = dbToken.user;
+            let editBlog: Blog | null = null;
+            if (editBlogId) {
+                editBlog = await prisma.blog.findFirst({ where: { AND: [{ id: editBlogId, authorId: dbToken.userId }] } })
+            }
             if (user) {
                 return {
                     props: {
                         username: user.username,
                         blogs: user.blogs,
+                        hasEdit: !!editBlog,
+                        editThis: editBlog
                     },
                 };
             }
