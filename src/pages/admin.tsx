@@ -15,14 +15,24 @@ import "@uiw/react-md-editor/markdown-editor.css";
 
 import dynamic from "next/dist/shared/lib/dynamic";
 import BlogRenderer from "../globalComponents/BlogRenderer";
-import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
+import ModalWithBackdrop, { ModalContextProvider, useModalContext, useModalUpdateContext } from "../globalComponents/ModalWithBackdrop";
 import Input from "../globalComponents/Input";
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor"),
     { ssr: false }
 );
 const MDPreview = dynamic(() => import("@uiw/react-markdown-preview"), { ssr: false })
-export default function Main(props: PageProps) {
+
+
+export default function OuterMain(props: PageProps) {
+    return <ModalContextProvider>
+        <Main {...props}></Main>
+    </ModalContextProvider>
+}
+
+
+
+function Main(props: PageProps) {
     //may need to create a global context for blogs
     const { username, blogs, editThis, hasEdit } = props;
     const [showBlogEdit, setShowBlogEdit] = useState(false);
@@ -30,21 +40,26 @@ export default function Main(props: PageProps) {
     const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
     const [blogView, SetBlogView] = useState(false);
     const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
-    console.log(hasEdit)
     const [createMode, setCreateMode] = useState(hasEdit);
-    console.log(createMode)
     const [nBlog, setNblog] = useState<Blog | null>(hasEdit ? editThis : null)
-
+    const [showModal, setShowModal] = useState(false)
+    const modalState = useModalContext()
+    console.log(modalState)
+    const setModalState = useModalUpdateContext()
     const createEBlog = trpc.blog.createEmptyBlog.useMutation({
         onSuccess: (data) => {
             setCreateMode(true)
             setNblog(data.newBlog);
-            setUnPublishedBlogs([...unPublishedBlogs,data.newBlog])
-        }
+            setUnPublishedBlogs([...unPublishedBlogs, data.newBlog])
+        },
     })
     return (
-        <main className="w-screen bg-primary text-white">
+        <main className={`w-screen bg-primary text-white ${modalState.isShown ? "overflow-hidden h-screen" : ""}`}>
             <TopBar></TopBar>
+            {/* <ModalWithBackdrop title="TEST" isShown={showModal}>
+                <Button onClick={() => { setShowModal(false) }}>EXIT</Button>
+            </ModalWithBackdrop> */}
+            {/* <Button onClick={() => { setShowModal(true); setModalState({ isShown: true }) }} className="bg-green-300">SHow Modal</Button> */}
             <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4  ">
                 <div className="flex flex-row gap-10">
                     <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
@@ -67,9 +82,9 @@ export default function Main(props: PageProps) {
                                 );
                             })}
                         </ul>
-                        {createEBlog.isLoading && <ModalWithBackdrop title="Creating">
+                        <ModalWithBackdrop title="Creating" isShown={createEBlog.isLoading}>
                             Loading
-                        </ModalWithBackdrop>}
+                        </ModalWithBackdrop>
                         <div className="flex w-full items-center justify-center">
                             {/* when button is clicked create a new temp blog and pass it as the blog */}
                             <button
@@ -135,20 +150,97 @@ function TopBar() {
     );
 }
 
-
-type line = string;
-type paragraph = line[];
-
-type Image = {
-    name: string,
-    src: string
-}
-
 type CreateBlogViewProps = {
     blog: Blog;
     unPublishedBlogs: Blog[];
     setUnPlishedBlogs: Set<Blog[]>
 }
+
+
+
+
+type AddImageViewProps = {
+    content:string;
+    setContent: Set<string>;
+    newBlog:Blog
+}
+
+function AddImageView(props:AddImageViewProps){
+    const {content,setContent,newBlog} = props
+     console.log("Re render")
+    const [upModal, SetUpModal] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
+    const [s,ss] = useState(false)
+    const ModalChild = () => {
+        // const textRef = useRef<HTMLInputElement>(null)
+        const nameRef = useRef<HTMLInputElement>(null)
+        const srcRef = useRef<HTMLInputElement>(null)
+        const fileRef = useRef<HTMLInputElement>(null)
+        return <>
+            <p>Add image from internet</p>
+            <Input ref={nameRef} name="imageMame" placeholder="Enter image name"></Input>
+            <Input ref={srcRef} name="imageSrc" placeholder="Paste link here"></Input>
+            <hr></hr>
+            <p>or</p>
+            <p>Add local image</p>
+            <Input ref={fileRef} type="file" accept="image/*"></Input>
+            <Button className="bg-secondary border-complementary" onClick={(e) => {
+                if (!uploadLoading) {
+                    if (fileRef && fileRef.current) {
+                        const files = fileRef.current.files
+                        if (files && files[0] && newBlog) {
+                            const formData = new FormData();
+                            formData.append("blogId", newBlog.id);
+                            formData.append("blogImage", files[0]);
+                            setUploadLoading(true)
+                            if (nameRef && nameRef.current && srcRef && srcRef.current) {
+                                nameRef.current.readOnly = true
+                                srcRef.current.readOnly = true
+                            }
+                            fetch(`/api/handleBlogContentImage`, {
+                                method: "POST",
+                                body: formData,
+                                credentials: "include"
+                            }).then(res => res.json()).then((data: { success: boolean, newImgId: string, blogId: string, imgName: string }) => {
+                                console.log(data)
+                                const { blogId, newImgId, success, imgName } = data;
+                                if (success) {
+                                    console.log("here")
+                                    console.log(nameRef, srcRef)
+                                    setContent(`${content} \n ![${imgName}](${`/api/getBlogContentImage?blogId=${blogId}&imageId=${newImgId}&authorId=${newBlog.authorId}`})`);
+                                    setUploadLoading(false)
+                                    SetUpModal(false)
+                                }
+                            })
+                        }
+                        else {
+                            if (nameRef && nameRef.current && srcRef && srcRef.current) {
+                                const imgName = nameRef.current.value;
+                                const imgSrc = srcRef.current.value;
+                                setContent(`${content} \n ![${imgName}](${imgSrc})`);
+                                SetUpModal(false)
+                            }
+                        }
+                    }
+                }
+
+            }}>{uploadLoading && "Loading" || "Add This"}</Button>
+        </>
+    }
+    return <div>
+
+        <ModalWithBackdrop title="Add image" isShown={upModal} onClick={() => { SetUpModal(false) }}>
+            <ModalChild></ModalChild>
+        </ModalWithBackdrop>
+
+        <Button className="bg-emerald-500 mx-4" onClick={() => {
+            SetUpModal(true);
+        }}>Add image</Button>
+      
+    </div>
+}
+
+
 
 function CreateBlogView(props: CreateBlogViewProps) {
     const { blog, unPublishedBlogs, setUnPlishedBlogs } = props
@@ -198,78 +290,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
             }
     })
     const [imgUploadLoading, setImgUploadLoading] = useState(false)
-    const AddImages = () => {
-
-        const [upModal, SetUpModal] = useState(false);
-        const [uploadLoading, setUploadLoading] = useState(false);
-
-        const ModalChild = () => {
-            // const textRef = useRef<HTMLInputElement>(null)
-            const nameRef = useRef<HTMLInputElement>(null)
-            const srcRef = useRef<HTMLInputElement>(null)
-            const fileRef = useRef<HTMLInputElement>(null)
-            return <>
-                <p>Add image from internet</p>
-                <Input ref={nameRef} name="imageMame" placeholder="Enter image name"></Input>
-                <Input ref={srcRef} name="imageSrc" placeholder="Paste link here"></Input>
-                <hr></hr>
-                <p>or</p>
-                <p>Add local image</p>
-                <Input ref={fileRef} type="file" accept="image/*"></Input>
-                <Button className="bg-secondary border-complementary" onClick={(e) => {
-                    if (!uploadLoading) {
-                        if (fileRef && fileRef.current) {
-                            const files = fileRef.current.files
-                            if (files && files[0] && newBlog) {
-                                const formData = new FormData();
-                                formData.append("blogId", newBlog.id);
-                                formData.append("blogImage", files[0]);
-                                setUploadLoading(true)
-                                if (nameRef && nameRef.current && srcRef && srcRef.current) {
-                                    nameRef.current.readOnly = true
-                                    srcRef.current.readOnly = true
-                                }
-                                fetch(`/api/handleBlogContentImage`, {
-                                    method: "POST",
-                                    body: formData,
-                                    credentials: "include"
-                                }).then(res => res.json()).then((data: { success: boolean, newImgId: string, blogId: string, imgName: string }) => {
-                                    console.log(data)
-                                    const { blogId, newImgId, success, imgName } = data;
-                                    if (success) {
-                                        console.log("here")
-                                        console.log(nameRef, srcRef)
-                                        setContent(`${content} \n ![${imgName}](${`/api/getBlogContentImage?blogId=${blogId}&imageId=${newImgId}&authorId=${newBlog.authorId}`})`);
-                                        setUploadLoading(false)
-                                        SetUpModal(false)
-                                    }
-                                })
-                            }
-                            else {
-                                if (nameRef && nameRef.current && srcRef && srcRef.current) {
-                                    const imgName = nameRef.current.value;
-                                    const imgSrc = srcRef.current.value;
-                                    setContent(`${content} \n ![${imgName}](${imgSrc})`);
-                                    SetUpModal(false)
-                                }
-                            }
-                        }
-                    }
-
-                }}>{uploadLoading && "Loading" || "Add This"}</Button>
-            </>
-        }
-        return <div>
-
-            {upModal && <ModalWithBackdrop title="Add image" onClick={() => { SetUpModal(false) }}>
-                <ModalChild></ModalChild>
-            </ModalWithBackdrop>}
-
-            <Button className="bg-emerald-500 mx-4" onClick={() => {
-                SetUpModal(true);
-            }}>Add image</Button>
-        </div>
-    }
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
@@ -323,7 +343,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
                 <div className="grid grid-cols-2 gap-4 mx-2 my-4">
                     <div className="grid grid-cols-[8fr_2fr]">
                         <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
-                        <AddImages></AddImages>
+                        {/* <AddImages></AddImages> */}
+                        <AddImageView {...{content,setContent,newBlog}}></AddImageView>
                     </div>
                     <div className="text-left">
                         <MDPreview style={{
@@ -333,8 +354,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
                         }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
                     </div>
                 </div>
-                {showConfirmDialog &&
-                    <ModalWithBackdrop title="Are You sure" onClick={() => {
+                {
+                    <ModalWithBackdrop isShown={showConfirmDialog} title="Are You sure" onClick={() => {
                         if (!addContentMutation.isLoading && !imgUploadLoading) {
                             setShowConfirmDialog(false);
                         }
@@ -351,7 +372,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
                         <Button onClick={() => { if (!imgUploadLoading && addContentMutation.isLoading) { setShowConfirmDialog(false) } }}>
                             Cancel
                         </Button>
-                    </ModalWithBackdrop>}
+                    </ModalWithBackdrop>
+                }
                 <Button onClick={() => {
                     if (newBlog && !addContentMutation.isLoading) {
                         if (content) {
@@ -363,6 +385,10 @@ function CreateBlogView(props: CreateBlogViewProps) {
                 >
                     Continue
                 </Button>
+                {/* <ModalWithBackdrop title="ok" isShown={s} onClick={()=>{
+                    ss(false)
+                }}></ModalWithBackdrop>
+                <Button onClick={()=>ss(true)}>OK</Button> */}
             </div>
         </form>
     );
