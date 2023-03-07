@@ -270,7 +270,7 @@ export const getServerSideProps: GetServerSideProps<
   if (underScoreBlogName) {
     const blogName = underScoreBlogName.split("_").join(" ").toLocaleLowerCase();
     const blog = await prisma.blog.findFirst({
-      where: { titleLowered: blogName },
+      where: { AND: [{ titleLowered: blogName }, { isTemp: false }] },
       include: { author: true },
     });
 
