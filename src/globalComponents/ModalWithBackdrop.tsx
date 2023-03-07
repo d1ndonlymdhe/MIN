@@ -3,15 +3,15 @@ import { createContext } from "react";
 
 
 type modalContextType = {
-    isShown : boolean
+    isShown: boolean
 }
-const modalContext = createContext<modalContextType>({isShown:false})
-const modalUpdateContext = createContext((newState:modalContextType)=> { })
+const modalContext = createContext<modalContextType>({ isShown: false })
+const modalUpdateContext = createContext((newState: modalContextType) => { })
 
-export function useModalContext(){
+export function useModalContext() {
     return useContext(modalContext);
 }
-export function useModalUpdateContext(){
+export function useModalUpdateContext() {
     return useContext(modalUpdateContext);
 }
 
@@ -21,13 +21,13 @@ type ModalWithBackdropProps = {
     onClick?: () => void,
     title: string,
     className?: string,
-    isShown:boolean
+    isShown: boolean
 }
 
 
 export function ModalContextProvider(props: React.PropsWithChildren) {
     const { children } = props;
-    const [modalState,setModalState] = useState<modalContextType>({isShown:false});
+    const [modalState, setModalState] = useState<modalContextType>({ isShown: false });
 
     function updateState(newState: any) {
         console.log("called")
@@ -43,15 +43,25 @@ export function ModalContextProvider(props: React.PropsWithChildren) {
 
 
 export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBackdropProps>) {
-    const { onClick, title, className,isShown } = props;
+    const { onClick, title, className, isShown } = props;
     // const [modalState,setModalState] = useState<modalContextType>({isShown:iSh});
     const modalState = useModalContext()
     const setModalState = useModalUpdateContext()
-    useEffect(()=>{
-        console.log("changed")
-        setModalState({isShown})
-    },[isShown])
+    const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 })
+    const [recordScroll, setRecordScroll] = useState(false);
     useEffect(() => {
+        console.log("changed")
+        setModalState({ isShown })
+        // if (recordScroll) {
+        if (isShown) {
+            const x = window.scrollX;
+            const y = window.scrollY;
+            setScrollPos({ x, y });
+
+        }
+    }, [isShown])
+    useEffect(() => {
+        console.log(window.scrollY);
         const onEsc = (e: KeyboardEvent) => {
             if (e.keyCode == 27) {
                 onClick && onClick()
@@ -60,11 +70,11 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
         };
         window.addEventListener("keydown", onEsc);
     }, []);
-
-
     return <>
-            {
-                isShown && <div className={`absolute h-screen w-screen left-0 bottom-0 z-[100] flex justify-center items-center backdrop-blur-sm overflow-hidden`} onClick={() => { onClick && onClick() }}>
+        {
+            isShown && <div style={{
+                top:`${scrollPos.y}px`
+            }} className={`absolute h-screen w-screen left-0 z-[100] flex justify-center items-center backdrop-blur-sm overflow-hidden`} onClick={() => { onClick && onClick() }}>
                 <div className={`bg-[#282828] flex flex-col justify-center items-center px-2 pb-2 rounded-xl ${className}`} onClick={(e) => { e.stopPropagation() }}>
                     <div className="flex flex-col px-4 py-2 my-2 w-full gap-5">
                         <div className="text-left text-white text-2xl font-bold mb-2">{title}</div>
@@ -74,6 +84,6 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
                     </div>
                 </div>
             </div>
-            }  
-        </>
+        }
+    </>
 }

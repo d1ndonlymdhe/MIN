@@ -26,7 +26,8 @@ const MDPreview = dynamic(() => import("@uiw/react-markdown-preview"), { ssr: fa
 
 export default function OuterMain(props: PageProps) {
     return <ModalContextProvider>
-        <Main {...props}></Main>
+        <Main {...props}>
+        </Main>
     </ModalContextProvider>
 }
 
@@ -34,7 +35,7 @@ export default function OuterMain(props: PageProps) {
 
 function Main(props: PageProps) {
     //may need to create a global context for blogs
-    const { username, blogs, editThis, hasEdit } = props;
+    const { username,blogs, editThis, hasEdit } = props;
     const [showBlogEdit, setShowBlogEdit] = useState(false);
     const [publishedBlogs, setPublishedBlogs] = useState(blogs.filter(b => !b.isTemp))
     const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
@@ -54,7 +55,7 @@ function Main(props: PageProps) {
         },
     })
     return (
-        <main className={`w-screen bg-primary text-white ${modalState.isShown ? "overflow-hidden h-screen" : ""}`}>
+        <main className={`w-screen bg-primary text-white ${modalState.isShown ? "" : ""}`}>
             <TopBar></TopBar>
             {/* <ModalWithBackdrop title="TEST" isShown={showModal}>
                 <Button onClick={() => { setShowModal(false) }}>EXIT</Button>

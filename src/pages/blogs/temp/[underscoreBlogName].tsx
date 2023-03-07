@@ -13,13 +13,9 @@ import uuid from "react-uuid";
 import Button from "../../../globalComponents/Button";
 import { trpc } from "../../../utils/trpc";
 import BlogRenderer from "../../../globalComponents/BlogRenderer";
-import ModalWithBackdrop from "../../../globalComponents/ModalWithBackdrop";
-export default function Main2(props: PageProps) {
+import ModalWithBackdrop, { ModalContextProvider } from "../../../globalComponents/ModalWithBackdrop";
+export default function Main(props: PageProps) {
     const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
-    const [isLiked, setIsLiked] = useState(liked);
-    const [likeCount, setLikeCount] = useState(
-        reactions.filter(r => r.type).length
-    )
     const publishMutation = trpc.blog.publishBlog.useMutation({
         onSuccess:(data)=>{
             window.location.href= `/blogs/${data.blog.titleLowered.replaceAll(" ","_")}`
@@ -34,7 +30,7 @@ export default function Main2(props: PageProps) {
     const [publishWarning, setPublishWarning] = useState(false)
 
     const DeleteWarning = () => {
-        return <ModalWithBackdrop title="Are you sure?" onClick={() => {
+        return <ModalWithBackdrop isShown={deleteWarning} title="Are you sure?" onClick={() => {
             if (!deleteMutation.isLoading) {
                 setDeleteWarning(false)
             }
@@ -57,7 +53,7 @@ export default function Main2(props: PageProps) {
         </ModalWithBackdrop>
     }
     const PublishWarning = () => {
-        return <ModalWithBackdrop title="Are you sure?" onClick={() => {
+        return <ModalWithBackdrop isShown={publishWarning} title="Are you sure?" onClick={() => {
             if (!publishMutation.isLoading) {
                 setPublishWarning(false)
             }
@@ -79,32 +75,34 @@ export default function Main2(props: PageProps) {
             </div>
         </ModalWithBackdrop>
     }
-    return <main className="w-screen min-h-screen bg-primary text-white">
-        <TopBar></TopBar>
-        <div className="h-full w-full py-2 px-2 grid grid-flow-rows md:grid-cols-[6fr_4fr] gap-4">
-            <div className="w-full min-h-[85vh]  grid place-items-center">
-                <div className="h-fit w-fit">
-                    <BlogRenderer blog={blog}></BlogRenderer>
+    return <ModalContextProvider>
+        <main className="w-screen min-h-screen bg-primary text-white">
+            <TopBar></TopBar>
+            <div className="h-full w-full py-2 px-2 grid grid-flow-rows md:grid-cols-[6fr_4fr] gap-4">
+                <div className="w-full min-h-[85vh]  grid place-items-center">
+                    <div className="h-fit w-fit">
+                        <BlogRenderer blog={blog}></BlogRenderer>
+                    </div>
+                </div>
+                <div className="flex flex-row gap-4 h-fit w-fit">
+                    {publishWarning && <PublishWarning></PublishWarning>}
+                    <Button className="bg-secondary" onClick={() => {
+                        if (!publishMutation.isLoading) {
+                            setPublishWarning(true)
+                        }
+                    }}>Publish</Button>
+                    {/* TODO href to admin and add extra serversideprops for editing */}
+                    <a href={`/admin?editThis=${blog.id}`} target="_blank"><Button className="bg-secondary">Edit</Button></a>
+                    {deleteWarning && <DeleteWarning></DeleteWarning>}
+                    <Button className="bg-secondary" onClick={() => {
+                        if (!deleteMutation.isLoading) {
+                            setDeleteWarning(true)
+                        }
+                    }}>Delete</Button>
                 </div>
             </div>
-            <div className="flex flex-row gap-4 h-fit w-fit">
-                {publishWarning && <PublishWarning></PublishWarning>}
-                <Button className="bg-secondary" onClick={() => {
-                    if (!publishMutation.isLoading) {
-                        setPublishWarning(true)
-                    }
-                }}>Publish</Button>
-                {/* TODO href to admin and add extra serversideprops for editing */}
-                <a href={`/admin?editThis=${blog.id}`} target="_blank"><Button className="bg-secondary">Edit</Button></a>
-                {deleteWarning && <DeleteWarning></DeleteWarning>}
-                <Button className="bg-secondary" onClick={() => {
-                    if (!deleteMutation.isLoading) {
-                        setDeleteWarning(true)
-                    }
-                }}>Delete</Button>
-            </div>
-        </div>
-    </main>
+        </main>
+    </ModalContextProvider>
 
 
 }
@@ -124,134 +122,10 @@ function TopBar() {
         </div>
     )
 }
-
-
-type CommentProp = {
-    comment: ClientComment;
-    blogId: string;
-    userId?: string;
-};
-
-function Comment(props: CommentProp) {
-    const { comment: c, userId, blogId } = props;
-    const [isLiked, setIsLiked] = useState(
-        (c.reactions.filter((r) => r.userId == userId)[0]?.type && true) || false
-    );
-    const [likes, setLikes] = useState(c.reactions.filter((r) => r.type).length);
-    const commentReactionMutation = trpc.blog.comment.reaction.useMutation({
-        onMutate: (variables) => {
-            const { blogId, commentId, type } = variables;
-            setIsLiked(type);
-            if (type) {
-                setLikes(likes + 1);
-            } else {
-                setLikes(likes - 1);
-            }
-        },
-        onSuccess: (data) => {
-            const { reaction, success } = data;
-            //may need it
-        },
-        onError: (data, context) => {
-            const { blogId, commentId, type } = context;
-            setIsLiked(!type);
-            if (type) {
-                setLikes(likes - 1);
-            } else {
-                setLikes(likes + 1);
-            }
-        },
-    });
-    return (
-        <div className=" flex flex-col gap-2">
-            <div className="w-fit flex flex-row gap-2">
-                <div className="h-full grid content-start">
-                    <UserCircleIcon className="w-6 h-6"></UserCircleIcon>
-                </div>
-                <p className="text-2xl">{c.author} :</p>
-            </div>
-            <div>
-                <p className=" p-2 text-4xl">{c.content}</p>
-                <div className="p-2 flex w-fit flex-row gap-2 ">
-                    <p>{likes}</p>
-                    <button
-                        onClick={() => {
-                            if (userId) {
-                                if (!commentReactionMutation.isLoading) {
-                                    commentReactionMutation.mutate({
-                                        blogId,
-                                        commentId: c.id,
-                                        type: !isLiked,
-                                    });
-                                }
-                            } else {
-                                alert("You need to log in to react");
-                            }
-                        }}
-                        className={`${isLiked && "font-bold"
-                            } `}
-                    >
-                        {isLiked ? <HandThumbUpIcon className="w-6 h-6"></HandThumbUpIcon> : <HandThumbUpIconOutline className="w-6 h-6"></HandThumbUpIconOutline>}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-type AddCommentProp = {
-    blog: Blog;
-};
-
-function AddComment(props: AddCommentProp) {
-    const { blog } = props;
-    const commentRef = useRef<HTMLInputElement>(null);
-    const addCommentMutation = trpc.blog.comment.addComment.useMutation({
-        onSuccess: () => {
-            window.location.reload();
-        },
-    });
-    return (
-        <form
-            className="flex flex-row w-fit gap-2"
-            onSubmit={(e) => {
-                e.preventDefault();
-                if (commentRef) {
-                    const content = commentRef.current?.value;
-                    if (content) {
-                        addCommentMutation.mutate({ content, blogId: blog.id });
-                    }
-                }
-            }}
-        >
-            <label>
-                <input
-                    className="form-control block w-full px-4 py-2 mb-2 md:mb-0 md:mr-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:outline-secondary focus:outline-[3px] focus:outline-none "
-                    type="text"
-                    ref={commentRef}
-                ></input>
-            </label>
-            <Button
-                type="submit"
-                className="bg-secondary"
-            >
-                Submit
-            </Button>
-            {/* <button
-        type="submit"
-        className="w-fit  p-2"
-      >
-        Submit
-      </button> */}
-        </form>
-    );
-}
-
 type ClientComment = Comment & {
     author: string;
     reactions: CommentReaction[];
 };
-
 type PageProps = {
     loggedIn: boolean;
     blog: Blog;
@@ -262,7 +136,6 @@ type PageProps = {
     username?: string;
     isLiked?: boolean;
 };
-
 export const getServerSideProps: GetServerSideProps<
     any,
     { underscoreBlogName: string }
