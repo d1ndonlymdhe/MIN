@@ -5,11 +5,7 @@ import uuid from "react-uuid";
 import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import Button from "../globalComponents/Button";
-import Spinner from "../globalComponents/Spinner";
-import { remark } from "remark";
-import html from "remark-html"
 import remarkMath from "remark-math";
-import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import "@uiw/react-md-editor/markdown-editor.css";
 
@@ -35,18 +31,15 @@ export default function OuterMain(props: PageProps) {
 
 function Main(props: PageProps) {
     //may need to create a global context for blogs
-    const { username,blogs, editThis, hasEdit } = props;
-    const [showBlogEdit, setShowBlogEdit] = useState(false);
+    const { username, blogs, editThis, hasEdit } = props;
     const [publishedBlogs, setPublishedBlogs] = useState(blogs.filter(b => !b.isTemp))
     const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
     const [blogView, SetBlogView] = useState(false);
     const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
     const [createMode, setCreateMode] = useState(hasEdit);
+    //was new blog now whatever blog is being edited
     const [nBlog, setNblog] = useState<Blog | null>(hasEdit ? editThis : null)
-    const [showModal, setShowModal] = useState(false)
     const modalState = useModalContext()
-    console.log(modalState)
-    const setModalState = useModalUpdateContext()
     const createEBlog = trpc.blog.createEmptyBlog.useMutation({
         onSuccess: (data) => {
             setCreateMode(true)
@@ -57,10 +50,6 @@ function Main(props: PageProps) {
     return (
         <main className={`w-screen bg-primary text-white ${modalState.isShown ? "" : ""}`}>
             <TopBar></TopBar>
-            {/* <ModalWithBackdrop title="TEST" isShown={showModal}>
-                <Button onClick={() => { setShowModal(false) }}>EXIT</Button>
-            </ModalWithBackdrop> */}
-            {/* <Button onClick={() => { setShowModal(true); setModalState({ isShown: true }) }} className="bg-green-300">SHow Modal</Button> */}
             <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4  ">
                 <div className="flex flex-row gap-10">
                     <div className="md:w-max-[30vw] w-max-[90vw] flex h-fit max-h-[80vh] w-fit flex-col gap-2 overflow-y-auto rounded-md bg-secondary py-4 px-8">
@@ -71,18 +60,20 @@ function Main(props: PageProps) {
                             {publishedBlogs.map((b) => {
                                 return (
                                     <li
-                                        className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
+                                        className="list-disc decoration-complementary"
                                         key={uuid()}
                                         onClick={() => {
                                             setCurrentBlog(b);
                                             SetBlogView(true);
                                         }}
                                     >
-                                        {b.title}
+                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span> 
+                                        <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog,publishedBlogs,setPublishedBlogs,setUnPublishedBlogs,unPublishedBlogs }}></BlogControls>
                                     </li>
                                 );
                             })}
                         </ul>
+                        
                         <ModalWithBackdrop title="Creating" isShown={createEBlog.isLoading}>
                             Loading
                         </ModalWithBackdrop>
@@ -109,14 +100,14 @@ function Main(props: PageProps) {
                             {unPublishedBlogs.map((b) => {
                                 return (
                                     <li
-                                        className="list-disc decoration-complementary hover:cursor-pointer hover:underline"
+                                        className="list-disc decoration-complementary "
                                         key={uuid()}
                                         onClick={() => {
                                             setCurrentBlog(b);
                                             SetBlogView(true);
                                         }}
                                     >
-                                        {b.title}
+                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span> <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog,publishedBlogs,setPublishedBlogs,setUnPublishedBlogs,unPublishedBlogs }}></BlogControls>
                                     </li>
                                     //add blog controls delete, publish , show
                                 );
@@ -157,23 +148,105 @@ type CreateBlogViewProps = {
     setUnPlishedBlogs: Set<Blog[]>
 }
 
-
-
-
-type AddImageViewProps = {
-    content:string;
-    setContent: Set<string>;
-    newBlog:Blog
+type BlogControlsProps = {
+    blog: Blog,
+    nBlog: Blog | null,
+    //while editing the blog we just set nBlog to current blog and createBlogView will handle it
+    setNblog: Set<Blog | null>,
+    publishedBlogs: Blog[],
+    unPublishedBlogs: Blog[],
+    setPublishedBlogs: Set<Blog[]>,
+    setUnPublishedBlogs: Set<Blog[]>
 }
 
-function AddImageView(props:AddImageViewProps){
-    const {content,setContent,newBlog} = props
-     console.log("Re render")
+
+function BlogControls(props: BlogControlsProps) {
+    const { blog, nBlog, setNblog, publishedBlogs, setPublishedBlogs, setUnPublishedBlogs, unPublishedBlogs } = props;
+    const [deleteModalShown,setDeleteModalShown] = useState(false);
+    const deleteMutation = trpc.blog.deleteBlog.useMutation({
+        onSuccess: (data) => {
+            // window.location.href = "/admin"
+            if(data.blog.isTemp){
+                const temp = unPublishedBlogs.filter(b=>b.id!==blog.id);
+                setUnPublishedBlogs(temp)
+            }else{
+                const temp = publishedBlogs.filter(b=>b.id!==blog.id);
+                setPublishedBlogs(temp)
+            }
+        }
+    })
+
+    const DeleteModal = () => {
+        return <ModalWithBackdrop isShown={deleteModalShown} title="Delete Blog?" onClick={()=>{
+            if(!deleteMutation.isLoading)
+            {
+                setDeleteModalShown(false);
+            }
+        }}>
+            <p>Are you sure you want to delete this blog</p>
+            <p>This action is irriversible.</p>
+            <div className="flex flex-row-reverse w-full">
+                <div className="flex justify-start gap-4 h-fit w-fit">
+                    <Button className="bg-red-400"  onClick={()=>{
+                        if(!deleteMutation.isLoading){
+                            deleteMutation.mutate({blogId:blog.id})
+                        }
+                    }}>Yes</Button>
+                    <Button className="bg-secondary" onClick={()=>{
+                        if(!deleteMutation.isLoading){
+                            setDeleteModalShown(false)
+                        }
+                    }}>Cancel</Button>
+                </div>
+
+
+            </div>
+        </ModalWithBackdrop>
+    }
+
+    return <div className="bg-pink-400 flex flex-row gap-4 px-4 py-2 rounded-md">
+        {/* wrapping in a to allow working like normal link */}
+        <a href={`/admin?editThis=${blog.id}`} onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault();
+            alert("Preventing default")
+        }}>
+            <Button className="bg-secondary" onClick={(e)=>{
+                e.stopPropagation()
+                setNblog(blog)
+            }}>
+                Edit
+            </Button>
+        </a>
+        <DeleteModal></DeleteModal>
+        <Button className="bg-secondary" onClick={()=>{
+            if(!deleteMutation.isLoading){
+                setDeleteModalShown(true)
+            }
+        }}>
+            Delete
+        </Button>
+        <a href={`/blogs/${blog.isTemp ? "temp/" : "/"}${blog.titleLowered.replaceAll(" ", "_")}`} target="_blank">
+            <Button className="bg-secondary">
+                Open
+            </Button>
+        </a>
+    </div>
+}
+
+type AddImageViewProps = {
+    content: string;
+    setContent: Set<string>;
+    newBlog: Blog
+}
+
+function AddImageView(props: AddImageViewProps) {
+    const { content, setContent, newBlog } = props
+    console.log("Re render")
     const [upModal, SetUpModal] = useState(false);
     const [uploadLoading, setUploadLoading] = useState(false);
-    const [s,ss] = useState(false)
+    const [s, ss] = useState(false)
     const ModalChild = () => {
-        // const textRef = useRef<HTMLInputElement>(null)
         const nameRef = useRef<HTMLInputElement>(null)
         const srcRef = useRef<HTMLInputElement>(null)
         const fileRef = useRef<HTMLInputElement>(null)
@@ -237,15 +310,13 @@ function AddImageView(props:AddImageViewProps){
         <Button className="bg-emerald-500 mx-4" onClick={() => {
             SetUpModal(true);
         }}>Add image</Button>
-      
+
     </div>
 }
 
-
-
 function CreateBlogView(props: CreateBlogViewProps) {
-    const { blog, unPublishedBlogs, setUnPlishedBlogs } = props
-    const [newBlog, setNewBlog] = useState(blog)
+    const { blog: newBlog, unPublishedBlogs, setUnPlishedBlogs } = props
+    // const [newBlog, setNewBlog] = useState(blog)
     const [title, setTitle] = useState(newBlog.title ? newBlog.title : "Title");
     const [imgSet, setImageSet] = useState(newBlog.coverFulfilled)
     const [imgSrc, setImgSrc] = useState(newBlog.coverFulfilled ? `/api/getBlogImage?blogId=${newBlog.id}&authorId=${newBlog.authorId}` : "")
@@ -345,7 +416,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                     <div className="grid grid-cols-[8fr_2fr]">
                         <MDEditor preview='edit' value={content} onChange={(v) => { setContent(v || "") }} className="w-full mx-2 h-[50vh]"></MDEditor>
                         {/* <AddImages></AddImages> */}
-                        <AddImageView {...{content,setContent,newBlog}}></AddImageView>
+                        <AddImageView {...{ content, setContent, newBlog }}></AddImageView>
                     </div>
                     <div className="text-left">
                         <MDPreview style={{
@@ -364,15 +435,19 @@ function CreateBlogView(props: CreateBlogViewProps) {
                         <p>
                             Your blog will be added to the pending queue where you can inspect it.
                         </p>
-                        <Button type={"submit"}
-                            className="bg-primary w-fit mx-4"> {
-                                (addContentMutation.isLoading || imgUploadLoading) && "Loading" || "Ok"
-                            }
-                        </Button>
-                        {/* TODO add visual cues that button unavialabe */}
-                        <Button onClick={() => { if (!imgUploadLoading && addContentMutation.isLoading) { setShowConfirmDialog(false) } }}>
-                            Cancel
-                        </Button>
+                        <div className="flex justify-end">
+                            <div className="flex justify-start h-fit w-fit gap-4">
+                                <Button type={"submit"}
+                                    className="bg-primary w-fit mx-4"> {
+                                        (addContentMutation.isLoading || imgUploadLoading) && "Loading" || "Ok"
+                                    }
+                                </Button>
+                                {/* TODO add visual cues that button unavialabe */}
+                                <Button onClick={() => { if (!imgUploadLoading && !addContentMutation.isLoading) { setShowConfirmDialog(false) } }}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
                     </ModalWithBackdrop>
                 }
                 <Button onClick={() => {
@@ -386,10 +461,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                 >
                     Continue
                 </Button>
-                {/* <ModalWithBackdrop title="ok" isShown={s} onClick={()=>{
-                    ss(false)
-                }}></ModalWithBackdrop>
-                <Button onClick={()=>ss(true)}>OK</Button> */}
+
             </div>
         </form>
     );

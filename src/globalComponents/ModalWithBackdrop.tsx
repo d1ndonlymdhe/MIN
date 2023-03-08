@@ -48,16 +48,12 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
     const modalState = useModalContext()
     const setModalState = useModalUpdateContext()
     const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 })
-    const [recordScroll, setRecordScroll] = useState(false);
     useEffect(() => {
         console.log("changed")
-        setModalState({ isShown })
-        // if (recordScroll) {
         if (isShown) {
             const x = window.scrollX;
             const y = window.scrollY;
             setScrollPos({ x, y });
-
         }
     }, [isShown])
     useEffect(() => {
