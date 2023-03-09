@@ -57,8 +57,7 @@ const Home: NextPage = () => {
                     className="text-blue-900 form-input form-input-lg rounded-md px-4 py-4"
                     type="email"
                     placeholder="Enter your email..."
-                    required={true}
-                    />
+                    required={true}></input>
                     <button
                     className="w-full mt-2 text-white bg-blue-900 hover:bg-blue-800 btn btn-lg rounded-md px-4 py-4"
                     type="submit"
@@ -71,8 +70,7 @@ const Home: NextPage = () => {
                     className="text-blue-900 form-input form-input-lg"
                     type="email"
                     placeholder="Enter your email..."
-                    required={true}
-                    />
+                    required={true}></input>
                     <button
                     className="text-white bg-blue-900 hover:bg-blue-800 btn btn-lg rounded-md px-1 py-1"
                     type="submit"
@@ -90,8 +88,7 @@ const Home: NextPage = () => {
                 src="https://images.unsplash.com/photo-1531548731165-c6ae86ff6491?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80"
                 alt="3 women looking at a laptop"
                 className="object-cover w-full h-64 bg-gray-100 md:h-full"
-                loading="lazy"
-                />
+                loading="lazy"/>
             </div>
          </section>
     </>

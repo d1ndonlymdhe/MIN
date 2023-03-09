@@ -62,7 +62,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                 }
                                 image.quality(70).write(`./files/${dbToken.user.id}/playlists/${blog.id}/blogImage.jpg`)
                             })
-                            prisma.blog.update({
+                            await prisma.blog.update({
                                 where: {
                                     id: blogId
                                 },

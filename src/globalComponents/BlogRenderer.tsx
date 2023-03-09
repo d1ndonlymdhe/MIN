@@ -11,9 +11,10 @@ export default function BlogRenderer(props: { blog: Blog }) {
     const content = blog.content;
     console.log(typeof content)
     return (
-        <div className="flex h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
+        <div className="grid grid-rows-[15vh_1fr_9fr] h-[85vh] w-[90vw] flex-col gap-2 overflow-auto rounded-md bg-secondary md:w-[40vw]">
             <div style={{
-                backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`
+                backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`,
+                // height: "50vh",
             }} className="h-[15vh] w-full rounded-t-md  text-black">
 
             </div>
@@ -23,7 +24,7 @@ export default function BlogRenderer(props: { blog: Blog }) {
                     background: "black",
                     color: "white",
 
-                }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+                }} source={content} className="prose  rounded-md smallBlogContent md:blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
             </div>
         </div>
     );
