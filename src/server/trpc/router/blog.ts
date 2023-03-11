@@ -21,6 +21,7 @@ export const blogRouter = router({
                         authorId: dbToken.userId,
                         coverFulfilled: false,
                         isTemp: true,
+                        publishedOn: new Date().getTime().toString()
                     }
                 })
                 await fs.mkdir(`./files/${dbToken.userId}/blogs/${newEblog.id}`)
@@ -49,7 +50,8 @@ export const blogRouter = router({
                             title: title,
                             titleLowered: title.toLowerCase(),
                             authorId: user.id,
-                            isTemp: true
+                            isTemp: true,
+                            publishedOn: new Date().getTime().toString()
                         }
                     })
                     await fs.mkdir(`./files/${user.id}/blogs/${newTempBlog.id}`)
@@ -83,6 +85,7 @@ export const blogRouter = router({
                             title: title ? title : blog.title,
                             titleLowered: title ? title.toLocaleLowerCase() : blog.titleLowered,
                             coverFulfilled: !hasImage,
+                            publishedOn: new Date().getTime().toString()
                         }
                     })
                     return {
@@ -125,7 +128,7 @@ export const blogRouter = router({
             if (dbToken) {
                 const blog = await prisma.blog.findFirst({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } });
                 if (blog && blog.coverImageid && blog.content && blog.title) {
-                    const pBlog = await prisma.blog.update({ where: { id: blogId }, data: { ...blog, isTemp: false } })
+                    const pBlog = await prisma.blog.update({ where: { id: blogId }, data: { ...blog, isTemp: false,publishedOn: new Date().getTime().toString() } })
                     return {
                         blog: pBlog
                     }
@@ -144,7 +147,7 @@ export const blogRouter = router({
             const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } })
             if (dbToken) {
                 const user = dbToken.user
-                const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id } })
+                const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id ,publishedOn: new Date().getTime().toString()} })
                 await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}`)
                 await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}/images`)
                 return {
