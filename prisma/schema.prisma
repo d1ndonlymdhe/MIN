@@ -34,7 +34,7 @@ model User {
 model Role {
   id     String @id @default(cuid())
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model Blog {
@@ -43,13 +43,17 @@ model Blog {
   titleLowered   String
   content        String
   authorId       String
-  author         User           @relation(fields: [authorId], references: [id])
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments       Comment[]
   reactions      BlogReaction[]
   images         BlogImage[]
   coverImageid   String         @default(cuid())
+  //trpc cannot handle form/multipart data (file) actual image is handled in a api routes so need to check if coverimage has been fulfilled
   coverFulfilled Boolean        @default(false)
   isTemp         Boolean        @default(false)
+  //storing as string might change to BigInt store UNIX timestamp
+  publishedOn    String
+
 }
 
 model BlogImage {
@@ -57,7 +61,7 @@ model BlogImage {
   name      String
   blogId    String
   fulfilled Boolean
-  blog      Blog    @relation(fields: [blogId], references: [id])
+  blog      Blog    @relation(fields: [blogId], references: [id],onDelete: Cascade)
 }
 
 model Comment {
@@ -65,8 +69,8 @@ model Comment {
   content         String
   blogId          String
   authorId        String
-  author          User              @relation(fields: [authorId], references: [id])
-  blog            Blog              @relation(fields: [blogId], references: [id])
+  author          User              @relation(fields: [authorId], references: [id],onDelete: Cascade)
+  blog            Blog              @relation(fields: [blogId], references: [id],onDelete: Cascade)
   commentReaction CommentReaction[]
 }
 
@@ -74,25 +78,25 @@ model BlogReaction {
   id     String  @id @default(cuid())
   type   Boolean
   blogId String
-  blog   Blog    @relation(fields: [blogId], references: [id])
+  blog   Blog    @relation(fields: [blogId], references: [id],onDelete: Cascade)
   userId String
-  user   User    @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model CommentReaction {
   id        String  @id @default(cuid())
   type      Boolean
   commentId String
-  comment   Comment @relation(fields: [commentId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id],onDelete: Cascade)
   userId    String
-  user      User    @relation(fields: [userId], references: [id])
+  user      User    @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model Token {
   id     String @id @default(cuid())
   userId String
   value  String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model Example {
