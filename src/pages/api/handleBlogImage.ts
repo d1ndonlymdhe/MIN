@@ -31,9 +31,9 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                         const fileName = file.originalFilename
                         if (fileName) {
                             const ext = getExtension(fileName)
-                            //if file is jpeg save as jpg
-
+                            
                             if (ext == "jpeg") {
+                                //if file is jpeg save as jpg
                                 Jimp.read(file.filepath, (err, image) => {
                                     if (err) {
                                         res.status(500).json({ error: "unknown" })
@@ -44,8 +44,8 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                 res.status(200).json({ success: true })
                                 res.end()
                             }
-                            //if file is not jpg or jpeg convert to jpg
-                            if (ext !== "jpg") {
+                            else if (ext !== "jpg") {
+                                //if file is not jpg or jpeg convert to jpg
                                 Jimp.read(file.filepath, (err, image) => {
                                     if (err) {
                                         res.status(500).json({ error: "unknown" })
@@ -54,14 +54,16 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                     image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
                                 })
                             }
-                            //if jpg save as is
-                            Jimp.read(file.filepath, (err, image) => {
-                                if (err) {
-                                    res.status(500).json({ error: "unknown" })
-                                    res.end()
-                                }
-                                image.quality(70).write(`./files/${dbToken.user.id}/playlists/${blog.id}/blogImage.jpg`)
-                            })
+                            else {
+                                //if jpg save as is
+                                Jimp.read(file.filepath, (err, image) => {
+                                    if (err) {
+                                        res.status(500).json({ error: "unknown" })
+                                        res.end()
+                                    }
+                                    image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
+                                })
+                            }
                             await prisma.blog.update({
                                 where: {
                                     id: blogId
