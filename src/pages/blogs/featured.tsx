@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             loggedIn = true;
         }
     }
-    const latestBlogs = await prisma.blog.findMany({ orderBy: { publishedOn: "desc" } })
+    const latestBlogs = await prisma.blog.findMany({ where:{isTemp:false},orderBy: { publishedOn: "desc" } })
 
     return {
         props: {
