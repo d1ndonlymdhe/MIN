@@ -1,7 +1,12 @@
-import {  Blog, PrismaClient } from "@prisma/client";
+import { Blog, PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next"
+import { useState } from "react";
 import uuid from "react-uuid";
+import Button from "../../globalComponents/Button";
+import { ModalContextProvider, useModalContext } from "../../globalComponents/ModalWithBackdrop";
 import Navbar from "../../globalComponents/Navbar";
+import Spinner from "../../globalComponents/Spinner";
+import { trpc } from "../../utils/trpc";
 
 
 type ClientBlog = (Blog & {
@@ -16,60 +21,84 @@ type PageProps = {
 }
 
 export default function FeaturedBlogs(props: PageProps) {
-    const { blogs } = props;
-
-
-
+    const { blogs: b } = props;
+    const [blogs, setBlogs] = useState(b);
+    const loadMoreMutation = trpc.blog.getBlogs.useMutation({
+        onSuccess: (data) => {
+            setBlogs([...blogs, ...data.blogs])
+        }
+    })
+    const modalState = useModalContext()
     return (
-        <main className="bg-primary min-h-screen text-minWhite flex flex-col gap-10">
-            {/* <div className="w-screen"> */}
-            <Navbar activeTab="Blogs"></Navbar>
-            {/* </div> */}
-            <div className="flex flex-col mx-20 gap-10">
-                <p className="text-4xl font-[700] font-complementry ">
-                    FEATURED BLOGS
-                </p>
-                <div className="grid grid-cols-3 gap-20">
-                    {
-                        blogs.map(b => {
-                            return <BlogPreview blog={b} key={uuid()}></BlogPreview>
-                        })
-                    }
+        <ModalContextProvider>
+            <main className={`bg-primary min-h-screen text-minWhite flex flex-col gap-10 ${modalState.isShown ? "h-screen overflow-hidden":""}`}>
+                {/* <div className="w-screen"> */}
+                <Navbar activeTab="Blogs"></Navbar>
+                {/* </div> */}
+                <div className="flex flex-col mx-10 lg:mx-20 gap-10 mb-4">
+                    <p className="text-2xl md:text-4xl font-[700] font-complementry ">
+                        FEATURED BLOGS
+                    </p>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3x gap-20">
+                        {
+                            blogs.map(b => {
+                                return <BlogPreview blog={b} key={uuid()}></BlogPreview>
+                            })
+                        }
+                    </div>
+                    <div className="w-full grid md::grid-cols-[4.5fr_1fr_4.5fr] items-center justify-items-center">
+                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden lg:block"></div> */}
+                        <div className="w-full"></div>
+
+                        <Button className="bg-secondary mx-2 md:w-fit w-full  text-md lg:text-lg" onClick={() => {
+                            if (!loadMoreMutation.isLoading) {
+                                loadMoreMutation.mutate({
+                                    from: blogs.length, to: blogs.length + 5, sortBy: {
+                                        property: "time"
+                                    }
+                                })
+                            }
+                        }}>{!loadMoreMutation.isLoading && "Load More" || <div className="mx-2 my-2">
+                            <Spinner></Spinner>
+                        </div>}</Button>
+                        <div className="w-full"></div>
+                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden md:block"></div> */}
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </ModalContextProvider>
     )
 }
 
 function BlogPreview(props: { blog: ClientBlog }) {
     const { blog } = props;
     return <a href={`/blogs/${blog.titleLowered.replaceAll(" ", "_")}`}>
-        <div className="bg-secondary rounded-lg h-[30vh] w-full flex-col hover:cursor-pointer">
+        <div className="bg-secondary rounded-lg h-[40vh] w-full flex-col hover:cursor-pointer">
             <div style={{
                 backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`,
                 backgroundSize: "cover"
-            }} className="h-[20vh] w-full rounded-t-md">
+            }} className="h-[25vh] w-full rounded-t-md">
             </div>
             {/* <div className="flex h-[10vh] w-full justify-start items-center"> */}
-                <div className="grid grid-cols-2 h-[10vh] w-full">
-                    <div className="flex justify-start items-center mx-4">
-                        <p className="font-[700] font-complementry text-3xl">{blog.title}</p>
-                    </div>
-                    <div className="flex justify-end">
-                        <div className="grid grid-rows-2 justify-center items-center mx-4 gap-2 font-bold">
-                            <div className="flex items-end justify-end h-full w-full">
-                                <p className="">
-                                    {(new Date(Number(blog.publishedOn))).toLocaleDateString()}
-                                </p>
-                            </div>
-                            <div className="flex items-start h-full w-full">
-                                <p className="">
-                                    {blog.author.name}
-                                </p>
-                            </div>
+            <div className="grid grid-cols-2 h-[15vh] w-full">
+                <div className="flex justify-start items-center mx-4">
+                    <p className="font-[700] font-complementry text-3xl">{blog.title}</p>
+                </div>
+                <div className="flex justify-end">
+                    <div className="grid grid-rows-2 justify-center items-center mx-4 gap-2 font-bold">
+                        <div className="flex items-end justify-end h-full w-full">
+                            <p className="">
+                                {(new Date(Number(blog.publishedOn))).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <div className="flex items-start h-full w-full">
+                            <p className="">
+                                {blog.author.name}
+                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
             {/* </div> */}
         </div>
     </a>
@@ -79,7 +108,7 @@ function BlogPreview(props: { blog: ClientBlog }) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = context.req.cookies?.token;
     const prisma = new PrismaClient()
-    const blogCount = 5;
+    const blogCount = 3;
     let loggedIn = false;
     if (token) {
         const dbToken = await prisma.token.findFirst({ where: { value: token } });
@@ -91,6 +120,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
         props: {
+            loggedIn,
             blogs: latestBlogs.reverse().slice(0 - blogCount).reverse()
         }
     }
