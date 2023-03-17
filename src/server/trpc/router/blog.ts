@@ -5,6 +5,20 @@ import { commentRouter } from "./comment"
 import fs from "node:fs/promises"
 import { Blog } from "@prisma/client"
 
+const getBlogValidator = z.object({
+    sortBy: z.object({
+        property: z.literal("title"),
+        order: z.literal("A").or(z.literal("D")).default("A")
+    }).or(z.object({
+        property: z.literal("time"),
+        order: z.literal("A").or(z.literal("D")).default("D")
+    })),
+    from: z.number().min(0),
+    to: z.number().min(1),
+    authorId: z.string().or(z.undefined())
+})
+
+
 export const blogRouter = router({
     createEmptyBlog: publicProcedure.mutation((async ({ ctx }) => {
         const { prisma } = ctx
@@ -128,11 +142,16 @@ export const blogRouter = router({
             if (dbToken) {
                 const blog = await prisma.blog.findFirst({ where: { AND: [{ id: blogId }, { authorId: dbToken.userId }] } });
                 if (blog && blog.coverImageid && blog.content && blog.title) {
-                    const pBlog = await prisma.blog.update({ where: { id: blogId }, data: { ...blog, isTemp: false,publishedOn: new Date().getTime().toString() } })
+                    const pBlog = await prisma.blog.update({ where: { id: blogId }, data: { ...blog, isTemp: false, publishedOn: new Date().getTime().toString() } })
                     return {
                         blog: pBlog
                     }
                 }
+                //TODO display suitable error message in client
+                throw new TRPCError({
+                    code:"BAD_REQUEST",  
+                    message:"Provide coverimage,content & title"
+                })
             }
         }
         throw new TRPCError({
@@ -147,7 +166,7 @@ export const blogRouter = router({
             const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } })
             if (dbToken) {
                 const user = dbToken.user
-                const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id ,publishedOn: new Date().getTime().toString()} })
+                const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id, publishedOn: new Date().getTime().toString() } })
                 await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}`)
                 await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}/images`)
                 return {
@@ -161,6 +180,40 @@ export const blogRouter = router({
             code: "BAD_REQUEST",
             message: "Error"
         });
+    }),
+    getBlogs: publicProcedure.input(getBlogValidator).mutation(async ({ input, ctx }) => {
+        const { from, sortBy, to, authorId } = input;
+        const prisma = ctx.prisma;
+        const ob = sortBy.property == "title" ?
+            {
+                title: sortBy.order == "A" ? "asc" : "desc" as "asc" | "desc"
+            }
+            : {
+                publishedOn: sortBy.order == "A" ? "asc" : "desc" as "asc" | "desc"
+            }
+        const blogs = await prisma.blog.findMany({
+            where: {
+                authorId: authorId
+            },
+            orderBy: ob,
+            include: {
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+        if (blogs) {
+            return {
+                //start from here
+                blogs : blogs.slice(from,to)
+            }
+            //TODO only make it fetch required data like Title author and blogID
+        }
+        throw new TRPCError({
+            code:"BAD_REQUEST"
+        })
     }),
     comment: commentRouter,
     //testing again
