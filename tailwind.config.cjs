@@ -2,6 +2,12 @@
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    screens:{
+      sm: '480px', 
+      md: '768px', 
+      lg: '976px', 
+      xl: '1440px'
+    },
     extend: {
       colors: {
         primary: "#3B3486",
@@ -10,12 +16,12 @@ module.exports = {
         minWhite: "#FCFDF2"
       },
       fontFamily: {
-        lato: ["'Lato'", '"sans-serif"'],
-        montserrat: ["'Montserrat", 'sans-serif'],
-        playfair: ["'PLayfair Display", 'serif'],
-        poppins: ["'Poppins'", "sans-serif"]
+        primary: ["'Lato'", '"sans-serif"'],
+        complementry: ["'Montserrat'", 'sans-serif'],
+        white: ["'Playfair Display'", 'serif'],
+        secondary: ["'Poppins'", "sans-serif"]
       }
     },
   },
-  plugins: [],
+  plugins: [require(`@tailwindcss/typography`)],
 };

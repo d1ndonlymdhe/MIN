@@ -18,15 +18,17 @@ datasource db {
 // }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  username     String
-  salt         String
-  passwordHash String
-  role         Role[]
-  tokens       Token[]
-  blogs        Blog[]
-  Comment      Comment[]
+  id               String            @id @default(cuid())
+  name             String
+  username         String
+  salt             String
+  passwordHash     String
+  role             Role[]
+  tokens           Token[]
+  blogs            Blog[]
+  comments         Comment[]
+  blogReactions    BlogReaction[]
+  commentReactions CommentReaction[]
 }
 
 model Role {
@@ -36,21 +38,54 @@ model Role {
 }
 
 model Blog {
-  id       String    @id @default(cuid())
-  title    String
-  content  String
-  authorId String
-  author   User      @relation(fields: [authorId], references: [id])
-  comments Comment[]
+  id             String         @id @default(cuid())
+  title          String
+  titleLowered   String
+  content        String
+  authorId       String
+  author         User           @relation(fields: [authorId], references: [id])
+  comments       Comment[]
+  reactions      BlogReaction[]
+  images         BlogImage[]
+  coverImageid   String         @default(cuid())
+  coverFulfilled Boolean        @default(false)
+  isTemp         Boolean        @default(false)
+}
+
+model BlogImage {
+  id        String  @id @default(cuid())
+  name      String
+  blogId    String
+  fulfilled Boolean
+  blog      Blog    @relation(fields: [blogId], references: [id])
 }
 
 model Comment {
-  id       String @id @default(cuid())
-  content  String
-  blogId   String
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id])
-  blog     Blog   @relation(fields: [blogId], references: [id])
+  id              String            @id @default(cuid())
+  content         String
+  blogId          String
+  authorId        String
+  author          User              @relation(fields: [authorId], references: [id])
+  blog            Blog              @relation(fields: [blogId], references: [id])
+  commentReaction CommentReaction[]
+}
+
+model BlogReaction {
+  id     String  @id @default(cuid())
+  type   Boolean
+  blogId String
+  blog   Blog    @relation(fields: [blogId], references: [id])
+  userId String
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model CommentReaction {
+  id        String  @id @default(cuid())
+  type      Boolean
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 model Token {

@@ -9,6 +9,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
+        {/* <style>
+          @import url('')
+        </style> */}
         <title>Mathmatics Initiatives in Nepal</title>
       </Head>
       <Component {...pageProps} />
