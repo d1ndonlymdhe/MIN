@@ -6,7 +6,7 @@ import ModalWithBackdrop from "./ModalWithBackdrop";
 import Image from "next/image";
 import Link from "next/link";
 
-const tabs = ["Home", "Blogs", "Projects", "Alumni", "About", "Support Us"] as const;
+const tabs = ["Home", "Blogs", "Projects", "Alumni", "About", "Contribute"] as const;
 type NavbarProps = {
   activeTab: (typeof tabs)[number];
   className?: string;

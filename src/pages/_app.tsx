@@ -5,6 +5,13 @@ import { trpc } from "../utils/trpc";
 import "../styles/globals.css";
 import Head from "next/head";
 
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
+
+
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>

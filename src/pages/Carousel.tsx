@@ -50,6 +50,8 @@ const Carousel = () => {
   </>
   )
 }
+
+const set<T> = 
 function ImagePlaceholder (n:number, i:number, setCurrentCard:React.Dispatch<React.SetStateAction<number>>, isSelected:boolean, currentCard:number) {
     return (
       <div

@@ -1,27 +1,15 @@
 import { Blog, PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import uuid from "react-uuid";
+import Navbar from "../../globalComponents/Navbar";
+
 
 export default function Main(props: PageProps) {
   const { blogs, loggedIn } = props;
 
   return (
-    // <main className="grid grid-rows-[2fr_8fr]">
-    //   <div>MIN BLOGS</div>
-    //   <div className="flex flex-col">
-    //     {blogs.map((b) => {
-    //       return (
-    //         <div key={uuid()} className="flex flex-col">
-    //             {/* use next link */}
-    //           <a href={`/blogs/${underscore(b.title)}`}>
-    //             <div className="font-bold">{b.title}</div>
-    //           </a>
-    //           {/* <div>{b.content}</div> */}
-    //         </div>
-    //       );
-    //     })}
-    //   </div>
-    // </main>
+    <>
+    <Navbar activeTab="Blogs"/>
     <main className="w-full px-4 py-12 mx-auto max-w-7xl md:w-4/5">
           <h1 className="py-8 text-2xl font-bold">FEATURED BLOG</h1>
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
@@ -56,6 +44,7 @@ export default function Main(props: PageProps) {
             </a>
           </div>
     </main>
+    </>
   );
 }
 
@@ -89,3 +78,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context)
 function underscore(str: string) {
   return str.split(" ").join("_")
 }
+
