@@ -16,12 +16,12 @@ const Alumni = () => {
         backgroundImg2={AlumniImg.src}
         introText="Alumni"
       />
-      <div className="mt-[27.8em] md:mt-[39.2em] bg-white">
+      <section className="mt-[27.8em] md:mt-[39.2em] bg-white">
         <AlumniCard />
         <AlumniCard />
         <AlumniCard />
 
-      </div>
+      </section>
     
 
       {/* footer */}

@@ -6,7 +6,7 @@ const AlumniCard = () => {
   return (
     <>
     <section className="bg-two-colors bg-white pt-24 md:px-24 md:pb-24">
-        <div className="felx-row flex flex-wrap justify-around space-y-5 md:space-y-0">
+        <div className="flex flex-wrap justify-around space-y-5 md:space-y-0">
           <div className="md:basis-1/4">
             <Image
               src={Chad.src}
