@@ -35,7 +35,7 @@ export default function Navbar(props: NavbarProps) {
                 return (
                   <li key={uuid()}>
                     {/*TODO use next/link */}
-                    <a href={`/${t}`}>
+                    <a href={`/${t.toLowerCase()}`}>
                       <div
                         className={`grid place-items-center font-complementry text-white text-lg font-[700] hover:cursor-pointer ${
                           activeTab == t
@@ -83,7 +83,7 @@ export default function Navbar(props: NavbarProps) {
               return (
                 <li key={uuid()}>
                   {/*TODO use next/link */}
-                  <a href={`/${t}`}>
+                  <a href={`/${(t == "Home" ? "" : t).toLowerCase()}`}>
                     <div
                       className={`grid place-items-center text-[18px] font-secondary text-white font-[550] opacity-60 hover:cursor-pointer ${
                         activeTab == t

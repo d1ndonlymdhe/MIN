@@ -7,6 +7,37 @@ import Background from "../globalComponents/Background";
 import homeImage from "../../public/images/homeImage.jpg";
 import homeImageL from "../../public/images/homeImageL.jpg";
 import Footer from "../globalComponents/Footer";
+import { Carousel } from "react-responsive-carousel";
+import Button from "../globalComponents/Button";
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
+
+import chad from "../../public/images/chad.png";
+import child from "../../public/images/child.png";
+import minLogo from "../../public/images/minLogo.png"
+
+const parentArr = [{
+  image: chad.src,
+  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
+}, {
+  image: child.src,
+  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
+},
+{
+  image: minLogo.src,
+  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
+},
+{
+  image: homeImage.src,
+  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
+},
+{
+  image: homeImageL.src,
+  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
+}
+
+]
+
+
 
 /* let homeImg = "";
 if (window.innerWidth >= 940) {
@@ -64,7 +95,51 @@ const Home: NextPage = () => {
           </h1>
         </div>
       </div>
+      {/* <div className="w-full h-full relative"> */}
+      <Carousel
+        className="relative"
+        renderArrowNext={
+          (onClickHandler, hasNext, label) => {
+            return <div
+              className="flex items-center top-0 right-3 w-fit h-full z-[2] absolute">
+              <Button onClick={onClickHandler} className={`mx-2 h-4/6 ${hasNext ? "bg-secondary cursor-pointer" : "bg-secondary/50 cursor-not-allowed"}  `}>
+                <ChevronDoubleRightIcon className="h-6 w-6 text-black"></ChevronDoubleRightIcon>
+              </Button>
+            </div>
+          }
+        }
+        renderArrowPrev={
+          (onClickHandler, hasPrev, label) => {
+            return <div
+              className="flex items-center top-0 left-3 w-fit h-full z-[2]  absolute">
+              <Button onClick={onClickHandler} className={`mx-2 h-4/6 ${hasPrev ? "bg-secondary cursor-pointer" : "bg-secondary/50 cursor-not-allowed"}  `}>
+                <ChevronDoubleLeftIcon className="h-6 w-6 text-black"></ChevronDoubleLeftIcon>
+              </Button>
+            </div>
+          }
+        }
+        showStatus={false} showThumbs={false} showIndicators={false}
+        infiniteLoop={true}
+        autoPlay={true}
+        interval={5000}
 
+      >
+        {
+          parentArr.map((p) => {
+            return <div className="w-screen h-20 mx-10 my-2 bg-white rounded-md">
+              <div className="my-4 mx-4 grid grid-cols-[30%_70%]">
+                <img className="h-10 w-10 rounded-md" src={p.image}>
+                </img>
+                <p>
+                  {p.text}
+                </p>
+              </div>
+            </div>
+          })
+        }
+
+      </Carousel>
+      {/* </div> */}
     {/* footer */}
     <Footer />
     </>
