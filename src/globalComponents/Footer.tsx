@@ -3,7 +3,7 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <>
-      <footer>
+      <footer className="border-t-2 border-[#FFE9B1]">
         <div className="container mx-auto flex flex-col-reverse justify-between space-y-8 px-6 py-10 md:flex-row md:space-y-0">
           <div className="flex flex-col-reverse items-center justify-between space-y-12 md:flex-col md:items-start md:space-y-5">
             {/* <div className="mx-auto my-6 text-center text-white md:hidden">
@@ -19,7 +19,7 @@ const Footer = () => {
               />
             </div>
             {/*  social links */}
-            <div className="flex items-center justify-center space-x-4">
+            <div className="flex items-center mx-auto justify-center space-x-4">
               <a href="#">
                 <Image
                   src="/images/icon-facebook.svg"

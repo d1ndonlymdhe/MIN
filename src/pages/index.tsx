@@ -51,18 +51,28 @@ const Home: NextPage = () => {
         </h1>
       </section>
 
-      <div className="my-[10em] flex h-[20em] flex-col justify-center border-y border-white md:h-[14em]">
-        <div className="flex flex-col place-content-around items-center space-y-10 font-secondary  text-2xl text-white md:flex-row md:space-y-0 md:text-2xl">
+      <div className="my-[14em] flex h-[30em] flex-col justify-center border-y border-white md:h-[18em] ">
+        <div className="flex flex-col place-content-around items-center space-y-[4em] font-secondary text-white md:flex-row md:space-y-0 ">
           <h1 className="text-center">
-            10000+ <br /> Students Reached
+            <span className="font-bold text-4xl md:text-5xl mb-2">
+            10000+
+            </span>
+             <br /> <br /> Students Reached
           </h1>
           <h1 className="text-center">
-            20+ <br /> Projects Initaited{" "}
+          <span className="font-bold text-4xl md:text-5xl mb-2">
+            20+
+            </span>
+             <br /> <br /> Projects Initaited{" "}
           </h1>
           <h1 className="text-center">
-            15+ <br /> Partners & Collaborators
+          <span className="font-bold text-4xl md:text-5xl mb-2">
+            15+
+            </span>
+             <br /> <br /> Partners & Collaborators
           </h1>
         </div>
+        
       </div>
 
     {/* footer */}
