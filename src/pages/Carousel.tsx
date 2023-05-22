@@ -177,11 +177,30 @@ function Testimonials() {
 
 
 function Newsletter() {
-  return <div className="w-full h-20 bg-green-500">
+  return <div className="font-complementry w-full h-96 relative bg-[#352f79] mt-10">
+    <div className="absolute left-0 top-0 bg-white w-[60vw] flex flex-row justify-center items-center z-[3] h-96" style={{
+      clipPath: "polygon(0 0,80% 0%,100% 100%,0% 100%)"
+    }}>
+      <div className="flex flex-col gap-10">
+        <p className=" font-[500] text-5xl">Subscribe Newsletter</p>
+        <p className="text-gray-400">We will not promote spam</p>
+      </div>
+      <div className="w-[20vw]">
 
+      </div>
+    </div>
+    <div className="flex justify-end  items-center h-full ">
+      <div className="h-fit w-fit -translate-x-[30rem] z-[4] shadow-2xl shadow-black rounded-md">
+        <input className="bg-yellow-500 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black placeholder:text-xl " placeholder="Enter your email address"></input>
+        <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">Subscribe</button>
+      </div>
+    </div>
   </div>
 }
 
+function Links() {
+
+}
 
 function CCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -272,42 +291,3 @@ function CCarousel() {
   </div>
 }
 
-
-
-
-type Card = {
-  imgSrc: string,
-  text: string,
-}
-
-
-type placeHolderProps = {
-  card: Card,
-}
-
-function ImagePlaceholder(props: placeHolderProps) {
-  const { card } = props
-  return (
-    <div
-      className="mx-20"
-      style={{
-        direction: "ltr"
-      }}
-    >
-      {/* to override the style passed from carousel component apply style props */}
-      <div className="w-full flex h-full overflow-hidden justify-center items-top bg-minWhite rounded-md">
-        <img style={
-          {
-            height: "20rem",
-            width: "20rem"
-          }
-        } src={card.imgSrc}></img>
-        <span
-          className="overflow-hidden"
-        >
-          {card.text}
-        </span>
-      </div>
-    </div>
-  );
-}
