@@ -1,64 +1,24 @@
-import uuid from "react-uuid";
+// import uuid from "react-uuid";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
-// import p2 from "../../public/image/minLogo.png"
 import p1 from "../../public/images/people/p1.jpg"
 import p2 from "../../public/images/people/p2.jpg"
-// const p2 = p1;
 import p3 from "../../public/images/people/p3.jpg"
-// const p3 = p1;
 import p4 from "../../public/images/people/p4.jpg"
-// const p4 = p1;
-// const p5 = p2;
-// const p6 = p3;
-// const p7 = p1;
 import p5 from "../../public/images/people/p5.jpg"
 import p6 from "../../public/images/people/p6.jpg"
 import p7 from "../../public/images/people/p7.jpg"
 import Button from "../globalComponents/Button";
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
-// import quote from "../../public/images/Quotes.svg";
 import Quote from "../globalComponents/Quotes";
 const ps = [p1, p2, p3, p4, p5, p6, p7];
 
-// const parentArr = ps.map(p => p.src)
-
-
-
-
-import chad from "../../public/images/chad.png";
-import child from "../../public/images/child.png";
-import minLogo from "../../public/images/minLogo.png"
+import minLogo from "../../public/images/MINLogox.png"
 import homeImage from "../../public/images/homeImage.jpg";
 import homeImageL from "../../public/images/homeImageL.jpg";
 import Navbar from "../globalComponents/Navbar";
-import Background from "../globalComponents/Background";
 import Head from "next/head";
-import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
-
-
-// const parentArr = [{
-//   image: chad.src,
-//   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
-// }, {
-//   image: child.src,
-//   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
-// },
-// {
-//   image: minLogo.src,
-//   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
-// },
-// {
-//   image: homeImage.src,
-//   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
-// },
-// {
-//   image: homeImageL.src,
-//   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consectetur, nulla vel consectetur semper, diam erat condimentum sapien, vel porta."
-// }
-// ]
 
 const parentArr = ps.map(p => {
   return {
@@ -104,6 +64,7 @@ export default function App() {
       <ProjectHighlights></ProjectHighlights>
       <Testimonials></Testimonials>
       <Newsletter></Newsletter>
+      <Footer></Footer>
     </>)
 }
 
@@ -134,7 +95,7 @@ function ProjectHighlights() {
     <div className="flex flex-col gap-10 mt-10">
       <div className="flex flex-col gap-20">
         <div className="flex flex-col h-[20%] justify-center items-center">
-          <p className="text-xl md:text-6xl font-bold text-center text-complementary">
+          <p className="text-4xl md:text-6xl font-bold text-center text-complementary">
             PROJECT HIGHLIGHTS
           </p>
         </div>
@@ -143,18 +104,17 @@ function ProjectHighlights() {
     </div>
     <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[25vh] border-y-white border-y">
       <div className="flex flex-col">
-        <span className="text-8xl font-[700]">1000<span className="text-complementary">+</span></span>
-        <span className="font-[500] text-4xl">Students Reached</span>
+        <span className="text-4xl text-center md:text-8xl font-[700]">1000<span className="text-complementary">+</span></span>
+        <span className="font-[500] text-lg text-center md:text-4xl">Students Reached</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-8xl font-[700]">20<span className="text-complementary">+</span></span>
-        <span className="font-[500] text-4xl">Projects Installed</span>
+        <span className="text-4xl  text-center md:text-8xl font-[700]">20<span className="text-complementary">+</span></span>
+        <span className="font-[500] text-lg text-center md:text-4xl">Projects Installed</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-8xl font-[700]">
-          15<span className="text-complementary">+</span>
+        <span className="text-4xl text-center md:text-8xl font-[700]">15<span className="text-complementary text-lg md:text-4xl">+</span>
         </span>
-        <span className="font-[500] text-4xl">
+        <span className="font-[500] text-lg text-center  md:text-4xl">
           Partners & Collaborators
         </span>
       </div>
@@ -165,7 +125,7 @@ function ProjectHighlights() {
 function Testimonials() {
   return <div className="testimonials flex flex-col gap-10 mt-10">
     <div className="flex flex-col h-[20%] justify-center items-center">
-      <p className="text-xl md:text-6xl font-bold text-center text-complementary">
+      <p className="text-4xl md:text-6xl font-bold text-center text-complementary">
         TESTIMONIALS
       </p>
     </div>
@@ -177,29 +137,79 @@ function Testimonials() {
 
 
 function Newsletter() {
-  return <div className="font-complementry w-full h-96 relative bg-[#352f79] mt-10">
-    <div className="absolute left-0 top-0 bg-white w-[60vw] flex flex-row justify-center items-center z-[3] h-96" style={{
-      clipPath: "polygon(0 0,80% 0%,100% 100%,0% 100%)"
-    }}>
-      <div className="flex flex-col gap-10">
-        <p className=" font-[500] text-5xl">Subscribe Newsletter</p>
-        <p className="text-gray-400">We will not promote spam</p>
+  return <>
+    <div className="hidden md:block">
+      <div className="font-complementry w-full h-96 relative bg-[#352f79] mt-10">
+        <div className="absolute left-0 top-0 bg-white w-[60vw] flex flex-row justify-center items-center z-[3] h-96" style={{
+          clipPath: "polygon(0 0,80% 0%,100% 100%,0% 100%)"
+        }}>
+          <div className="flex flex-col  md:gap-10">
+            <p className=" font-[500] text-5xl">Subscribe Newsletter</p>
+            <p className="text-gray-400">We will not promote spam</p>
+          </div>
+          <div className="w-[20vw]">
+          </div>
+        </div>
+        <div className="flex justify-end  items-center h-full ">
+          <div className="h-fit w-fit -translate-x-[30rem] z-[4] shadow-2xl shadow-black rounded-md">
+            <input className="bg-yellow-500 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black placeholder:text-xl " placeholder="Enter your email address"></input>
+            <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">Subscribe</button>
+          </div>
+        </div>
       </div>
-      <div className="w-[20vw]">
+    </div>
+    <div className="w-full grid grid-rows-[2fr_8fr] gap-4 mt-10 md:hidden border-y-2 border-y-complementary  py-10">
+      <div className="text-4xl font-bold  w-full h-full text-complementary text-center">
+        Newsletter
+      </div>
+      <div className="flex flex-col items-center gap-4">
+        <div className="text-center text-lg text-white font-complementry">
+          We Will not promote spam
+        </div>
+        <input className="w-[60%] rounded-md py-4 pl-4 placeholder:text-[#bcbcbc] placeholder:font-complementry" placeholder="Enter your email.">
+        </input>
+        <button className="rounded-md bg-[#ffb700] text-xl w-[60%] py-4 font-bold">
+          SIGN UP
 
+        </button>
       </div>
     </div>
-    <div className="flex justify-end  items-center h-full ">
-      <div className="h-fit w-fit -translate-x-[30rem] z-[4] shadow-2xl shadow-black rounded-md">
-        <input className="bg-yellow-500 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black placeholder:text-xl " placeholder="Enter your email address"></input>
-        <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">Subscribe</button>
-      </div>
-    </div>
-  </div>
+  </>
 }
 
-function Links() {
-
+function Footer() {
+  return <div className="bg-primary w-full">
+    <div className="w-full items-center border-b-2 border-b-complementary flex flex-col-reverse md:flex-row pb-10 pt-10" >
+      <div className="w-1/2 flex flex-col items-center">
+        <div className="flex flex-col gap-4 py-4">
+          <img src={minLogo.src} className="h-24 md:h-52"></img>
+          <div className="flex flex-row gap-2 md:items-start">
+            <p>LinkedIn</p>
+            <p>Facebook</p>
+            <p>Instagram</p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full md:w-1/2 grid grid-cols-2 gap-20 text-2xl text-white font-primary pt-4 justify-items-center md:justify-items-end md:pr-10">
+        <div className="flex flex-col gap-2">
+          <div className="text-complementary">Contact</div>
+          <div>WhatsApp</div>
+          <div>Support</div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="text-complementary">Quick Links</div>
+          <div>Home</div>
+          <div>Projects</div>
+          <div>Alumini</div>
+          <div>About</div>
+          <div>Support</div>
+        </div>
+      </div>
+    </div>
+    <div className="w-full h-20 text-white flex justify-center items-center">
+      <p>Copyright © 2023 Mathmatics Initiatives in Nepal</p>
+    </div>
+  </div>
 }
 
 function CCarousel() {
