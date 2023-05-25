@@ -2,14 +2,15 @@ import { Blog, PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import uuid from "react-uuid";
 import Navbar from "../../globalComponents/Navbar";
+import { useState } from "react";
 
 
 export default function Main(props: PageProps) {
   const { blogs, loggedIn } = props;
-
+  const [modalShown, setModalShown] = useState(false);
   return (
-    <>
-    <Navbar activeTab="Blogs"/>
+    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
+      <Navbar setModalShown={setModalShown} activeTab="Blogs" />
     <main className="w-full px-4 py-12 mx-auto max-w-7xl md:w-4/5">
           <h1 className="py-8 text-2xl font-bold">FEATURED BLOG</h1>
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
@@ -44,7 +45,7 @@ export default function Main(props: PageProps) {
             </a>
           </div>
     </main>
-    </>
+    </div>
   );
 }
 

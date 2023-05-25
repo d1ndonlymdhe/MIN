@@ -26,7 +26,9 @@ export default function Navbar(props: NavbarProps) {
       }
     }, [])
 
-    return <div className="flex justify-center">
+    return <div className="flex justify-center" onClick={(e) => {
+      e.stopPropagation()
+    }}>
       <div className="flex flex-col">
         <ul className={`flex flex-col gap-2 ${className ? className : ""}`}>
           {tabs.map((t) => {
@@ -60,7 +62,10 @@ export default function Navbar(props: NavbarProps) {
   }
 
   const NavbarModal = () => {
-    return <div className="absolute h-screen w-screen left-0  top-0 z-50 flex justify-center items-center backdrop-blur-sm overflow-hidden">
+    return <div className="absolute h-screen w-screen left-0  top-0 z-50 flex justify-center items-center backdrop-blur-sm overflow-hidden" onClick={() => {
+      setModalShown(false)
+      setShowNavbarModal(false)
+    }}>
       <ModalChild></ModalChild>
     </div>
   }
