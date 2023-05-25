@@ -1,5 +1,5 @@
 import { Bars3Icon, RectangleStackIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import uuid from "react-uuid";
 import Button from "./Button";
 import ModalWithBackdrop from "./ModalWithBackdrop";
@@ -10,59 +10,62 @@ const tabs = ["Home", "Blogs", "Projects", "Alumni", "About", "Contribute"] as c
 type NavbarProps = {
   activeTab: (typeof tabs)[number];
   className?: string;
+  setModalShown: React.Dispatch<SetStateAction<boolean>>
 };
 
 export default function Navbar(props: NavbarProps) {
-  const { activeTab, className } = props;
+  const { activeTab, className, setModalShown } = props;
   const [showNavbarModal, setShowNavbarModal] = useState(false);
-  //TODO do not show navbar modal when lg width is hit
-  // useEffect(()=>{
-  //     window.innerWidth
-  // })
-  const NavbarModal = () => {
-    return (
-      <ModalWithBackdrop
-        title="Menu"
-        isShown={showNavbarModal}
-        onClick={() => {
-          setShowNavbarModal(false);
-        }}
-      >
-        <div className="mx-20 flex justify-end">
-          <div className="flex flex-col">
-            <ul className={`flex flex-col gap-2 ${className ? className : ""}`}>
-              {tabs.map((t) => {
-                return (
-                  <li key={uuid()}>
-                    {/*TODO use next/link */}
-                    <a href={`/${t.toLowerCase()}`}>
-                      <div
-                        className={`grid place-items-center font-complementry text-white text-lg font-[700] hover:cursor-pointer ${
-                          activeTab == t
-                            ? "border-b-4 border-b-complementary bg-[#352F79] font-black"
-                            : ""
+
+  const ModalChild = () => {
+
+    useEffect(() => {
+      setModalShown(true);
+      return () => {
+        setModalShown(false);
+      }
+    }, [])
+
+    return <div className="flex justify-center">
+      <div className="flex flex-col">
+        <ul className={`flex flex-col gap-2 ${className ? className : ""}`}>
+          {tabs.map((t) => {
+            return (
+              <li key={uuid()}>
+                {/*TODO use next/link */}
+                <a href={`/${t.toLowerCase()}`}>
+                  <div
+                    className={`grid place-items-center font-complementry text-white text-lg font-[700] hover:cursor-pointer ${activeTab == t
+                      ? "border-b-4 border-b-complementary bg-[#352F79] font-black"
+                      : ""
                         }`}
-                      >
-                        <p className="mx-4 mt-6 mb-2">{t}</p>
-                      </div>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-            <Button
-              className="bg-secondary"
-              onClick={() => {
-                setShowNavbarModal(false);
-              }}
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      </ModalWithBackdrop>
-    );
-  };
+                  >
+                    <p className="mx-4 mt-6 mb-2">{t}</p>
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+        <Button
+          className="bg-secondary"
+          onClick={() => {
+            setShowNavbarModal(false);
+          }}
+        >
+          Close
+        </Button>
+      </div>
+    </div>
+  }
+
+  const NavbarModal = () => {
+    return <div className="absolute h-screen w-screen left-0  top-0 z-50 flex justify-center items-center backdrop-blur-sm overflow-hidden">
+      <ModalChild></ModalChild>
+    </div>
+  }
+
+
 
   return (
     <>
@@ -85,11 +88,10 @@ export default function Navbar(props: NavbarProps) {
                   {/*TODO use next/link */}
                   <a href={`/${(t == "Home" ? "" : t).toLowerCase()}`}>
                     <div
-                      className={`grid place-items-center text-[18px] font-secondary text-white font-[550] opacity-60 hover:cursor-pointer ${
-                        activeTab == t
+                      className={`grid place-items-center text-[18px] font-secondary text-white font-[550] opacity-60 hover:cursor-pointer ${activeTab == t
                           ? "border-b-4 border-b-complementary bg-[#352F79] font-black"
                           : ""
-                      }`}
+                        }`}
                     >
                       <p className="mx-8 mt-10 mb-4">{t}</p>
                     </div>
@@ -103,7 +105,7 @@ export default function Navbar(props: NavbarProps) {
       <nav className="grid grid-cols-2 lg:hidden">
         <div className="flex items-center justify-start font-primary text-[30px] font-[700] ml-5 mt-2">
           <Link href="/">
-          <Image
+            <Image
               src="/images/minLogox.png"
               alt="Picture of the author"
               width={150}
@@ -111,7 +113,7 @@ export default function Navbar(props: NavbarProps) {
             />
           </Link>
         </div>
-        <NavbarModal></NavbarModal>
+        {showNavbarModal && <NavbarModal></NavbarModal>}
         <div className="flex w-full justify-end items-center relative z-10">
           <Bars3Icon
             className="mx-4 h-10 w-10 fill-white mr-[30px]"

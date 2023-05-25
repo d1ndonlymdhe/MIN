@@ -18,7 +18,7 @@ import homeImage from "../../public/images/homeImage.jpg";
 import homeImageL from "../../public/images/homeImageL.jpg";
 import Navbar from "../globalComponents/Navbar";
 import Head from "next/head";
-import { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 
 const parentArr = ps.map(p => {
   return {
@@ -31,8 +31,9 @@ const parentArr = ps.map(p => {
 
 
 export default function App() {
+  const [modalShown, setModalShown] = useState(false);
   return (
-    <>
+    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
       <Head>
         <style>
           {
@@ -60,19 +61,21 @@ export default function App() {
           }
         </style>
       </Head>
-      <Intro></Intro>
+      <Intro setModalShown={setModalShown}></Intro>
       <ProjectHighlights></ProjectHighlights>
       <Testimonials></Testimonials>
       <Newsletter></Newsletter>
       <Footer></Footer>
-    </>)
+    </div>)
 }
 
-
-function Intro() {
+function Intro(props: {
+  setModalShown: React.Dispatch<SetStateAction<boolean>>
+}) {
+  const { setModalShown } = props;
   return <div className="h-screen w-screen bg1">
     <div className="z-[3] relative">
-      <Navbar activeTab="Home"></Navbar>
+      <Navbar setModalShown={setModalShown} activeTab="Home"></Navbar>
     </div>
     <div className="flex justify-center items-center bg-primary bg-opacity-50 h-screen w-screen z-[2] absolute top-0">
       <div className="grid  justify-center items-center font-secondary text-white h-fit w-fit md:gap-15 ">
@@ -112,7 +115,7 @@ function ProjectHighlights() {
         <span className="font-[500] text-lg text-center md:text-4xl">Projects Installed</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-4xl text-center md:text-8xl font-[700]">15<span className="text-complementary text-lg md:text-4xl">+</span>
+        <span className="text-4xl text-center md:text-8xl font-[700]">15<span className="text-complementary">+</span>
         </span>
         <span className="font-[500] text-lg text-center  md:text-4xl">
           Partners & Collaborators
