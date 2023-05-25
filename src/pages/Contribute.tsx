@@ -5,11 +5,13 @@ import homeImageL from "../../public/images/homeImageL.jpg";
 import Image from "next/image";
 import nokia from "../../public/images/nokia.png";
 import Footer from "../globalComponents/Footer";
+import { useState } from "react";
 
 const Contribute = () => {
+  const [modalShown, setModalShown] = useState(false)
   return (
-    <>
-      <Navbar activeTab="Contribute" />
+    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
+      <Navbar activeTab="Contribute" setModalShown={setModalShown} />
       <Background
         backgroundImg={homeImage.src}
         backgroundImg2={homeImageL.src}
@@ -90,7 +92,7 @@ const Contribute = () => {
       
       {/* footer */}
       <Footer/>
-    </>
+    </div>
   );
 };
 
