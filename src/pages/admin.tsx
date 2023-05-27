@@ -67,13 +67,13 @@ function Main(props: PageProps) {
                                             SetBlogView(true);
                                         }}
                                     >
-                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span> 
-                                        <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog,publishedBlogs,setPublishedBlogs,setUnPublishedBlogs,unPublishedBlogs }}></BlogControls>
+                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span>
+                                        <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog, publishedBlogs, setPublishedBlogs, setUnPublishedBlogs, unPublishedBlogs }}></BlogControls>
                                     </li>
                                 );
                             })}
                         </ul>
-                        
+
                         <ModalWithBackdrop title="Creating" isShown={createEBlog.isLoading}>
                             Loading
                         </ModalWithBackdrop>
@@ -107,7 +107,7 @@ function Main(props: PageProps) {
                                             SetBlogView(true);
                                         }}
                                     >
-                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span> <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog,publishedBlogs,setPublishedBlogs,setUnPublishedBlogs,unPublishedBlogs }}></BlogControls>
+                                        <span className="hover:cursor-pointer hover:underline">{b.title}</span> <BlogControls key={uuid()} {...{ blog: b, nBlog, setNblog, publishedBlogs, setPublishedBlogs, setUnPublishedBlogs, unPublishedBlogs }}></BlogControls>
                                     </li>
                                     //add blog controls delete, publish , show
                                 );
@@ -162,24 +162,23 @@ type BlogControlsProps = {
 
 function BlogControls(props: BlogControlsProps) {
     const { blog, nBlog, setNblog, publishedBlogs, setPublishedBlogs, setUnPublishedBlogs, unPublishedBlogs } = props;
-    const [deleteModalShown,setDeleteModalShown] = useState(false);
+    const [deleteModalShown, setDeleteModalShown] = useState(false);
     const deleteMutation = trpc.blog.deleteBlog.useMutation({
         onSuccess: (data) => {
             // window.location.href = "/admin"
-            if(data.blog.isTemp){
-                const temp = unPublishedBlogs.filter(b=>b.id!==blog.id);
+            if (data.blog.isTemp) {
+                const temp = unPublishedBlogs.filter(b => b.id !== blog.id);
                 setUnPublishedBlogs(temp)
-            }else{
-                const temp = publishedBlogs.filter(b=>b.id!==blog.id);
+            } else {
+                const temp = publishedBlogs.filter(b => b.id !== blog.id);
                 setPublishedBlogs(temp)
             }
         }
     })
 
     const DeleteModal = () => {
-        return <ModalWithBackdrop isShown={deleteModalShown} title="Delete Blog?" onClick={()=>{
-            if(!deleteMutation.isLoading)
-            {
+        return <ModalWithBackdrop isShown={deleteModalShown} title="Delete Blog?" onClick={() => {
+            if (!deleteMutation.isLoading) {
                 setDeleteModalShown(false);
             }
         }}>
@@ -187,13 +186,13 @@ function BlogControls(props: BlogControlsProps) {
             <p>This action is irriversible.</p>
             <div className="flex flex-row-reverse w-full">
                 <div className="flex justify-start gap-4 h-fit w-fit">
-                    <Button className="bg-red-400"  onClick={()=>{
-                        if(!deleteMutation.isLoading){
-                            deleteMutation.mutate({blogId:blog.id})
+                    <Button className="bg-red-400" onClick={() => {
+                        if (!deleteMutation.isLoading) {
+                            deleteMutation.mutate({ blogId: blog.id })
                         }
                     }}>Yes</Button>
-                    <Button className="bg-secondary" onClick={()=>{
-                        if(!deleteMutation.isLoading){
+                    <Button className="bg-secondary" onClick={() => {
+                        if (!deleteMutation.isLoading) {
                             setDeleteModalShown(false)
                         }
                     }}>Cancel</Button>
@@ -211,7 +210,7 @@ function BlogControls(props: BlogControlsProps) {
             e.preventDefault();
             alert("Preventing default")
         }}>
-            <Button className="bg-secondary" onClick={(e)=>{
+            <Button className="bg-secondary" onClick={(e) => {
                 e.stopPropagation()
                 setNblog(blog)
             }}>
@@ -219,8 +218,8 @@ function BlogControls(props: BlogControlsProps) {
             </Button>
         </a>
         <DeleteModal></DeleteModal>
-        <Button className="bg-secondary" onClick={()=>{
-            if(!deleteMutation.isLoading){
+        <Button className="bg-secondary" onClick={() => {
+            if (!deleteMutation.isLoading) {
                 setDeleteModalShown(true)
             }
         }}>
