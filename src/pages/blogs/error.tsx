@@ -1,3 +1,4 @@
+import img from "next/image";
 export default function Main() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-24">
@@ -29,7 +30,8 @@ export default function Main() {
           </a>
         </div>
         <div>
-          <Image
+          <img
+            alt="dunno"
             className="h-full w-full rounded-lg bg-gray-100"
             src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
           />

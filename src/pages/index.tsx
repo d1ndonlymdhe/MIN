@@ -32,7 +32,7 @@ const parentArr = ps.map(p => {
 export default function App() {
   const [modalShown, setModalShown] = useState(false);
   return (
-    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
+    <div className={modalShown ? "h-screen w-screen overflow-hidden bg-primary" : "bg-primary overflow-x-hidden"}>
       <Head>
         <style>
           {

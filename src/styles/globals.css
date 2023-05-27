@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: #3B3486;
+    overflow-x: hidden;
+}
 .prose :where(code):not(:where([class~="not-prose"] *))::after {
     content: "" !important
 }
@@ -68,6 +72,10 @@
     /* @apply text-blue-700 */
 }
 
+.blogContent mspace::after {
+    content: "\a";
+    white-space: pre;
+}
 .smallBlogContent {
     @apply px-4 text-left bg-transparent !important
 }

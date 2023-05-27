@@ -13,7 +13,7 @@ import uuid from "react-uuid";
 import Button from "../../../globalComponents/Button";
 import { trpc } from "../../../utils/trpc";
 import BlogRenderer from "../../../globalComponents/BlogRenderer";
-import ModalWithBackdrop, { ModalContextProvider } from "../../../globalComponents/ModalWithBackdrop";
+import ModalWithBackdrop from "../../../globalComponents/ModalWithBackdrop";
 export default function Main(props: PageProps) {
     const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
     const publishMutation = trpc.blog.publishBlog.useMutation({
@@ -28,7 +28,7 @@ export default function Main(props: PageProps) {
     })
     const [deleteWarning, setDeleteWarning] = useState(false);
     const [publishWarning, setPublishWarning] = useState(false)
-
+    const [modalShown, setModalShown] = useState(false);
     const DeleteWarning = () => {
         return <ModalWithBackdrop isShown={deleteWarning} title="Are you sure?" onClick={() => {
             if (!deleteMutation.isLoading) {
@@ -40,6 +40,7 @@ export default function Main(props: PageProps) {
                 <div className="flex flex-row gap-4">
                     <Button className="bg-red-400" onClick={() => {
                         if (!deleteMutation.isLoading) {
+                            console.log("delete mutating")
                             deleteMutation.mutate({ blogId: blog.id })
                         }
                     }}>{deleteMutation.isLoading && "Loading" || "DELETE"}</Button>
@@ -63,6 +64,7 @@ export default function Main(props: PageProps) {
                 <div className="flex flex-row gap-4">
                     <Button className="bg-secondary" onClick={() => {
                         if (!publishMutation.isLoading) {
+                            console.log("mutating")
                             publishMutation.mutate({ blogId: blog.id })
                         }
                     }}>{publishMutation.isLoading && "Loading" || "Publish"}</Button>
@@ -75,7 +77,7 @@ export default function Main(props: PageProps) {
             </div>
         </ModalWithBackdrop>
     }
-    return <ModalContextProvider>
+    return <div>
         <main className="w-screen min-h-screen bg-primary text-white">
             <TopBar></TopBar>
             <div className="h-full w-full py-2 px-2 grid grid-flow-rows md:grid-cols-[6fr_4fr] gap-4">
@@ -102,7 +104,7 @@ export default function Main(props: PageProps) {
                 </div>
             </div>
         </main>
-    </ModalContextProvider>
+    </div>
 
 
 }

@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next"
 import { useState } from "react";
 import uuid from "react-uuid";
 import Button from "../../globalComponents/Button";
-import { ModalContextProvider, useModalContext } from "../../globalComponents/ModalWithBackdrop";
+// import { ModalContextProvider, useModalContext } from "../../globalComponents/ModalWithBackdrop";
 import Navbar from "../../globalComponents/Navbar";
 import Spinner from "../../globalComponents/Spinner";
 import { trpc } from "../../utils/trpc";
@@ -28,12 +28,13 @@ export default function FeaturedBlogs(props: PageProps) {
             setBlogs([...blogs, ...data.blogs])
         }
     })
-    const modalState = useModalContext()
+    const [modalShown, setModalShown] = useState(false);
+    // const modalState = useModalContext()
     return (
-        <ModalContextProvider>
-            <main className={`bg-primary min-h-screen text-minWhite flex flex-col gap-10 ${modalState.isShown ? "h-screen overflow-hidden":""}`}>
+        <div>
+            <main className={`bg-primary min-h-screen text-minWhite flex flex-col gap-10 ${modalShown ? "h-screen w-screen overflow-hidden" : ""}`}>
                 {/* <div className="w-screen"> */}
-                <Navbar activeTab="Blogs"></Navbar>
+                <Navbar activeTab="Blogs" setModalShown={setModalShown}></Navbar>
                 {/* </div> */}
                 <div className="flex flex-col mx-10 lg:mx-20 gap-10 mb-4">
                     <p className="text-2xl md:text-4xl font-[700] font-complementry ">
@@ -66,7 +67,7 @@ export default function FeaturedBlogs(props: PageProps) {
                     </div>
                 </div>
             </main>
-        </ModalContextProvider>
+        </div>
     )
 }
 

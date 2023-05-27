@@ -10,7 +10,7 @@ import MemberCard from "../globalComponents/MemberCard";
 const About = () => {
   const [modalShown, setModalShown] = useState(false)
   return (
-    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""} >
+    <div className={modalShown ? "h-screen w-screen overflow-hidden bg-primary" : "bg-primary overflow-x-hidden"} >
       <Navbar activeTab='About' setModalShown={setModalShown} />
     <Background
         backgroundImg={AboutImg.src}

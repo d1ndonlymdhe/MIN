@@ -11,7 +11,7 @@ const Alumni = () => {
   // modalShown is needed to find if the navbar modal is shown in mobile mode the width and height of main parent div is set to 100vh to avoid scrolling
   const [modalShown, setModalShown] = useState(false);
   return (
-    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
+    <div className={modalShown ? "h-screen w-screen overflow-hidden bg-primary" : "bg-primary overflow-x-hidden"}>
       <Navbar activeTab="Alumni" setModalShown={setModalShown} />
       <Background
         backgroundImg={AlumniImg.src}

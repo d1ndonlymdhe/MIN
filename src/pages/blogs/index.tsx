@@ -54,27 +54,49 @@ type PageProps = {
   blogs: Blog[];
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (context) => {
-  const prisma = new PrismaClient();
-  const token = context.req.cookies.token;
+// export const getServerSideProps: GetServerSideProps<PageProps> = async (context) => {
+//   const prisma = new PrismaClient();
+//   const token = context.req.cookies.token;
+//   let loggedIn = false;
+//   if (token) {
+//     const dbToken = await prisma.token.findFirst({
+//       where: { value: token },
+//       include: { user: true },
+//     });
+//     if (dbToken) {
+//       loggedIn = true;
+//     }
+//   }
+//   const blogs = await prisma.blog.findMany();
+//   return {
+//     props: {
+//       loggedIn,
+//       blogs,
+//     },
+//   };
+// };
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies?.token;
+  const prisma = new PrismaClient()
+  const blogCount = 3;
   let loggedIn = false;
   if (token) {
-    const dbToken = await prisma.token.findFirst({
-      where: { value: token },
-      include: { user: true },
-    });
+    const dbToken = await prisma.token.findFirst({ where: { value: token } });
     if (dbToken) {
       loggedIn = true;
     }
   }
-  const blogs = await prisma.blog.findMany();
+  const latestBlogs = await prisma.blog.findMany({ where: { isTemp: false }, orderBy: { publishedOn: "desc" }, include: { author: { select: { name: true } } } })
+
   return {
     props: {
       loggedIn,
-      blogs,
-    },
-  };
-};
+      blogs: latestBlogs.reverse().slice(0 - blogCount).reverse()
+    }
+  }
+}
 
 function underscore(str: string) {
   return str.split(" ").join("_")

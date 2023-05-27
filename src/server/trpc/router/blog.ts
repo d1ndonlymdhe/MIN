@@ -134,6 +134,7 @@ export const blogRouter = router({
         })
     }),
     publishBlog: publicProcedure.input(z.object({ blogId: z.string() })).mutation(async ({ input, ctx }) => {
+        console.log("mutating")
         const prisma = ctx.prisma;
         const { blogId } = input;
         const token = ctx.req.cookies?.token;

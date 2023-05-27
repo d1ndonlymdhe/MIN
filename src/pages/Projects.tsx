@@ -10,7 +10,7 @@ import { useState } from "react";
 const projects = () => {
   const [modalShown, setModalShown] = useState(false)
   return (
-    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
+    <div className={modalShown ? "h-screen w-screen overflow-hidden bg-primary" : "bg-primary overflow-x-hidden"}>
       <Navbar activeTab="Projects" setModalShown={setModalShown} />
       <Background
         backgroundImg={homeImage.src}

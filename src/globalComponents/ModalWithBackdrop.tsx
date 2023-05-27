@@ -2,18 +2,18 @@ import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 
 
-type modalContextType = {
-    isShown: boolean
-}
-const modalContext = createContext<modalContextType>({ isShown: false })
-const modalUpdateContext = createContext((newState: modalContextType) => { })
+// type modalContextType = {
+//     isShown: boolean
+// }
+// const modalContext = createContext<modalContextType>({ isShown: false })
+// const modalUpdateContext = createContext((newState: modalContextType) => { })
 
-export function useModalContext() {
-    return useContext(modalContext);
-}
-export function useModalUpdateContext() {
-    return useContext(modalUpdateContext);
-}
+// export function useModalContext() {
+//     return useContext(modalContext);
+// }
+// export function useModalUpdateContext() {
+//     return useContext(modalUpdateContext);
+// }
 
 
 
@@ -25,28 +25,28 @@ type ModalWithBackdropProps = {
 }
 
 
-export function ModalContextProvider(props: React.PropsWithChildren) {
-    const { children } = props;
-    const [modalState, setModalState] = useState<modalContextType>({ isShown: false });
+// export function ModalContextProvider(props: React.PropsWithChildren) {
+//     const { children } = props;
+//     const [modalState, setModalState] = useState<modalContextType>({ isShown: false });
 
-    function updateState(newState: any) {
-        console.log("called")
-        setModalState(newState);
-    }
-    return <modalContext.Provider value={modalState}>
-        <modalUpdateContext.Provider value={(newState: typeof modalState) => { updateState(newState) }}>
-            {children}
-        </modalUpdateContext.Provider>
-    </modalContext.Provider>
-}
+//     function updateState(newState: any) {
+//         console.log("called")
+//         setModalState(newState);
+//     }
+//     return <modalContext.Provider value={modalState}>
+//         <modalUpdateContext.Provider value={(newState: typeof modalState) => { updateState(newState) }}>
+//             {children}
+//         </modalUpdateContext.Provider>
+//     </modalContext.Provider>
+// }
 
 
 
 export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBackdropProps>) {
     const { onClick, title, className, isShown } = props;
     // const [modalState,setModalState] = useState<modalContextType>({isShown:iSh});
-    const modalState = useModalContext()
-    const setModalState = useModalUpdateContext()
+    // const modalState = useModalContext()
+    // const setModalState = useModalUpdateContext()
     const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 })
     useEffect(() => {
         console.log("changed")

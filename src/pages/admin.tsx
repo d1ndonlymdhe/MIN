@@ -11,7 +11,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 
 import dynamic from "next/dist/shared/lib/dynamic";
 import BlogRenderer from "../globalComponents/BlogRenderer";
-import ModalWithBackdrop, { ModalContextProvider, useModalContext, useModalUpdateContext } from "../globalComponents/ModalWithBackdrop";
+import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
 import Input from "../globalComponents/Input";
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor"),
@@ -21,10 +21,10 @@ const MDPreview = dynamic(() => import("@uiw/react-markdown-preview"), { ssr: fa
 
 
 export default function OuterMain(props: PageProps) {
-    return <ModalContextProvider>
+    return (
         <Main {...props}>
         </Main>
-    </ModalContextProvider>
+    )
 }
 
 
@@ -37,9 +37,10 @@ function Main(props: PageProps) {
     const [blogView, SetBlogView] = useState(false);
     const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
     const [createMode, setCreateMode] = useState(hasEdit);
+    const [modalShown, setModalShown] = useState(false);
     //was new blog now whatever blog is being edited
     const [nBlog, setNblog] = useState<Blog | null>(hasEdit ? editThis : null)
-    const modalState = useModalContext()
+    // const modalState = useModalContext()
     const createEBlog = trpc.blog.createEmptyBlog.useMutation({
         onSuccess: (data) => {
             setCreateMode(true)
@@ -48,7 +49,7 @@ function Main(props: PageProps) {
         },
     })
     return (
-        <main className={`w-screen bg-primary text-white ${modalState.isShown ? "" : ""}`}>
+        <main className={`w-screen bg-primary text-white ${modalShown ? "h-screen w-screen overflow-hidden" : ""}`}>
             <TopBar></TopBar>
             <div className="grid-flow-cols grid h-full min-h-[90vh] w-full justify-items-center gap-4 bg-primary py-4 px-4  ">
                 <div className="flex flex-row gap-10">
@@ -399,7 +400,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
                     <input hidden type={"file"} accept="image/*" ref={imgInputRef}></input>
                 </label>
                 <div className="mx-2">
-                    <div className="h-full w-full">
+                    <div className="h-full w-full h">
                         <input
                             value={title}
                             type="text"
@@ -409,7 +410,6 @@ function CreateBlogView(props: CreateBlogViewProps) {
                             className="rounded-xl w-full pl-2 bg-secondary font-primary text-5xl font-bold focus:outline-4 focus:outline-complementary"
                         ></input>
                     </div>
-
                 </div>
                 <div className="grid grid-cols-2 gap-4 mx-2 my-4">
                     <div className="grid grid-cols-[8fr_2fr]">
