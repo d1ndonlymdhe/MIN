@@ -18,6 +18,7 @@ import homeImageL from "../../public/images/homeImageL.jpg";
 import Navbar from "../globalComponents/Navbar";
 import Head from "next/head";
 import React, { SetStateAction, useState } from "react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 
 const parentArr = ps.map(p => {
   return {
@@ -101,7 +102,7 @@ function ProjectHighlights() {
             PROJECT HIGHLIGHTS
           </p>
         </div>
-        <CCarousel></CCarousel>
+        <Carousel2></Carousel2>
       </div>
     </div>
     <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[25vh] border-y-white border-y">
@@ -213,6 +214,92 @@ function Footer() {
     </div>
   </div>
 }
+
+
+
+function Carousel2() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  return <div className="flex flex-col gap-10">
+    <Carousel
+      renderArrowNext={
+        (onClickHandler, hasNext, label) => {
+          return <div
+            className="flex justify-end items-center top-0 right-0 md:right-40 w-fit h-full z-[2] absolute">
+            <button className="px-4 py-4 bg-secondary" onClick={onClickHandler}>
+              <ArrowRightIcon className="h-6 w-6 text-white"></ArrowRightIcon>
+            </button>
+          </div>
+        }
+      }
+      renderArrowPrev={
+        (onClickHandler, hasPrev, label) => {
+          return <div
+            className="flex justify-start items-center top-0 left-0 md:left-40 w-fit h-full z-[2] absolute">
+            <button className="px-4 py-4 bg-secondary" onClick={onClickHandler}>
+              <ArrowLeftIcon className="h-6 w-6 text-white"></ArrowLeftIcon>
+            </button>
+          </div>
+        }
+      }
+      showThumbs={false}
+      showStatus={false}
+      showIndicators={false}
+      selectedItem={currentSlide}
+      interval={1000}
+      animationHandler={"slide"}
+      showArrows={false}
+      onChange={(index) => {
+        console.log(index, currentSlide)
+        setCurrentSlide(index)
+      }}
+
+    >
+      {
+        parentArr.map((p, i) => {
+          return <div className="flex w-full h-fit justify-center text-black">
+            <div className="bg-white flex flex-row w-[70vw] h-[60vh]">
+              <div className="w-[20vw] h-full" style={{
+                backgroundImage: `url(${p.image})`,
+                backgroundSize: "cover"
+              }}>
+              </div>
+              <div className="w-[50vw] h-full flex flex-col px-10 py-10 items-start gap-4">
+                <p className="font-primary font-bold text-7xl text-left">
+                  Eric
+                  <br></br>
+                  Shrestha
+                </p>
+                <p className="font-secondary text-gray-500">
+                  Chief Operating Officer
+                </p>
+                <p className="text-left font-[600] font-complementry text-xl pt-10">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit non elit vitae varius. Sed egestas convallis vulputate. Aenean efficitur, leo nec sollicitudin tempus, orci massa commodo turpis, id dapibus ligula dui a nisl. Aliquam accumsan rhoncus tortor. Donec fermentum lacus ut odio hendrerit facilisis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut lobortis, risus vel posuere scelerisque, tellus lacus convallis mauris.
+                </p>
+              </div>
+            </div>
+          </div>
+        })
+      }
+    </Carousel>
+    <div className="w-full h-5 flex justify-center items-center">
+      <div className="grid grid-cols-[2fr_6fr_2fr] gap-4">
+        <div></div>
+        <div className="flex flex-row gap-2 justify-center items-center">
+          {
+            ps.map((p, i) => {
+              return <div className={`w-4 h-4 rounded-full ${i == currentSlide ? "bg-rose-600" : "bg-white"} cursor-pointer`} onClick={() => {
+                setCurrentSlide(i);
+              }} key={i}>
+              </div>
+            })
+          }
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+}
+
 
 function CCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0)
