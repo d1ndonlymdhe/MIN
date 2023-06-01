@@ -44,9 +44,7 @@ type ModalWithBackdropProps = {
 
 export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBackdropProps>) {
     const { onClick, title, className, isShown } = props;
-    // const [modalState,setModalState] = useState<modalContextType>({isShown:iSh});
-    // const modalState = useModalContext()
-    // const setModalState = useModalUpdateContext()
+
     const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 })
     useEffect(() => {
         console.log("changed")

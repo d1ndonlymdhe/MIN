@@ -8,6 +8,11 @@ import html from 'remark-html'
 
 export default function Post(props: any) {
     const blog = props.content as string;
+    const author = props.author;
+    const publishedOn = props.blog.publishedOn;
+    const comments = props.comments;
+    console.log(author, publishedOn, comments);
+    // const author = props.
     // console.log(blog)
     return <div className="w-screen flex justify-center">
         <div className="blogContent prose w-full md:w-[50vw]" dangerouslySetInnerHTML={{ __html: blog }} />
@@ -71,6 +76,7 @@ export const getServerSideProps: GetServerSideProps<
                         content: blog.content,
                         id: blog.id,
                         title: blog.title,
+                        publishedOn: blog.publishedOn
                     },
                     reactions,
                     comments: comments.map((c) => {
