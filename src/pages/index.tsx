@@ -69,7 +69,7 @@ export default function App() {
     </div>)
 }
 
-function Intro(props: {
+export function Intro(props: {
   setModalShown: React.Dispatch<SetStateAction<boolean>>
 }) {
   const { setModalShown } = props;

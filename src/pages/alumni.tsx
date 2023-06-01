@@ -6,19 +6,44 @@ import Footer from "../globalComponents/Footer";
 import Image from "next/image";
 import Chad from "../../public/images/chad.png";
 import AlumniCard from "../globalComponents/AlumniCard";
-
+import { Intro } from ".";
+import Head from "next/head";
+import homeImage from "../../public/images/homeImage.jpg";
+import homeImageL from "../../public/images/homeImageL.jpg";
 const Alumni = () => {
   // modalShown is needed to find if the navbar modal is shown in mobile mode the width and height of main parent div is set to 100vh to avoid scrolling
   const [modalShown, setModalShown] = useState(false);
   return (
     <div className={modalShown ? "h-screen w-screen overflow-hidden bg-primary" : "bg-primary overflow-x-hidden"}>
-      <Navbar activeTab="Alumni" setModalShown={setModalShown} />
-      <Background
-        backgroundImg={AlumniImg.src}
-        backgroundImg2={AlumniImg.src}
-        introText="Alumni"
-      />
-      <section className="mt-[27.8em] md:mt-[39.2em] bg-white">
+      <Head>
+        <style>
+          {
+            `
+                .bg1{
+                    background-image:url(${homeImage.src});
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: cover;
+                    width: 100vw;
+                    height: 80vh;
+
+                }
+                @media only screen and (min-width:768px){
+                    .bg1{
+                        background-image:url(${homeImageL.src});
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: cover;
+                        width: 100vw;
+                        height: 100vh;
+
+                    }
+                }`
+          }
+        </style>
+      </Head>
+      <Intro setModalShown={setModalShown}></Intro>
+      <section className=" bg-white">
         <AlumniCard />
         <AlumniCard />
         <AlumniCard />
