@@ -10,9 +10,9 @@ import {
 import { GetServerSideProps } from "next";
 import { useRef, useState } from "react";
 import uuid from "react-uuid";
-import Button from "../../globalComponents/Button";
-import { trpc } from "../../utils/trpc";
-import BlogRenderer from "../../globalComponents/BlogRenderer";
+import Button from "../../../globalComponents/Button";
+import { trpc } from "../../../utils/trpc";
+import BlogRenderer from "../../../globalComponents/BlogRenderer";
 export default function Main2(props: PageProps) {
   const { blog, loggedIn, author, comments, reactions, isLiked: liked, userId, username } = props
   const [isLiked, setIsLiked] = useState(liked);

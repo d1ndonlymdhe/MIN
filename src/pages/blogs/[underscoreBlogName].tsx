@@ -13,12 +13,14 @@ export default function Post(props: any) {
     const publishedOn = props.blog.publishedOn;
     const comments = props.comments;
     const title = props.blog.title as string;
+    const blogId = props.blog.id;
+    const authorId = props.blog.authorId;
     console.log(author, publishedOn, comments);
     // const author = props.
     // console.log(blog)
     return <>
         <div className="w-screen flex justify-center py-4 text-minWhite">
-            <div className=" md:w-fit flex flex-col">
+            <div className="md:w-fit flex flex-col">
                 <p className="text-6xl font-primary  text-left">
                     {title}
                 </p>
@@ -27,14 +29,28 @@ export default function Post(props: any) {
                         - {author}
                     </p>
                 </div>
+                <div className="h-1 w-[100%] bg-slate-800 rounded-full my-5">
+                </div>
+
+                <p className="w-[50vw] md:w-[40vw]">
+                    <img src={`/api/getBlogImage?blogId=${blogId}&authorId=${authorId}`} className="rounded-md"></img>
+                </p>
                 {/* <div className="w-full flex justify-center my-4"> */}
                 <div className="h-1 w-[100%] bg-slate-800 rounded-full my-5">
                 </div>
                 {/* </div> */}
-                <div className="blogContent  prose w-full md:w-[50vw]" dangerouslySetInnerHTML={{ __html: blog }} />
+                {/* <div className="blogContent  prose w-full md:w-[50vw]" dangerouslySetInnerHTML={{ __html: blog }} /> */}
+                <Blog content={blog}></Blog>
 
             </div>
         </div>
+    </>
+}
+
+
+function Blog(props: { content: string }) {
+    return <>
+        <div className="blogContent prose w-full md:w-[50vw]" dangerouslySetInnerHTML={{ __html: props.content }}></div>
     </>
 }
 
