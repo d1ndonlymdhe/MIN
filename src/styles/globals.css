@@ -6,6 +6,7 @@ body {
     background-color: #3B3486;
     overflow-x: hidden;
 }
+
 .prose :where(code):not(:where([class~="not-prose"] *))::after {
     content: "" !important
 }
@@ -14,6 +15,9 @@ body {
     content: "" !important
 }
 
+.blogContent {
+    @apply font-complementry;
+}
 .blogContent strong {
     @apply text-white
 }
@@ -39,27 +43,27 @@ body {
 }
 
 .blogContent h1 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent h2 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent h3 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent h4 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent h5 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent h6 {
-    @apply text-white font-primary
+    @apply text-slate-400 font-secondary
 }
 
 .blogContent img {
@@ -76,8 +80,10 @@ body {
     content: "\a";
     white-space: pre;
 }
+
 .smallBlogContent {
-    @apply px-4 text-left bg-transparent !important
+    @apply px-4 text-left bg-transparent;
+        @apply text-gray-500;
 }
 
 .smallBlogContent .base {
@@ -131,6 +137,7 @@ body {
 .smallBlogContent h6 {
     @apply text-white font-primary
 }
+
 .smallBlogContent img {
     @apply rounded-md
 }

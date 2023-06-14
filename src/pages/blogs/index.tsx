@@ -1,104 +1,128 @@
 import { Blog, PrismaClient } from "@prisma/client";
-import { GetServerSideProps } from "next";
-import uuid from "react-uuid";
-import Navbar from "../../globalComponents/Navbar";
+import { GetServerSideProps } from "next"
 import { useState } from "react";
+import uuid from "react-uuid";
+import Button from "../../globalComponents/Button";
+// import { ModalContextProvider, useModalContext } from "../../globalComponents/ModalWithBackdrop";
+import Navbar from "../../globalComponents/Navbar";
+import Spinner from "../../globalComponents/Spinner";
+import { trpc } from "../../utils/trpc";
 
 
-export default function Main(props: PageProps) {
-  const { blogs, loggedIn } = props;
-  const [modalShown, setModalShown] = useState(false);
-  return (
-    <div className={modalShown ? "h-screen w-screen overflow-hidden" : ""}>
-      <Navbar setModalShown={setModalShown} activeTab="Blogs" />
-    <main className="w-full px-4 py-12 mx-auto max-w-7xl md:w-4/5">
-          <h1 className="py-8 text-2xl font-bold">FEATURED BLOG</h1>
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                <div>
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1596496181871-9681eacf9764?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx"
-                      className="object-cover w-full h-56 mb-5 bg-center rounded"
-                      alt="image alt"
-                      loading="lazy"
-                    />
-                  </div>
-                  <p className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                    Math
-                  </p>
-                  <h2 className="mb-2 text-xl font-bold leading-snug text-gray-900">
-                    <a href="#" className="text-gray-900 hover:text-purple-700">
-                      Planning for Math 
-                    </a>
-                  </h2>
-                  <p className="mb-4 text-sm font-normal text-gray-600">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis delectus esse vel. At eos quas provident, explicabo facere numquam veritatis, laboriosam iure reprehenderit animi dolores!
-                  </p>
-                </div> 
-          </div>
-          <div className="flex flex-col items-center justify-center mt-12 space-x-0 space-y-2 md:space-x-2 md:space-y-0 md:flex-row">
-            <a href="#" className="w-full rounded-full btn btn-light btn-xl md:w-auto">
-              👈    
-            </a>
-            <a href="#" className="w-full rounded-full btn btn-light btn-xl md:w-auto">
-              👉    
-            </a>
-          </div>
-    </main>
-    </div>
-  );
-}
+type ClientBlog = (Blog & {
+    author: {
+        name: string;
+    };
+})
 
 type PageProps = {
-  loggedIn: boolean;
-  blogs: Blog[];
-};
+    blogs: ClientBlog[]
 
-// export const getServerSideProps: GetServerSideProps<PageProps> = async (context) => {
-//   const prisma = new PrismaClient();
-//   const token = context.req.cookies.token;
-//   let loggedIn = false;
-//   if (token) {
-//     const dbToken = await prisma.token.findFirst({
-//       where: { value: token },
-//       include: { user: true },
-//     });
-//     if (dbToken) {
-//       loggedIn = true;
-//     }
-//   }
-//   const blogs = await prisma.blog.findMany();
-//   return {
-//     props: {
-//       loggedIn,
-//       blogs,
-//     },
-//   };
-// };
+}
+
+export default function FeaturedBlogs(props: PageProps) {
+    const { blogs: b } = props;
+    const [blogs, setBlogs] = useState(b);
+    const loadMoreMutation = trpc.blog.getBlogs.useMutation({
+        onSuccess: (data) => {
+            setBlogs([...blogs, ...data.blogs])
+        }
+    })
+    const [modalShown, setModalShown] = useState(false);
+    // const modalState = useModalContext()
+    return (
+        <div>
+            <main className={`bg-primary min-h-screen text-minWhite flex flex-col gap-10 ${modalShown ? "h-screen w-screen overflow-hidden" : ""}`}>
+                {/* <div className="w-screen"> */}
+                <Navbar activeTab="Blogs" setModalShown={setModalShown}></Navbar>
+                {/* </div> */}
+                <div className="flex flex-col mx-10 lg:mx-20 gap-10 mb-4">
+                    <p className="text-2xl md:text-4xl font-[700] font-complementry ">
+                        FEATURED BLOGS
+                    </p>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3x gap-20">
+                        {
+                            blogs.map(b => {
+                                return <BlogPreview blog={b} key={uuid()}></BlogPreview>
+                            })
+                        }
+                    </div>
+                    <div className="w-full grid md::grid-cols-[4.5fr_1fr_4.5fr] items-center justify-items-center">
+                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden lg:block"></div> */}
+                        <div className="w-full"></div>
+
+                        <Button className="bg-secondary mx-2 md:w-fit w-full  text-md lg:text-lg" onClick={() => {
+                            if (!loadMoreMutation.isLoading) {
+                                loadMoreMutation.mutate({
+                                    from: blogs.length, to: blogs.length + 5, sortBy: {
+                                        property: "time"
+                                    }
+                                })
+                            }
+                        }}>{!loadMoreMutation.isLoading && "Load More" || <div className="mx-2 my-2">
+                            <Spinner></Spinner>
+                        </div>}</Button>
+                        <div className="w-full"></div>
+                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden md:block"></div> */}
+                    </div>
+                </div>
+            </main>
+        </div>
+    )
+}
+
+function BlogPreview(props: { blog: ClientBlog }) {
+    const { blog } = props;
+    return <a href={`/blogs/${blog.titleLowered.replaceAll(" ", "_")}`}>
+        <div className="bg-secondary rounded-lg h-[40vh] w-full flex-col hover:cursor-pointer">
+            <div style={{
+                backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`,
+                backgroundSize: "cover"
+            }} className="h-[25vh] w-full rounded-t-md">
+            </div>
+            {/* <div className="flex h-[10vh] w-full justify-start items-center"> */}
+            <div className="grid grid-cols-2 h-[15vh] w-full">
+                <div className="flex justify-start items-center mx-4">
+                    <p className="font-[700] font-complementry text-3xl">{blog.title}</p>
+                </div>
+                <div className="flex justify-end">
+                    <div className="grid grid-rows-2 justify-center items-center mx-4 gap-2 font-bold">
+                        <div className="flex items-end justify-end h-full w-full">
+                            <p className="">
+                                {(new Date(Number(blog.publishedOn))).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <div className="flex items-start h-full w-full">
+                            <p className="">
+                                {blog.author.name}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* </div> */}
+        </div>
+    </a>
+}
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = context.req.cookies?.token;
-  const prisma = new PrismaClient()
-  const blogCount = 3;
-  let loggedIn = false;
-  if (token) {
-    const dbToken = await prisma.token.findFirst({ where: { value: token } });
-    if (dbToken) {
-      loggedIn = true;
+    const token = context.req.cookies?.token;
+    const prisma = new PrismaClient()
+    const blogCount = 3;
+    let loggedIn = false;
+    if (token) {
+        const dbToken = await prisma.token.findFirst({ where: { value: token } });
+        if (dbToken) {
+            loggedIn = true;
+        }
     }
-  }
-  const latestBlogs = await prisma.blog.findMany({ where: { isTemp: false }, orderBy: { publishedOn: "desc" }, include: { author: { select: { name: true } } } })
+    const latestBlogs = await prisma.blog.findMany({ where: { isTemp: false }, orderBy: { publishedOn: "desc" }, include: { author: { select: { name: true } } } })
 
-  return {
-    props: {
-      loggedIn,
-      blogs: latestBlogs.reverse().slice(0 - blogCount).reverse()
+    return {
+        props: {
+            loggedIn,
+            blogs: latestBlogs.reverse().slice(0 - blogCount).reverse()
+        }
     }
-  }
 }
-
-function underscore(str: string) {
-  return str.split(" ").join("_")
-}
-
