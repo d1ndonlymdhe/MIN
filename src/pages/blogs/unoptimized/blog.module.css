@@ -1,0 +1,144 @@
+.prose :where(code):not(:where([class~="not-prose"] *))::after {
+    content: "" !important
+}
+
+.prose :where(code):not(:where([class~="not-prose"] *))::before {
+    content: "" !important
+}
+
+.blogContent strong {
+    @apply text-white
+}
+
+.blogContent p {
+    @apply text-white
+}
+
+.blogContent ul {
+    @apply list-disc
+}
+
+.blogContent ol {
+    @apply list-decimal
+}
+
+.blogContent li {
+    @apply text-white
+}
+
+.blogContent li::marker {
+    @apply text-white
+}
+
+.blogContent h1 {
+    @apply text-white font-primary
+}
+
+.blogContent h2 {
+    @apply text-white font-primary
+}
+
+.blogContent h3 {
+    @apply text-white font-primary
+}
+
+.blogContent h4 {
+    @apply text-white font-primary
+}
+
+.blogContent h5 {
+    @apply text-white font-primary
+}
+
+.blogContent h6 {
+    @apply text-white font-primary
+}
+
+.blogContent img {
+    @apply rounded-md
+}
+
+.blogContent a {
+    --color-accent-fg: rgb(29, 210, 216);
+    overflow: hidden !important;
+    /* @apply text-blue-700 */
+}
+
+.blogContent mspace::after {
+    content: "\a";
+    white-space: pre;
+}
+
+.smallBlogContent {
+    @apply px-4 text-left bg-transparent !important
+}
+
+.smallBlogContent .base {
+    @apply hidden
+}
+
+.smallBlogContent strong {
+    @apply text-white
+}
+
+.smallBlogContent p {
+    @apply text-white
+}
+
+.smallBlogContent ul {
+    @apply list-disc
+}
+
+.smallBlogContent ol {
+    @apply list-decimal
+}
+
+.smallBlogContent li {
+    @apply text-white
+}
+
+.smallBlogContent li::marker {
+    @apply text-white
+}
+
+.smallBlogContent h1 {
+    @apply text-white font-primary;
+}
+
+.smallBlogContent h2 {
+    @apply text-white font-primary
+}
+
+.smallBlogContent h3 {
+    @apply text-white font-primary
+}
+
+.smallBlogContent h4 {
+    @apply text-white font-primary
+}
+
+.smallBlogContent h5 {
+    @apply text-white font-primary
+}
+
+.smallBlogContent h6 {
+    @apply text-white font-primary
+}
+
+.smallBlogContent img {
+    @apply rounded-md
+}
+
+.smallBlogContent a {
+    --color-accent-fg: rgb(29, 210, 216);
+    overflow: hidden !important;
+    /* @apply text-blue-700 */
+}
+
+.smallBlogContent {
+    @apply px-4 text-left bg-transparent !important
+}
+
+.smallBlogContent .base {
+    @apply hidden
+}
