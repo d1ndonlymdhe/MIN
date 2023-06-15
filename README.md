@@ -10,7 +10,10 @@
 9. run npx prisma db push (run this when you change schema)
 8. Edit code
 9. Push code
-
+To test s3 api use locastack [localstack](https://docs.localstack.cloud/overview/)
+Add S3_ENDPOINT=http://localhost:4566
+S3_ACCESS_KEY=test
+S3_SECRET_KEY=test to .env
 ## Start Your Own Server
 
     ```bash

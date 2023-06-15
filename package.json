@@ -23,6 +23,7 @@
     "@trpc/server": "^10.0.0",
     "@types/formidable": "^2.0.5",
     "@uiw/react-md-editor": "^3.20.4",
+    "aws-sdk": "^2.1397.0",
     "formidable": "^2.1.1",
     "jimp": "^0.22.4",
     "js-cookie": "^3.0.1",

@@ -42,4 +42,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 /files/*
-prisma/prisma/sqlite.db
+/prisma/prisma/sqlite.db
