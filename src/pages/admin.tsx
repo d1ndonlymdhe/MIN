@@ -13,6 +13,7 @@ import dynamic from "next/dist/shared/lib/dynamic";
 import BlogRenderer from "../globalComponents/BlogRenderer";
 import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
 import Input from "../globalComponents/Input";
+import { getBlogContentImage } from "./blogs/[underscoreBlogName]";
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor"),
     { ssr: false }
@@ -281,7 +282,9 @@ function AddImageView(props: AddImageViewProps) {
                                 if (success) {
                                     console.log("here")
                                     console.log(nameRef, srcRef)
-                                    setContent(`${content} \n ![${imgName}](${`/api/getBlogContentImage?blogId=${blogId}&imageId=${newImgId}&authorId=${newBlog.authorId}`})`);
+                                    // setContent(`${content} \n ![${imgName}](${`/api/getBlogContentImage?blogId=${blogId}&imageId=${newImgId}&authorId=${newBlog.authorId}`})`);
+                                    setContent(`${content} \n ![${imgName}](${getBlogContentImage(blogId, newImgId)})`);
+
                                     setUploadLoading(false)
                                     SetUpModal(false)
                                 }

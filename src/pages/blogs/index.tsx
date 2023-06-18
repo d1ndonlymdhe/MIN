@@ -7,6 +7,7 @@ import Button from "../../globalComponents/Button";
 import Navbar from "../../globalComponents/Navbar";
 import Spinner from "../../globalComponents/Spinner";
 import { trpc } from "../../utils/trpc";
+import { getBlogImage } from "./[underscoreBlogName]";
 
 
 type ClientBlog = (Blog & {
@@ -76,7 +77,7 @@ function BlogPreview(props: { blog: ClientBlog }) {
     return <a href={`/blogs/${blog.titleLowered.replaceAll(" ", "_")}`}>
         <div className="bg-secondary rounded-lg h-[40vh] w-full flex-col hover:cursor-pointer">
             <div style={{
-                backgroundImage: `url(/api/getBlogImage?blogId=${blog.id}&authorId=${blog.authorId})`,
+                backgroundImage: `url(${getBlogImage(blog.id)})`,
                 backgroundSize: "cover"
             }} className="h-[25vh] w-full rounded-t-md">
             </div>

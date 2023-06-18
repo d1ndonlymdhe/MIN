@@ -15,9 +15,10 @@ export default function Post(props: any) {
     const title = props.blog.title as string;
     const blogId = props.blog.id;
     const authorId = props.blog.authorId;
-    console.log(author, publishedOn, comments);
+    // console.log(author, publishedOn, comments);
     // const author = props.
     // console.log(blog)
+
     return <>
         <div className="w-screen flex justify-center py-4 text-minWhite">
             <div className="md:w-fit flex flex-col">
@@ -33,7 +34,7 @@ export default function Post(props: any) {
                 </div>
 
                 <p className="w-[50vw] md:w-[40vw]">
-                    <img src={`/api/getBlogImage?blogId=${blogId}&authorId=${authorId}`} className="rounded-md"></img>
+                    <img src={getBlogImage(blogId)} className="rounded-md"></img>
                 </p>
                 {/* <div className="w-full flex justify-center my-4"> */}
                 <div className="h-1 w-[100%] bg-slate-800 rounded-full my-5">
@@ -143,3 +144,16 @@ export const getServerSideProps: GetServerSideProps<
         },
     };
 };
+
+export function getBlogImage(blogId: string) {
+    const bucketname = "my-bucket";
+    const bucketUrl = "http://localhost:9444"
+    return `${bucketUrl}/${bucketname}/${blogId}.jpg`;
+    // return `/api/getBlogImage?blogId=${blogId}`
+}
+
+export function getBlogContentImage(blogId: string, imageId: string) {
+    const bucketname = "my-bucket";
+    const bucketUrl = "http://localhost:9444";
+    return `${bucketUrl}/${bucketname}/${blogId}/${imageId}.jpg`;
+}

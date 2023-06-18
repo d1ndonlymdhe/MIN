@@ -6,6 +6,7 @@ import S3 from "aws-sdk/clients/s3"
 const endpoint = process.env.S3_ENDPOINT;
 const acKey = process.env.S3_ACCESS_KEY;
 const seKey = process.env.S3_SECRET_KEY;
+const bucketName = "my-bucket"
 const s3 = new S3({
     endpoint: endpoint,
     accessKeyId: acKey,
@@ -51,7 +52,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         res.end()
                                     }
                                     s3.putObject({
-                                        Bucket: "my-bucket",
+                                        Bucket: bucketName,
                                         Key: `${blogId}.jpg`,
                                         Body: await image.quality(70).getBufferAsync("image/jpeg")
 
@@ -59,7 +60,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         console.log(err, data)
                                         console.log("sent")
                                     })
-                                    image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
+                                    // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
                                 })
                                 res.status(200).json({ success: true })
                                 res.end()
@@ -72,7 +73,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         res.end()
                                     }
                                     s3.putObject({
-                                        Bucket: "my-bucket",
+                                        Bucket: bucketName,
                                         Key: `${blogId}.jpg`,
                                         Body: await image.quality(70).getBufferAsync("image/jpeg")
 
@@ -81,7 +82,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         console.log("sent")
                                     })
 
-                                    image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
+                                    // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
                                 })
                             }
                             else {
@@ -92,7 +93,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         res.end()
                                     }
                                     s3.putObject({
-                                        Bucket: "my-bucket",
+                                        Bucket: bucketName,
                                         Key: `${blogId}.jpg`,
                                         Body: await image.quality(70).getBufferAsync("image/jpeg")
 
@@ -100,7 +101,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                         console.log(err, data)
                                         console.log("sent")
                                     })
-                                    image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
+                                    // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/blogImage.jpg`)
                                 })
                             }
                             await prisma.blog.update({
@@ -113,8 +114,6 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                             })
                             res.status(200).json({ success: true, blogId: blogId })
                             res.end()
-
-
                         }
                     } else {
                         res.status(500).json({ error: "No playlist" })
