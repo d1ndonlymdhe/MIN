@@ -66,9 +66,7 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
     }, []);
     return <>
         {
-            isShown && <div style={{
-                top:`${scrollPos.y}px`
-            }} className={`absolute h-screen w-screen left-0 z-[100] flex justify-center items-center backdrop-blur-sm overflow-hidden`} onClick={() => { onClick && onClick() }}>
+            isShown && <div className={`absolute h-screen w-screen left-0 z-[100] top-0 flex justify-center items-center backdrop-blur-sm overflow-hidden`} onClick={() => { onClick && onClick() }}>
                 <div className={`bg-[#282828] flex flex-col justify-center items-center px-2 pb-2 rounded-xl ${className}`} onClick={(e) => { e.stopPropagation() }}>
                     <div className="flex flex-col px-4 py-2 my-2 w-full gap-5">
                         <div className="text-left text-white text-2xl font-bold mb-2">{title}</div>

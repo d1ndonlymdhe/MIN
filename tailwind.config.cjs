@@ -19,7 +19,8 @@ module.exports = {
         primary: ["'Lato'", '"sans-serif"'],
         complementry: ["'Montserrat'", 'sans-serif'],
         white: ["'Playfair Display'", 'serif'],
-        secondary: ["'Poppins'", "sans-serif"]
+        secondary: ["'Poppins'", "sans-serif"],
+        inter: ["'Inter'", "sans-serif"]
       }
     },
   },
