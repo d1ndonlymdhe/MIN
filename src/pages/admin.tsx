@@ -5,8 +5,8 @@ import uuid from "react-uuid";
 import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import Button from "../globalComponents/Button";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
+// import remarkMath from "remark-math";
+// import rehypeKatex from "rehype-katex";
 import "@uiw/react-md-editor/markdown-editor.css";
 
 import dynamic from "next/dist/shared/lib/dynamic";
@@ -421,11 +421,16 @@ function CreateBlogView(props: CreateBlogViewProps) {
                         <AddImageView {...{ content, setContent, newBlog }}></AddImageView>
                     </div>
                     <div className="text-left">
+                        {/* <MDPreview style={{
+                            background: "black",
+                            color: "white",
+                            overflow: "scroll"
+                        }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview> */}
                         <MDPreview style={{
                             background: "black",
                             color: "white",
                             overflow: "scroll"
-                        }} source={content} className="prose rounded-md blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+                        }} source={content} className="prose rounded-md blogContent"></MDPreview>
                     </div>
                 </div>
                 {

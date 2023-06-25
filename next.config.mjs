@@ -5,6 +5,14 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 import removeImports from "next-remove-imports"
+
+
+const removeImportsFun = removeImports({})
+
+export default removeImportsFun({
+})
+
+
 /** @type {import("next").NextConfig} */
 // const config = {
 //   reactStrictMode: true,
@@ -14,4 +22,3 @@ import removeImports from "next-remove-imports"
 //     defaultLocale: "en",
 //   },
 // };
-export default removeImports({});
