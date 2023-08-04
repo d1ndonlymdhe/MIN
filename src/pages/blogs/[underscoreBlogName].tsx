@@ -253,14 +253,14 @@ type PageProps = {
 
 
 export function getBlogImage(blogId: string) {
-    const bucketname = "my-bucket";
-    const bucketUrl = "http://localhost:9444"
-    return `${bucketUrl}/${bucketname}/${blogId}.jpg`;
-    // return `/api/getBlogImage?blogId=${blogId}`
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME
+
+    return `https://res.cloudinary.com/${cloudName}/image/upload/blogs/${blogId}/blogImage.jpg`
+
 }
 
 export function getBlogContentImage(blogId: string, imageId: string) {
-    const bucketname = "my-bucket";
-    const bucketUrl = "http://localhost:9444";
-    return `${bucketUrl}/${bucketname}/${blogId}/${imageId}.jpg`;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME
+    return `https://res.cloudinary.com/${cloudName}/image/upload/blogs/${blogId}/images/${imageId}.jpg`
 }

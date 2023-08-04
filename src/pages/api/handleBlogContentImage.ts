@@ -1,18 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import formidable from "formidable"
 import { PrismaClient } from "@prisma/client"
-import Jimp from "jimp"
-import S3 from "aws-sdk/clients/s3"
-const endpoint = process.env.S3_ENDPOINT;
-const acKey = process.env.S3_ACCESS_KEY;
-const seKey = process.env.S3_SECRET_KEY;
-const bucketName = "my-bucket"
-const s3 = new S3({
-    endpoint: endpoint,
-    accessKeyId: acKey,
-    secretAccessKey: seKey,
-    s3ForcePathStyle: true,
-});
+import { v2 as cloudinary } from "cloudinary"
+
+const apiKey = process.env.CLOUDINARY_API_KEY
+const apiSecret = process.env.CLOUDINARY_SECRET_KEY
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME
+cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret
+})
+
 export default async function handleBlogContentImage(req: NextApiRequest, res: NextApiResponse) {
     const token = req.cookies.token
     console.log("token = ", token)
@@ -41,84 +40,27 @@ export default async function handleBlogContentImage(req: NextApiRequest, res: N
                             const ext = getExtension(fileName)
                             const imgName = fileName.replace(`.${ext}` || "", "");
                             const newBlogImage = await prisma.blogImage.create({ data: { fulfilled: true, blogId: blog.id, name: imgName } })
-                            //if file is jpeg save as jpg
-                            if (ext == "jpeg") {
-                                Jimp.read(file.filepath, async (err, image) => {
-                                    if (err) {
-                                        res.status(500).json({ error: "unknown" })
-                                        res.end()
-                                    }
-                                    // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/images/${newBlogImage.id}/${imgName}.jpg`)
-                                    s3.putObject({
-                                        Bucket: bucketName,
-                                        Key: `${blogId}/${newBlogImage.id}.jpg`,
-                                        Body: await image.quality(70).getBufferAsync("image/jpeg")
+                            cloudinary.uploader.upload(file.filepath, {
+                                public_id: `blogs/${blogId}/images/${newBlogImage.id}`,
+                                format: "jpg"
+                            }, () => {
 
-                                    }).send((err, data) => {
-                                        console.log(err, data)
-                                        console.log("sent")
-                                        if (!err) {
-                                            res.status(200).json({ success: true, newImgId: newBlogImage.id, blogId: blogId, imgName: imgName })
-                                            res.end()
-                                        }
-                                    })
-                                })
-                                // res.status(200).json({ success: true })
-                                // res.end()
-                            }
-                            //if file is not jpg or jpeg convert to jpg
-                            if (ext !== "jpg") {
-                                Jimp.read(file.filepath, async (err, image) => {
-                                    if (err) {
-                                        res.status(500).json({ error: "unknown" })
-                                        res.end()
-                                    }
-                                    s3.putObject({
-                                        Bucket: bucketName,
-                                        Key: `${blogId}/${newBlogImage.id}.jpg`,
-                                        Body: await image.quality(70).getBufferAsync("image/jpeg")
-                                    }).send((err, data) => {
-                                        console.log(err, data)
-                                        console.log("sent")
-                                        if (!err) {
-                                            res.status(200).json({ success: true, newImgId: newBlogImage.id, blogId: blogId, imgName: imgName })
-                                            res.end()
-                                        }
-                                    })
-                                    // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/images/${newBlogImage.id}/${imgName}.jpg`)
-                                })
-                            }
-                            //if jpg save as is
-                            Jimp.read(file.filepath, async (err, image) => {
-                                if (err) {
-                                    res.status(500).json({ error: "unknown" })
-                                    res.end()
-                                }
-                                // image.quality(70).write(`./files/${dbToken.user.id}/blogs/${blog.id}/images/${newBlogImage.id}/${imgName}.jpg`)
-                                s3.putObject({
-                                    Bucket: bucketName,
-                                    Key: `${blogId}/${newBlogImage.id}.jpg`,
-                                    Body: await image.quality(70).getBufferAsync("image/jpeg")
-
-                                }).send((err, data) => {
-                                    console.log(err, data)
-                                    console.log("sent")
-                                    if (!err) {
-                                        res.status(200).json({ success: true, newImgId: newBlogImage.id, blogId: blogId, imgName: imgName })
-                                        res.end()
-                                    }
+                                res.status(200).json({
+                                    imgName,
+                                    blogId,
+                                    newImgId: newBlogImage.id,
+                                    success: true
                                 })
                             })
-
+                        } else {
+                            res.status(500).json({ error: "No Blog" })
+                            res.end()
                         }
-                    } else {
-                        res.status(500).json({ error: "No Blog" })
+                    }
+                    else {
+                        res.status(500).json({ error: "No plId or file" })
                         res.end()
                     }
-                }
-                else {
-                    res.status(500).json({ error: "No plId or file" })
-                    res.end()
                 }
             })
         } else {

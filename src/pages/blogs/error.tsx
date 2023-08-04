@@ -1,4 +1,5 @@
 import img from "next/image";
+
 export default function Main() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-24">
