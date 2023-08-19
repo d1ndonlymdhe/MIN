@@ -253,8 +253,8 @@ function AddImageView(props: AddImageViewProps) {
         const fileRef = useRef<HTMLInputElement>(null)
         return <>
             <p>Add image from internet</p>
-            <Input ref={nameRef} name="imageMame" placeholder="Enter image name"></Input>
-            <Input ref={srcRef} name="imageSrc" placeholder="Paste link here"></Input>
+            <Input ref={nameRef} name="imageMame" className="text-black" placeholder="Enter image name"></Input>
+            <Input ref={srcRef} name="imageSrc" className="text-black" placeholder="Paste link here"></Input>
             <hr></hr>
             <p>or</p>
             <p>Add local image</p>

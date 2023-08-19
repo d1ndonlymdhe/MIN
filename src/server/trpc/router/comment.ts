@@ -79,5 +79,33 @@ export const commentRouter = router({
         throw new TRPCError({
             code: "BAD_REQUEST"
         })
+    }),
+    deleteComment: publicProcedure.input(z.object({ commentId: z.string(), blogId: z.string() })).mutation(async ({ input, ctx }) => {
+        const { prisma, req } = ctx;
+        const { token } = req.cookies;
+        const { commentId, blogId } = input;
+        if (token) {
+            const dbToken = await prisma.token.findFirst({ where: { value: token } })
+            if (dbToken) {
+                const dbuserId = dbToken.userId;
+                //check if user owns blog;
+                const dbBlog = await prisma.blog.findFirst({ where: { AND: [{ authorId: dbuserId }, { id: blogId }] } });
+                if (dbBlog) {
+                    //check if comment exists on blog;
+                    const dbComment = await prisma.comment.findFirst({ where: { AND: [{ id: commentId }, { blogId: blogId }] } });
+                    if (dbComment) {
+                        console.log("deleting");
+                        await prisma.comment.delete({ where: { id: commentId } });
+                        return {
+                            success: true,
+                            commentId
+                        }
+                    }
+                }
+            }
+        }
+        throw new TRPCError({
+            code: "BAD_REQUEST"
+        })
     })
 })

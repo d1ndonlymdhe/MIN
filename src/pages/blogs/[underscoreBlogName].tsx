@@ -5,12 +5,14 @@ import { BlogReaction, CommentReaction, PrismaClient } from "@prisma/client"
 import { remark } from 'remark'
 import html from 'remark-html'
 import remarkGfm from "remark-gfm";
-import { PaperAirplaneIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import Navbar from "../../globalComponents/Navbar";
 import { useRef, useState } from "react";
 import Input from "../../globalComponents/Input";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../../globalComponents/Spinner";
+import Button from "../../globalComponents/Button";
+import ModalWithBackdrop from "../../globalComponents/ModalWithBackdrop";
 
 export default function Post(props: PageProps) {
     const blog = props.content as string;
@@ -52,7 +54,7 @@ export default function Post(props: PageProps) {
                 <Blog content={blog}></Blog>
 
             </div>
-            <Comment comments={comments} blogId={blogId} setComments={setComments} userId={userId} username={name}></Comment>
+            <Comment comments={comments} blogId={blogId} setComments={setComments} userId={userId} username={name} authorId={authorId}></Comment>
         </div>
     </>
 }
@@ -60,17 +62,17 @@ export default function Post(props: PageProps) {
 
 type CommentProps = {
     comments: ClientComment[],
-    setComments: React.Dispatch<React.SetStateAction<ClientComment[]>>,
+    setComments: setState<ClientComment[]>
     blogId: string,
     userId: string;
     username: string;
-
+    authorId: string;
 }
 
-
+type setState<T> = React.Dispatch<React.SetStateAction<T>>
 
 function Comment(props: CommentProps) {
-    const { blogId, comments, setComments, userId, username } = props
+    const { blogId, comments, setComments, userId, username, authorId } = props
     const commentMutatation = trpc.blog.comment.addComment.useMutation({
         onSuccess: (data) => {
             setComments([...comments, {
@@ -79,7 +81,7 @@ function Comment(props: CommentProps) {
                 blogId: blogId,
                 content: data.content,
                 id: data.commentId,
-                reaction: [],
+                // reaction: [],
             }])
         }
     });
@@ -115,10 +117,66 @@ function Comment(props: CommentProps) {
                         <div className="font-complementry text-xl">
                             {c.content}
                         </div>
+                        {userId == authorId && <CommentDeleteButton {...{ blogId, commentId: c.id, comments, setComments }}></CommentDeleteButton>}
                     </div>
                 })
             }
         </div>
+    </div>
+}
+
+
+type deleteButtonProps = {
+    commentId: string;
+    blogId: string;
+    comments: ClientComment[],
+    setComments: setState<ClientComment[]>
+
+}
+
+function CommentDeleteButton(props: deleteButtonProps) {
+    const { commentId, blogId, comments, setComments } = props;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const deleteMutation = trpc.blog.comment.deleteComment.useMutation({
+        onSuccess: (data) => {
+            let temp = comments.filter(c => {
+                c.id != data.commentId;
+            })
+            setComments(temp);
+            setShowDeleteModal(false);
+        }
+    });
+    const deleteHandler = () => {
+        if (!deleteMutation.isLoading) {
+            setShowDeleteModal(true);
+        }
+    }
+    return <div>
+        <ModalWithBackdrop title="Delete Comment?" isShown={showDeleteModal} onClick={() => {
+            if (!deleteMutation.isLoading) {
+                setShowDeleteModal(false);
+            }
+        }}>
+            <p>
+                Are you sure you want to delete the comment?
+            </p>
+            <div className="flex justify-end gap-4">
+                <Button className="bg-blue-400" onClick={() => {
+                    if (!deleteMutation.isLoading) {
+                        setShowDeleteModal(false);
+                    }
+                }}>NO</Button>
+                <Button className="bg-red-400" onClick={() => {
+                    if (!deleteMutation.isLoading) {
+                        deleteMutation.mutate({ blogId, commentId })
+
+                    }
+                }}>Yes</Button>
+            </div>
+        </ModalWithBackdrop>
+        <Button className="bg-red-500" onClick={deleteHandler}>
+            <TrashIcon className="h-8 w-8" ></TrashIcon>
+        </Button>
     </div>
 }
 
@@ -197,7 +255,7 @@ export const getServerSideProps: GetServerSideProps<
                             blogId: c.blogId,
                             content: c.content,
                             id: c.id,
-                            reactions: commentReactions.filter((r) => r.commentId == c.id),
+                            // reactions: commentReactions.filter((r) => r.commentId == c.id),
                         };
                     }),
                     loggedIn,
@@ -228,7 +286,7 @@ type ClientComment = {
     blogId: string;
     content: string;
     id: string;
-    reaction: CommentReaction[]
+    // reaction: CommentReaction[]
 }
 
 
