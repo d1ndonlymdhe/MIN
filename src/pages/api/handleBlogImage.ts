@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client"
 
 import { v2 as cloudinary } from "cloudinary"
 const apiKey = process.env.CLOUDINARY_API_KEY
-const apiSecret = process.env.CLOUDINARY_SECRET_KEY
+const apiSecret = process.env.CLOUDINARY_API_SECRET
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME
 cloudinary.config({
     cloud_name: cloudName,
@@ -25,22 +25,9 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                     console.log("error  = ", err)
                     res.status(500).json({ error: "Bad Form" })
                     res.end()
-                    // return
                 }
                 const { blogId } = <{ blogId: string }>fields
                 const file = <formidable.File>files.blogImage
-                // fetch(`${cloudinaryURL}/upload`, {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     }
-                //     ,
-                //     body: JSON.stringify({
-                //         api_key: apiKey,
-
-                //     })
-                // })
-                // console.log(fields,file.originalFilename)
                 if (blogId && file) {
                     const blogs = await prisma.blog.findMany({ where: { AND: [{ id: blogId }, { authorId: dbToken.user.id }] } })
                     const blog = blogs[0]

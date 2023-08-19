@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client"
 import { v2 as cloudinary } from "cloudinary"
 
 const apiKey = process.env.CLOUDINARY_API_KEY
-const apiSecret = process.env.CLOUDINARY_SECRET_KEY
+const apiSecret = process.env.CLOUDINARY_API_SECRET
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME
 cloudinary.config({
     cloud_name: cloudName,
