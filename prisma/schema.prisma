@@ -26,7 +26,6 @@ model User {
   role             Role[]
   tokens           Token[]
   blogs            Blog[]
-  comments         Comment[]
   blogReactions    BlogReaction[]
   commentReactions CommentReaction[]
 }
@@ -34,7 +33,7 @@ model User {
 model Role {
   id     String @id @default(cuid())
   userId String
-  user   User   @relation(fields: [userId], references: [id],onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Blog {
@@ -53,7 +52,6 @@ model Blog {
   isTemp         Boolean        @default(false)
   //storing as string might change to BigInt store UNIX timestamp
   publishedOn    String
-
 }
 
 model BlogImage {
@@ -61,16 +59,16 @@ model BlogImage {
   name      String
   blogId    String
   fulfilled Boolean
-  blog      Blog    @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  blog      Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
   id              String            @id @default(cuid())
   content         String
   blogId          String
-  authorId        String
-  author          User              @relation(fields: [authorId], references: [id],onDelete: Cascade)
-  blog            Blog              @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  authorName      String
+  email           String
+  blog            Blog              @relation(fields: [blogId], references: [id], onDelete: Cascade)
   commentReaction CommentReaction[]
 }
 
@@ -78,29 +76,23 @@ model BlogReaction {
   id     String  @id @default(cuid())
   type   Boolean
   blogId String
-  blog   Blog    @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  blog   Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userId String
-  user   User    @relation(fields: [userId], references: [id],onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CommentReaction {
   id        String  @id @default(cuid())
   type      Boolean
   commentId String
-  comment   Comment @relation(fields: [commentId], references: [id],onDelete: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String
-  user      User    @relation(fields: [userId], references: [id],onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Token {
   id     String @id @default(cuid())
   userId String
   value  String
-  user   User   @relation(fields: [userId], references: [id],onDelete: Cascade)
-}
-
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
