@@ -9,11 +9,9 @@ import {
     PrismaClient
 } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { useEffect, useRef, useState } from "react";
-import uuid from "react-uuid";
+import { useState } from "react";
 import Button from "../../../globalComponents/Button";
 import { trpc } from "../../../utils/trpc";
-import BlogRenderer from "../../../globalComponents/BlogRenderer";
 import ModalWithBackdrop from "../../../globalComponents/ModalWithBackdrop";
 import { getBlogImage } from "../[underscoreBlogName]";
 import { remark } from "remark";
@@ -25,10 +23,8 @@ export default function Post(props: any) {
     const blog = props.content as string;
     const author = props.author;
     const publishedOn = props.blog.publishedOn;
-    const comments = props.comments;
     const title = props.blog.title as string;
     const blogId = props.blog.id;
-    const authorId = props.blog.authorId;
     const [modalShown, setModalShown] = useState(false);
     const [publishModal, setPublishModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -193,9 +189,6 @@ export const getServerSideProps: GetServerSideProps<
             const processedContent = await remark().use(remarkGfm).use(html).process(blog.content)
             const comments = await prisma.comment.findMany({
                 where: { blogId: blog.id },
-                include: {
-                    author: true,
-                },
             });
             const reactions = await prisma.blogReaction.findMany({
                 where: {
@@ -219,17 +212,6 @@ export const getServerSideProps: GetServerSideProps<
                         title: blog.title,
                         publishedOn: blog.publishedOn
                     },
-                    reactions,
-                    comments: comments.map((c) => {
-                        return {
-                            author: c.author.name,
-                            authorId: c.authorId,
-                            blogId: c.blogId,
-                            content: c.content,
-                            id: c.id,
-                            reactions: commentReactions.filter((r) => r.commentId == c.id),
-                        };
-                    }),
                     loggedIn,
                     userId: userId || "",
                     username: username || "",

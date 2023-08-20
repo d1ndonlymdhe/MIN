@@ -7,12 +7,15 @@ import html from 'remark-html'
 import remarkGfm from "remark-gfm";
 import { PaperAirplaneIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import Navbar from "../../globalComponents/Navbar";
-import { useRef, useState } from "react";
+import { createContext, useReducer, useRef, useState } from "react";
 import Input from "../../globalComponents/Input";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../../globalComponents/Spinner";
 import Button from "../../globalComponents/Button";
 import ModalWithBackdrop from "../../globalComponents/ModalWithBackdrop";
+import Head from "next/head";
+
+
 
 export default function Post(props: PageProps) {
     const blog = props.content as string;
@@ -26,35 +29,35 @@ export default function Post(props: PageProps) {
     const authorId = props.blog.authorId;
     const [modalShown, setModalShown] = useState(false);
     return <>
-        <Navbar setModalShown={setModalShown} activeTab="Blogs"></Navbar>
-        <div className="w-full h-fit flex flex-col items-center my-10 text-white gap-5">
-            <div className="flex flex-row items-center justify-center text-white text-[6rem] font-primary font-[700] w-[60vw] h-[50vh] rounded-md" style={{
-                backgroundImage: `url(${getBlogImage(blogId)})`,
-                backgroundSize: "cover"
-            }}>
-                <p>
-                    {title}
-                </p>
-            </div>
-            <div className="w-[60vw] flex gap-2 items-center font-inter text-xl">
-                {/* TODO add user image */}
-                <div>
-                    <UserCircleIcon className="h-10 w-10"></UserCircleIcon>
+        <Head>
+            <title>{title}</title>
+        </Head>
+        <div className={`${modalShown && "h-screen w-screen overflow-hidden"}`}>
+            <Navbar setModalShown={setModalShown} activeTab="Blogs"></Navbar>
+            <div className="w-full h-fit flex flex-col items-center my-10 text-white gap-5">
+                <div className="flex flex-row items-center justify-center text-white text-[6rem] font-primary font-[700] w-[60vw] h-[50vh] rounded-md" style={{
+                    backgroundImage: `url(${getBlogImage(blogId)})`,
+                    backgroundSize: "cover"
+                }}>
+                    <p>
+                        {title}
+                    </p>
                 </div>
-                <p className="text-[#FFB700]">
-                    {author}
-                </p>
-                <p>
-                    {/* {ps} */}
-                    {(new Date(Number(publishedOn)).toDateString())}
-                    {/* {new Date(publishedOn).toDateString()} */}
-                </p>
+                <div className="w-[60vw] flex gap-2 items-center font-inter text-xl">
+                    <p className="text-[#FFB700]">
+                        {author}
+                    </p>
+                    <p>
+                        {/* {ps} */}
+                        {(new Date(Number(publishedOn)).toDateString())}
+                        {/* {new Date(publishedOn).toDateString()} */}
+                    </p>
+                </div>
+                <div className="w-[60vw]">
+                    <Blog content={blog}></Blog>
+                </div>
+                <Comment comments={comments} blogId={blogId} setComments={setComments} userId={userId} username={name} authorId={authorId} setModalShown={setModalShown}></Comment>
             </div>
-            <div className="w-[60vw]">
-                <Blog content={blog}></Blog>
-
-            </div>
-            <Comment comments={comments} blogId={blogId} setComments={setComments} userId={userId} username={name} authorId={authorId}></Comment>
         </div>
     </>
 }
@@ -63,6 +66,7 @@ export default function Post(props: PageProps) {
 type CommentProps = {
     comments: ClientComment[],
     setComments: setState<ClientComment[]>
+    setModalShown: setState<boolean>
     blogId: string,
     userId: string;
     username: string;
@@ -72,55 +76,88 @@ type CommentProps = {
 type setState<T> = React.Dispatch<React.SetStateAction<T>>
 
 function Comment(props: CommentProps) {
-    const { blogId, comments, setComments, userId, username, authorId } = props
+    const { blogId, comments, setComments, userId, username, authorId, setModalShown } = props
+    console.log(comments)
     const commentMutatation = trpc.blog.comment.addComment.useMutation({
         onSuccess: (data) => {
             setComments([...comments, {
-                author: username,
-                authorId: userId,
+                authorName: data.authorName,
                 blogId: blogId,
                 content: data.content,
                 id: data.commentId,
+                email: data.email
                 // reaction: [],
             }])
         }
     });
-    const inputRef = useRef<HTMLInputElement>(null);
-    return <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[60vw] py-4 px-20">
-        <div className="flex flex-row gap-4 justify-center">
-            <UserCircleIcon className="h-10 w-10"></UserCircleIcon>
-            <form className="h-fit w-full flex flex-row gap-4" onSubmit={(e) => {
-                e.preventDefault()
-                if (inputRef.current && !commentMutatation.isLoading) {
-                    const content = inputRef.current.value;
-                    if (content) {
-                        commentMutatation.mutate({
-                            blogId: blogId,
-                            content: content
-                        })
+    const contentRef = useRef<HTMLInputElement>(null);
+    const nameRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    return <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[60vw] py-4 px-20">
+            <div className="flex flex-row gap-4 justify-center">
+                <form className="h-fit w-full flex flex-col gap-4" onSubmit={(e) => {
+                    e.preventDefault()
+                    if (emailRef.current && nameRef.current && contentRef.current && !commentMutatation.isLoading) {
+                        const content = contentRef.current.value;
+                        const email = emailRef.current.value;
+                        const name = nameRef.current.value;
+                        if (content && email && name) {
+                            commentMutatation.mutate({
+                                blogId: blogId,
+                                content: content,
+                                email,
+                                name
+                            })
+                        }
                     }
-                }
-            }}>
-                <Input ref={inputRef} className="w-full bg-transparent border-transparent border-b-2 active:outline-none  focus:outline-none focus:border-b-4 rounded-sm ease-in-out duration-100 border-b-complementary text-white"></Input>
-                <button type="submit">
-                    {
-                        commentMutatation.isLoading && <Spinner></Spinner> || <PaperAirplaneIcon className="h-10 w-10"></PaperAirplaneIcon>
-                    }
-                </button>
-            </form>
-        </div>
-        <div className="flex flex-col gap-4">
-            {
-                comments.map(c => {
-                    return <div key={c.id} className="flex flex-row gap-4 items-center">
-                        <UserCircleIcon className="h-10 w-10"></UserCircleIcon>
-                        <div className="font-complementry text-xl">
-                            {c.content}
-                        </div>
-                        {userId == authorId && <CommentDeleteButton {...{ blogId, commentId: c.id, comments, setComments }}></CommentDeleteButton>}
+                }}>
+                    <label className="flex flex-col">
+                        <p>
+                            Name:
+                        </p>
+                        <Input ref={nameRef} required={true} type="Text" minLength={1} className="w-full bg-transparent border-transparent border-b-2 active:outline-none  focus:outline-none focus:border-b-4 rounded-sm ease-in-out duration-100 border-b-complementary text-white"></Input>
+                    </label>
+                    <label className="flex flex-col">
+                        <p>
+                            Email:
+                        </p>
+                        <Input ref={emailRef} required={true} type="email" className="w-full bg-transparent border-transparent border-b-2 active:outline-none  focus:outline-none focus:border-b-4 rounded-sm ease-in-out duration-100 border-b-complementary text-white"></Input>
+                    </label>
+                    <div className="flex flex-row">
+                        <label className="flex flex-col w-full">
+                            <p>
+                                Comment:
+                            </p>
+                            <Input ref={contentRef} className="w-full bg-transparent border-transparent border-b-2 active:outline-none  focus:outline-none focus:border-b-4 rounded-sm ease-in-out duration-100 border-b-complementary text-white"></Input></label>
+                        <button type="submit">
+                            {
+                                commentMutatation.isLoading && <Spinner></Spinner> || <PaperAirplaneIcon className="h-10 w-10"></PaperAirplaneIcon>
+                            }
+                        </button>
                     </div>
-                })
-            }
+                </form>
+            </div>
+        </div>
+        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[60vw] py-4 px-20">
+
+            <div className="flex flex-col gap-4">
+                {
+                    comments.map(c => {
+                        return <div key={c.id} className="flex flex-col gap-4 items-start">
+                            <p>
+                                {c.authorName} says:
+                            </p>
+                            <div className="flex flex-row w-full gap-4">
+                                <div className="font-complementry text-xl">
+                                    {c.content}
+                                </div>
+                                {userId == authorId && <CommentDeleteButton {...{ blogId, commentId: c.id, comments, setComments, setModalShown }}></CommentDeleteButton>}
+                            </div>
+                        </div>
+                    })
+                }
+            </div>
         </div>
     </div>
 }
@@ -131,12 +168,17 @@ type deleteButtonProps = {
     blogId: string;
     comments: ClientComment[],
     setComments: setState<ClientComment[]>
+    setModalShown: setState<boolean>
 
 }
 
 function CommentDeleteButton(props: deleteButtonProps) {
-    const { commentId, blogId, comments, setComments } = props;
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const { commentId, blogId, comments, setComments, setModalShown } = props;
+    // const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useReducer((state: boolean, action: boolean) => {
+        setModalShown(action);
+        return action;
+    }, false)
     const deleteMutation = trpc.blog.comment.deleteComment.useMutation({
         onSuccess: (data) => {
             let temp = comments.filter(c => {
@@ -181,7 +223,6 @@ function CommentDeleteButton(props: deleteButtonProps) {
 }
 
 
-
 function Blog(props: { content: string }) {
     return <>
         <div className="blogContent prose w-full md:w-[50vw]" dangerouslySetInnerHTML={{ __html: props.content }}></div>
@@ -221,21 +262,13 @@ export const getServerSideProps: GetServerSideProps<
             const processedContent = await remark().use(remarkGfm).use(html).process(blog.content)
             const comments = await prisma.comment.findMany({
                 where: { blogId: blog.id },
-                include: {
-                    author: true,
-                },
+
             });
-            const reactions = await prisma.blogReaction.findMany({
-                where: {
-                    blogId: blog.id,
-                },
-            });
-            //find all comment reactions
-            const commentReactions = await prisma.commentReaction.findMany({
-                where: {
-                    commentId: { in: comments.map((r) => r.id) },
-                },
-            });
+            // const reactions = await prisma.blogReaction.findMany({
+            //     where: {
+            //         blogId: blog.id,
+            //     },
+            // });
             return {
                 props: {
                     author: blog.author.name,
@@ -247,11 +280,9 @@ export const getServerSideProps: GetServerSideProps<
                         title: blog.title,
                         publishedOn: blog.publishedOn
                     },
-                    reactions,
                     comments: comments.map((c) => {
                         return {
-                            author: c.author.name,
-                            authorId: c.authorId,
+                            authorName: c.authorName,
                             blogId: c.blogId,
                             content: c.content,
                             id: c.id,
@@ -261,11 +292,6 @@ export const getServerSideProps: GetServerSideProps<
                     loggedIn,
                     userId: userId || "",
                     username: username || "",
-                    isLiked: reactions.filter((r) => {
-                        return r.userId == userId;
-                    })[0]?.type
-                        ? true
-                        : false,
                 },
             };
         }
@@ -280,13 +306,11 @@ export const getServerSideProps: GetServerSideProps<
 
 
 type ClientComment = {
-
-    author: string;
-    authorId: string;
+    authorName: string;
+    email: string;
     blogId: string;
     content: string;
     id: string;
-    // reaction: CommentReaction[]
 }
 
 
