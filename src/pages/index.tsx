@@ -19,6 +19,7 @@ import Navbar from "../globalComponents/Navbar";
 import Head from "next/head";
 import React, { SetStateAction, useState } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
+import Footer from "../globalComponents/Footer";
 
 const parentArr = ps.map(p => {
   return {
@@ -61,7 +62,7 @@ export default function App() {
           }
         </style>
       </Head>
-      <Intro setModalShown={setModalShown}></Intro>
+      <Intro setModalShown={setModalShown} activeTab="Home" ></Intro>
       <ProjectHighlights></ProjectHighlights>
       <Testimonials></Testimonials>
       <Newsletter></Newsletter>
@@ -71,25 +72,29 @@ export default function App() {
 
 export function Intro(props: {
   setModalShown: React.Dispatch<SetStateAction<boolean>>
+  activeTab: "Home" | "Projects" | "Blogs" | "Alumni" | "About" | "Contribute"
 }) {
-  const { setModalShown } = props;
-  return <div className="h-screen w-screen bg1">
-    <div className="z-[3] relative">
-      <Navbar setModalShown={setModalShown} activeTab="Home"></Navbar>
-    </div>
-    <div className="flex justify-center items-center bg-primary bg-opacity-50 h-screen w-screen z-[2] absolute top-0">
-      <div className="grid  justify-center items-center font-secondary text-white h-fit w-fit md:gap-15 ">
-        <div className=" flex flex-col gap-8  w-[15em] md:w-[40em] text-center">
-          <p className="text-lg md:text-4xl  font-bold">
-            Mathmatics Initiatives in Nepal
-          </p>
-          <p className="text-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, temporibus mollitia. Possimus eos pariatur reiciendis earum ut! Praesentium, unde. Exercitationem nemo modi ducimus quibusdam cumque maxime expedita, repellendus qui iste.
-          </p>
+  const { setModalShown, activeTab } = props;
+  return <>
+
+    <div className="h-screen w-screen bg1">
+      <div className="z-[3] relative">
+        <Navbar setModalShown={setModalShown} activeTab={activeTab}></Navbar>
+      </div>
+      <div className="flex justify-center items-center bg-primary bg-opacity-50 h-screen w-screen z-[2] absolute top-0">
+        <div className="grid  justify-center items-center font-secondary text-white h-fit w-fit md:gap-15 ">
+          <div className=" flex flex-col gap-8  w-[15em] md:w-[40em] text-center">
+            <p className="text-lg md:text-4xl  font-bold">
+              Mathmatics Initiatives in Nepal
+            </p>
+            <p className="text-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, temporibus mollitia. Possimus eos pariatur reiciendis earum ut! Praesentium, unde. Exercitationem nemo modi ducimus quibusdam cumque maxime expedita, repellendus qui iste.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </>
 }
 
 
@@ -180,40 +185,40 @@ function Newsletter() {
   </>
 }
 
-function Footer() {
-  return <div className="bg-primary w-full">
-    <div className="w-full items-center border-b-2 border-b-complementary flex flex-col-reverse md:flex-row pb-10 pt-10" >
-      <div className="w-1/2 flex flex-col items-center">
-        <div className="flex flex-col gap-4 py-4">
-          <img src={minLogo.src} className="h-24 md:h-52"></img>
-          <div className="flex flex-row gap-2 md:items-start">
-            <p>LinkedIn</p>
-            <p>Facebook</p>
-            <p>Instagram</p>
-          </div>
-        </div>
-      </div>
-      <div className="w-full md:w-1/2 grid grid-cols-2 gap-20 text-2xl text-white font-primary pt-4 justify-items-center md:justify-items-end md:pr-10">
-        <div className="flex flex-col gap-2">
-          <div className="text-complementary">Contact</div>
-          <div>WhatsApp</div>
-          <div>Support</div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="text-complementary">Quick Links</div>
-          <div>Home</div>
-          <div>Projects</div>
-          <div>Alumini</div>
-          <div>About</div>
-          <div>Support</div>
-        </div>
-      </div>
-    </div>
-    <div className="w-full h-20 text-white flex justify-center items-center">
-      <p>Copyright © 2023 Mathmatics Initiatives in Nepal</p>
-    </div>
-  </div>
-}
+// function Footer() {
+//   return <div className="bg-primary w-full">
+//     <div className="w-full items-center border-b-2 border-b-complementary flex flex-col-reverse md:flex-row pb-10 pt-10" >
+//       <div className="w-1/2 flex flex-col items-center">
+//         <div className="flex flex-col gap-4 py-4">
+//           <img src={minLogo.src} className="h-24 md:h-52"></img>
+//           <div className="flex flex-row gap-2 md:items-start">
+//             <p>LinkedIn</p>
+//             <p>Facebook</p>
+//             <p>Instagram</p>
+//           </div>
+//         </div>
+//       </div>
+//       <div className="w-full md:w-1/2 grid grid-cols-2 gap-20 text-2xl text-white font-primary pt-4 justify-items-center md:justify-items-end md:pr-10">
+//         <div className="flex flex-col gap-2">
+//           <div className="text-complementary">Contact</div>
+//           <div>WhatsApp</div>
+//           <div>Support</div>
+//         </div>
+//         <div className="flex flex-col gap-2">
+//           <div className="text-complementary">Quick Links</div>
+//           <div>Home</div>
+//           <div>Projects</div>
+//           <div>Alumini</div>
+//           <div>About</div>
+//           <div>Support</div>
+//         </div>
+//       </div>
+//     </div>
+//     <div className="w-full h-20 text-white flex justify-center items-center">
+//       <p>Copyright © 2023 Mathmatics Initiatives in Nepal</p>
+//     </div>
+//   </div>
+// }
 
 
 
