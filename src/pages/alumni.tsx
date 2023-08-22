@@ -9,6 +9,7 @@ import AlumniCard from "../globalComponents/AlumniCard";
 import Head from "next/head";
 import homeImage from "../../public/images/homeImage.jpg";
 import homeImageL from "../../public/images/homeImageL.jpg";
+import { Intro } from ".";
 const Alumni = () => {
   // modalShown is needed to find if the navbar modal is shown in mobile mode the width and height of main parent div is set to 100vh to avoid scrolling
   const [modalShown, setModalShown] = useState(false);
@@ -41,7 +42,7 @@ const Alumni = () => {
           }
         </style>
       </Head>
-      <Intro setModalShown={setModalShown}></Intro>
+      <Intro setModalShown={setModalShown} activeTab="Alumni"></Intro>
       <section className=" bg-white">
         <AlumniCard />
         <AlumniCard />
@@ -56,27 +57,5 @@ const Alumni = () => {
   );
 };
 
-function Intro(props: {
-  setModalShown: React.Dispatch<SetStateAction<boolean>>
-}) {
-  const { setModalShown } = props;
-  return <div className="h-screen w-screen bg1">
-    <div className="z-[3] relative">
-      <Navbar setModalShown={setModalShown} activeTab="Alumni"></Navbar>
-    </div>
-    <div className="flex justify-center items-center bg-primary bg-opacity-50 h-screen w-screen z-[2] absolute top-0">
-      <div className="grid  justify-center items-center font-secondary text-white h-fit w-fit md:gap-15 ">
-        <div className=" flex flex-col gap-8  w-[15em] md:w-[40em] text-center">
-          <p className="text-lg md:text-4xl  font-bold">
-            Mathmatics Initiatives in Nepal
-          </p>
-          <p className="text-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, temporibus mollitia. Possimus eos pariatur reiciendis earum ut! Praesentium, unde. Exercitationem nemo modi ducimus quibusdam cumque maxime expedita, repellendus qui iste.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-}
 
 export default Alumni;
