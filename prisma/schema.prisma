@@ -7,7 +7,7 @@ generator client {
 
 // for local testing use this
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
