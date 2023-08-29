@@ -1,15 +1,15 @@
-import Navbar from "../globalComponents/Navbar";
+// import Navbar from "../globalComponents/Navbar";
 import homeImage from "../../public/images/homeImage.jpg";
 import homeImageL from "../../public/images/homeImageL.jpg";
-import Background from "../globalComponents/Background";
+// import Background from "../globalComponents/Background";
 import Footer from "../globalComponents/Footer";
 import ProjectCard from "../globalComponents/ProjectCard";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import Head from "next/head";
 import { Intro } from ".";
 
 
-const projects = () => {
+const Projects = () => {
   const [modalShown, setModalShown] = useState(false)
   return (<>
     <Head>
@@ -64,4 +64,4 @@ const projects = () => {
 
 
 
-export default projects;
+export default Projects;

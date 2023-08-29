@@ -1,8 +1,8 @@
-import { Bars3Icon, RectangleStackIcon } from "@heroicons/react/24/solid";
-import { SetStateAction, useEffect, useState } from "react";
+import { Bars3Icon } from "@heroicons/react/24/solid";
+import { type SetStateAction, useEffect, useState } from "react";
 import uuid from "react-uuid";
 import Button from "./Button";
-import ModalWithBackdrop from "./ModalWithBackdrop";
+// import ModalWithBackdrop from "./ModalWithBackdrop";
 import Image from "next/image";
 import Link from "next/link";
 

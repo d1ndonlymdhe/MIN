@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { createReadStream } from "node:fs";
 export default async function getBlogImage(req: NextApiRequest, res: NextApiResponse) {
     const { blogId, authorId, imageId } = req.query

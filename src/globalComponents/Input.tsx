@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef } from "react";
+import { type ForwardedRef, forwardRef } from "react";
 import type { ChangeEvent } from "react";
 type InputProps = {
     type?: string,
@@ -10,7 +10,6 @@ type InputProps = {
     required?: boolean
     value?: string
     defaultValue?: string
-    expand?: boolean
     readonly?: boolean
     autoComplete?: "off" | "on"
     placeholder?: string
@@ -19,7 +18,7 @@ type InputProps = {
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref: ForwardedRef<HTMLInputElement> | undefined) => {
     const REF = ref || null
-    const { type, id, minLength, placeholder, className, name, accept, required, value, onChange, defaultValue, expand, autoComplete, readonly } = props;
+    const { type, id, minLength, placeholder, className, name, accept, required, value, onChange, defaultValue, autoComplete, readonly } = props;
 
     return <input ref={REF}
         name={name || ""}

@@ -261,7 +261,7 @@ function Carousel2() {
     >
       {
         parentArr.map((p, i) => {
-          return <div className="flex w-full h-fit justify-center text-black">
+          return <div key={i} className="flex w-full h-fit justify-center text-black">
             <div className="bg-white flex flex-row w-[70vw] h-[60vh]">
               <div className="w-[20vw] h-full" style={{
                 backgroundImage: `url(${p.image})`,

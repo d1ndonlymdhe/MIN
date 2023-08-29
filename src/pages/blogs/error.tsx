@@ -1,4 +1,4 @@
-import img from "next/image";
+// import img from "next/image";
 
 export default function Main() {
   return (
