@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// for local testing use this
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// datasource db {
+//   provider     = "mysql"
+//   url          = env("DATABASE_URL")
+//   // relationMode = "prisma"
+// }
+
+model User {
+  id               String            @id @default(cuid())
+  name             String
+  username         String
+  salt             String
+  passwordHash     String
+  role             Role[]
+  tokens           Token[]
+  blogs            Blog[]
+  blogReactions    BlogReaction[]
+  commentReactions CommentReaction[]
+}
+
+model Role {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Blog {
+  id             String         @id @default(cuid())
+  title          String
+  titleLowered   String
+  content        String
+  authorId       String
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments       Comment[]
+  reactions      BlogReaction[]
+  images         BlogImage[]
+  coverImageid   String         @default(cuid())
+  //trpc cannot handle form/multipart data (file) actual image is handled in a api routes so need to check if coverimage has been fulfilled
+  coverFulfilled Boolean        @default(false)
+  isTemp         Boolean        @default(false)
+  //storing as string might change to BigInt store UNIX timestamp
+  publishedOn    String
+}
+
+model BlogImage {
+  id        String  @id @default(cuid())
+  name      String
+  blogId    String
+  fulfilled Boolean
+  blog      Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id              String            @id @default(cuid())
+  content         String
+  blogId          String
+  authorName      String
+  email           String
+  blog            Blog              @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  commentReaction CommentReaction[]
+}
+
+model BlogReaction {
+  id     String  @id @default(cuid())
+  type   Boolean
+  blogId String
+  blog   Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CommentReaction {
+  id        String  @id @default(cuid())
+  type      Boolean
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Token {
+  id     String @id @default(cuid())
+  userId String
+  value  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
