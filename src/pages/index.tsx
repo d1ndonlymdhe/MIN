@@ -20,7 +20,7 @@ import Head from "next/head";
 import React, { SetStateAction, useState } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import Footer from "../globalComponents/Footer";
-
+import Image from "next/image"
 const parentArr = ps.map(p => {
   return {
     image: p.src,
