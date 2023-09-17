@@ -38,8 +38,6 @@ export const blogRouter = router({
                         publishedOn: new Date().getTime().toString()
                     }
                 })
-                await fs.mkdir(`./files/${dbToken.userId}/blogs/${newEblog.id}`)
-                await fs.mkdir(`./files/${dbToken.userId}/blogs/${newEblog.id}/images`)
                 return {
                     newBlog: newEblog
                 }
@@ -68,8 +66,6 @@ export const blogRouter = router({
                             publishedOn: new Date().getTime().toString()
                         }
                     })
-                    await fs.mkdir(`./files/${user.id}/blogs/${newTempBlog.id}`)
-                    await fs.mkdir(`./files/${user.id}/blogs/${newTempBlog.id}/images`)
                     if (newTempBlog) {
                         return {
                             newBlog: newTempBlog
@@ -181,8 +177,6 @@ export const blogRouter = router({
             if (dbToken) {
                 const user = dbToken.user
                 const newBlog = await prisma.blog.create({ data: { title: title, titleLowered: title.toLowerCase(), content: content, authorId: user.id, publishedOn: new Date().getTime().toString() } })
-                await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}`)
-                await fs.mkdir(`./files/${user.id}/blogs/${newBlog.id}/images`)
                 return {
                     success: true,
                     title: title,

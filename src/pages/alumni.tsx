@@ -1,10 +1,10 @@
-import React, { SetStateAction, useState } from "react";
-import Navbar from "../globalComponents/Navbar";
-import AlumniImg from "../../public/images/alumni.jpg";
-import Background from "../globalComponents/Background";
+import React, {  useState } from "react";
+// import Navbar from "../globalComponents/Navbar";
+// import AlumniImg from "../../public/images/alumni.jpg";
+// import Background from "../globalComponents/Background";
 import Footer from "../globalComponents/Footer";
-import Image from "next/image";
-import Chad from "../../public/images/chad.png";
+// import Image from "next/image";
+// import Chad from "../../public/images/chad.png";
 import AlumniCard from "../globalComponents/AlumniCard";
 import Head from "next/head";
 import homeImage from "../../public/images/homeImage.jpg";

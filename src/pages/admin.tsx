@@ -1,6 +1,6 @@
-import { Blog, PrismaClient } from "@prisma/client";
-import { GetServerSideProps } from "next";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
+import { type Blog, PrismaClient } from "@prisma/client";
+import { type GetServerSideProps } from "next";
+import React, { SetStateAction, useRef, useState } from "react";
 import uuid from "react-uuid";
 import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
@@ -227,7 +227,7 @@ function BlogControls(props: BlogControlsProps) {
         }}>
             Delete
         </Button>
-        <a href={`/blogs/${blog.isTemp ? "temp/" : "/"}${blog.titleLowered.replaceAll(" ", "_")}`} target="_blank">
+        <a href={`/blogs/${blog.isTemp ? "temp/" : "/"}${blog.titleLowered.replaceAll(" ", "_")}`} rel="noreferrer" target="_blank">
             <Button className="bg-secondary">
                 Open
             </Button>
@@ -246,7 +246,6 @@ function AddImageView(props: AddImageViewProps) {
     console.log("Re render")
     const [upModal, SetUpModal] = useState(false);
     const [uploadLoading, setUploadLoading] = useState(false);
-    const [s, ss] = useState(false)
     const ModalChild = () => {
         const nameRef = useRef<HTMLInputElement>(null)
         const srcRef = useRef<HTMLInputElement>(null)
@@ -382,7 +381,7 @@ function CreateBlogView(props: CreateBlogViewProps) {
 
                 <label
                     className="hover:cursor-pointer"
-                    onChange={(e) => {
+                    onChange={() => {
                         if (imgInputRef && imgInputRef.current) {
                             const files = imgInputRef.current.files
                             if (files && files[0]) {

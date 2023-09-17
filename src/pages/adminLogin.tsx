@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { trpc } from "../utils/trpc";
 import cookie from "js-cookie";
-import { GetServerSideProps } from "next";
+import { type GetServerSideProps } from "next";
 import { PrismaClient } from "@prisma/client";
 export default function Main() {
   const loginMutation = trpc.auth.loginMutation.useMutation({
     //run this function when loginmutaion is successful
     onSuccess: (data) => {
-      const { token, success } = data;
+      const { token } = data;
       //set a uniquely generated token for future login
       cookie.set("token", token, { expires: 30 });
       window.location.reload();
@@ -15,7 +15,7 @@ export default function Main() {
   });
   const signUpMutaion = trpc.auth.signupMutation.useMutation({
     onSuccess: (data) => {
-      const { success } = data;
+      // const { success } = data;
       window.location.reload();
     },
   });
@@ -139,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       include: { user: true },
     });
     if (dbToken) {
-      const user = dbToken.user;
+      // const user = dbToken.user;
       //if logged in redirect to homepage (admin page)
       return {
         redirect: {

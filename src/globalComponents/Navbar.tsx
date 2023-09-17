@@ -1,11 +1,11 @@
-import { Bars3Icon, RectangleStackIcon } from "@heroicons/react/24/solid";
-import { SetStateAction, useEffect, useState } from "react";
+import { Bars3Icon } from "@heroicons/react/24/solid";
+import { type SetStateAction, useEffect, useState } from "react";
 import uuid from "react-uuid";
 import Button from "./Button";
-import ModalWithBackdrop from "./ModalWithBackdrop";
+// import ModalWithBackdrop from "./ModalWithBackdrop";
 import Image from "next/image";
 import Link from "next/link";
-
+import MinLogoX from "../../public/images/MINLogox.png"
 const tabs = ["Home", "Blogs", "Projects", "Alumni", "About", "Contribute"] as const;
 type NavbarProps = {
   activeTab: (typeof tabs)[number];
@@ -78,7 +78,7 @@ export default function Navbar(props: NavbarProps) {
         <div className="flex items-center justify-start font-secondary font-bold ml-5">
           <Link href="/">
             <Image
-              src="/images/minLogox.png"
+              src={MinLogoX.src}
               alt="Picture of the author"
               width={150}
               height={75}

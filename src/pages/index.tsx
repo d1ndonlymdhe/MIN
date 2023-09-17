@@ -20,7 +20,7 @@ import Head from "next/head";
 import React, { SetStateAction, useState } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import Footer from "../globalComponents/Footer";
-
+import Image from "next/image"
 const parentArr = ps.map(p => {
   return {
     image: p.src,
@@ -261,7 +261,7 @@ function Carousel2() {
     >
       {
         parentArr.map((p, i) => {
-          return <div className="flex w-full h-fit justify-center text-black">
+          return <div key={i} className="flex w-full h-fit justify-center text-black">
             <div className="bg-white flex flex-row w-[70vw] h-[60vh]">
               <div className="w-[20vw] h-full" style={{
                 backgroundImage: `url(${p.image})`,

@@ -7,7 +7,7 @@ generator client {
 
 // for local testing use this
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -40,7 +40,7 @@ model Blog {
   id             String         @id @default(cuid())
   title          String
   titleLowered   String
-  content        String
+  content        String         @db.LongText
   authorId       String
   author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments       Comment[]
