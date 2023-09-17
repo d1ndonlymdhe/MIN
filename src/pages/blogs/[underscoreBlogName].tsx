@@ -181,7 +181,7 @@ function CommentDeleteButton(props: deleteButtonProps) {
     }, false)
     const deleteMutation = trpc.blog.comment.deleteComment.useMutation({
         onSuccess: (data) => {
-            let temp = comments.filter(c => {
+            const temp = comments.filter(c => {
                 c.id != data.commentId;
             })
             setComments(temp);

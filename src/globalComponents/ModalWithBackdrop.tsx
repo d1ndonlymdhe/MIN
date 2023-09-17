@@ -1,5 +1,5 @@
-import { PropsWithChildren, useContext, useEffect, useState } from "react";
-import { createContext } from "react";
+import { type PropsWithChildren, useEffect, useState } from "react";
+// import { createContext } from "react";
 
 
 // type modalContextType = {
@@ -45,7 +45,7 @@ type ModalWithBackdropProps = {
 export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBackdropProps>) {
     const { onClick, title, className, isShown } = props;
 
-    const [scrollPos, setScrollPos] = useState({ x: 0, y: 0 })
+    const setScrollPos = useState({ x: 0, y: 0 })[1]
     useEffect(() => {
         console.log("changed")
         if (isShown) {

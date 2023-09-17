@@ -36,7 +36,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                         const fileName = file.originalFilename
                         if (fileName) {
                             console.log(file.filepath);
-                            const ext = getExtension(fileName)
+                            // const ext = getExtension(fileName)
                             cloudinary.uploader.upload(`${file.filepath}`, {
                                 public_id: `blogs/${blogId}/blogImage`,
                                 format: "jpg"

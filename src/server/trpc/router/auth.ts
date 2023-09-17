@@ -55,9 +55,6 @@ export const authRouter = router({
                 const passwordHash = hash(password + salt)
                 const newUser = await prisma.user.create({ data: { username: username, passwordHash: passwordHash, salt: salt, name: name } })
                 //create a directory for storing future files need to use storage service like amazon s3
-                fs.mkdir(`./files/${newUser.id}`)
-                fs.mkdir(`./files/${newUser.id}/blogs`)
-                fs.mkdir(`./files/${newUser.id}/images`)
                 return {
                     success: true
                 }

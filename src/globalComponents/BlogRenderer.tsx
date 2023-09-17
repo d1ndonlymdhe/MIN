@@ -1,7 +1,6 @@
-import { Blog } from "@prisma/client";
+import type { Blog } from "@prisma/client";
 import dynamic from "next/dynamic";
 import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 
 import "@uiw/react-markdown-preview/markdown.css";
 import { getBlogImage } from "../pages/blogs/[underscoreBlogName]";
@@ -26,7 +25,7 @@ export default function BlogRenderer(props: { blog: Blog }) {
                     background: "black",
                     color: "white",
 
-                }} source={content} className="prose  rounded-md smallBlogContent md:blogContent" remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}></MDPreview>
+                }} source={content} className="prose  rounded-md smallBlogContent md:blogContent" rehypePlugins={[rehypeKatex]}></MDPreview>
             </div>
         </div>
     );

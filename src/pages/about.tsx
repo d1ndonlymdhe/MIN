@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import Navbar from '../globalComponents/Navbar'
+// import Navbar from '../globalComponents/Navbar'
 import AboutImg from "../../public/images/alumni.jpg";
-import Background from "../globalComponents/Background";
+// import Background from "../globalComponents/Background";
 import Footer from "../globalComponents/Footer";
-import Image from "next/image";
+// import Image from "next/image";
 import MemberCard from "../globalComponents/MemberCard";
 import { Intro } from '.';
 import Head from 'next/head';
