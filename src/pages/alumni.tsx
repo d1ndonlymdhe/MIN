@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from "react";
+import React, {  useState } from "react";
 // import Navbar from "../globalComponents/Navbar";
 // import AlumniImg from "../../public/images/alumni.jpg";
 // import Background from "../globalComponents/Background";
