@@ -13,7 +13,8 @@ const Button = (props: PropsWithChildren<buttonProps>) => {
         if (onClick) {
             onClick(e)
         }
-    }}>{props.children}</button>
+    }}
+    >{props.children}</button>
 }
 
 export default Button
