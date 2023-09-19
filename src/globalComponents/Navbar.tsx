@@ -107,7 +107,7 @@ export default function Navbar(props: NavbarProps) {
           </ul>
         </div>
       </nav>
-      <nav className="grid grid-cols-2 lg:hidden">
+      <nav className="grid grid-cols-2 lg:hidden w-full">
         <div className="flex items-center justify-start font-primary text-[30px] font-[700] ml-5 mt-2">
           <Link href="/">
             <Image

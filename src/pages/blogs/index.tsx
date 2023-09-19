@@ -1,129 +1,167 @@
 import { Blog, PrismaClient } from "@prisma/client";
-import { GetServerSideProps } from "next"
-import { useState } from "react";
-import uuid from "react-uuid";
-import Button from "../../globalComponents/Button";
-// import { ModalContextProvider, useModalContext } from "../../globalComponents/ModalWithBackdrop";
+import { GetServerSideProps } from "next";
 import Navbar from "../../globalComponents/Navbar";
-import Spinner from "../../globalComponents/Spinner";
-import { trpc } from "../../utils/trpc";
+import { useState } from "react";
+import { Intro } from "..";
+import homeImage from "../../../public/images/homeImage.jpg";
+import homeImageL from "../../../public/images/homeImageL.jpg";
+import Head from "next/head";
 import { getBlogImage } from "./[underscoreBlogName]";
-
-
-type ClientBlog = (Blog & {
+import { trpc } from "../../utils/trpc";
+import Button from "../../globalComponents/Button";
+import Spinner from "../../globalComponents/Spinner";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import Footer from "../../globalComponents/Footer";
+type ClientBlog = Blog & {
     author: {
         name: string;
-    };
-})
-
+    }
+}
 type PageProps = {
     blogs: ClientBlog[]
-
 }
-
-export default function FeaturedBlogs(props: PageProps) {
-    const { blogs: b } = props;
-    const [blogs, setBlogs] = useState(b);
+export default function NewIndex(props: PageProps) {
+    // const blogs = props.blogs;
+    const [blogs, setBlogs] = useState(props.blogs);
+    const [isNavShown, setIsNavShown] = useState(false);
     const loadMoreMutation = trpc.blog.getBlogs.useMutation({
         onSuccess: (data) => {
             setBlogs([...blogs, ...data.blogs])
         }
     })
-    const [modalShown, setModalShown] = useState(false);
-    // const modalState = useModalContext()
-    return (
-        <div>
-            <main className={`bg-primary min-h-screen text-minWhite flex flex-col gap-10 ${modalShown ? "h-screen w-screen overflow-hidden" : ""}`}>
-                {/* <div className="w-screen"> */}
-                <Navbar activeTab="Blogs" setModalShown={setModalShown}></Navbar>
-                {/* </div> */}
-                <div className="flex flex-col mx-10 lg:mx-20 gap-10 mb-4">
-                    <p className="text-2xl md:text-4xl font-[700] font-complementry ">
-                        FEATURED BLOGS
-                    </p>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3x gap-20">
-                        {
-                            blogs.map(b => {
-                                return <BlogPreview blog={b} key={uuid()}></BlogPreview>
-                            })
-                        }
-                    </div>
-                    <div className="w-full grid md::grid-cols-[4.5fr_1fr_4.5fr] items-center justify-items-center">
-                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden lg:block"></div> */}
-                        <div className="w-full"></div>
+    const LDButton = <LoadButton onClick={() => {
+        loadMoreMutation.mutate({
+            from: blogs.length, to: blogs.length + 5, sortBy: {
+                property: "time"
+            }
+        })
+    }} isLoading={loadMoreMutation.isLoading}></LoadButton>
+    return <div className={`flex gap-10 flex-col ${isNavShown ? "overflow-y-hidden" : "overflow-y-auto"} overflow-x-hidden`}>
+        <Head>
+            <style>
+                {
+                    `
+                .bg1{
+                    background-image:url(${homeImage.src});
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: cover;
+                    width: 100vw;
+                    height: 80vh;
 
-                        <Button className="bg-secondary mx-2 md:w-fit w-full  text-md lg:text-lg" onClick={() => {
-                            if (!loadMoreMutation.isLoading) {
-                                loadMoreMutation.mutate({
-                                    from: blogs.length, to: blogs.length + 5, sortBy: {
-                                        property: "time"
-                                    }
-                                })
-                            }
-                        }}>{!loadMoreMutation.isLoading && "Load More" || <div className="mx-2 my-2">
-                            <Spinner></Spinner>
-                        </div>}</Button>
-                        <div className="w-full"></div>
-                        {/* <div className="w-full h-2 rounded-md bg-cyan-300 hidden md:block"></div> */}
-                    </div>
-                </div>
-            </main>
+                }
+                @media only screen and (min-width:768px){
+                    .bg1{
+                        background-image:url(${homeImageL.src});
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: cover;
+                        width: 100vw;
+                        height: 100vh;
+
+                    }
+                }`
+                }
+            </style>
+        </Head>
+        <Intro activeTab="Blogs" setModalShown={setIsNavShown}></Intro>
+        {/* for desktop */}
+        <div style={{
+            gridTemplateAreas: `'first first'`
+        }} className="hidden md:grid gap-4 px-10 w-full md:grid-cols-2">
+            {
+                blogs.map((b, i) => {
+                    if (i == 0) {
+                        return <div key={i} style={{ gridArea: "first" }}> <BlogThumbnail blog={b}></BlogThumbnail> </div>
+                    } else {
+                        return <BlogThumbnail key={i} blog={b}></BlogThumbnail>
+                    }
+                })
+
+            }
+            {LDButton}
         </div>
-    )
+        {/* for mobile */}
+        <div className="grid md:hidden gap-6 px-4 w-full grid-cols-1">
+            {
+                blogs.map((b, i) => {
+                    return <BlogThumbnail key={i} blog={b}></BlogThumbnail>
+                })
+
+            }
+            {LDButton}
+        </div>
+        <Footer></Footer>
+    </div>
 }
 
-function BlogPreview(props: { blog: ClientBlog }) {
-    const { blog } = props;
+type ThumbnailProps = {
+    blog: ClientBlog
+}
+
+type LoadButtonProps = {
+    isLoading: boolean,
+    onClick: () => void
+}
+
+function LoadButton(props: LoadButtonProps) {
+    let { isLoading, onClick } = props;
+    return <Button className="bg-secondary mx-2 w-full py-4 md:py-2" onClick={() => {
+        if (!isLoading) {
+            onClick();
+        }
+    }}
+    >
+        <div className="grid place-content-center">
+            {
+                !isLoading && <div className="flex flex-col justify-center items-center md:text-xl">
+                    <PlusIcon className="w-16 md:w-24 h-16 md:h-24"></PlusIcon>
+                    Load More
+                </div> || <Spinner></Spinner>
+            }
+        </div>
+    </Button>
+}
+
+
+function BlogThumbnail(props: ThumbnailProps) {
+    let { blog } = props;
     return <a href={`/blogs/${blog.titleLowered.replaceAll(" ", "_")}`}>
-        <div className="bg-secondary rounded-lg h-[40vh] w-full flex-col hover:cursor-pointer">
-            <div style={{
-                backgroundImage: `url(${getBlogImage(blog.id)})`,
-                backgroundSize: "cover"
-            }} className="h-[25vh] w-full rounded-t-md">
+        <div className="w-full rounded-md flex gap-4 flex-col justify-end h-[30rem]" style={{
+            backgroundImage: `url(${getBlogImage(blog.id)})`,
+            backgroundSize: "cover"
+        }}>
+            <div className="flex flex-row justify-between py-4 px-4 bg-black bg-opacity-30 text-white font-bold text-lg md:text-2xl">
+                <span>
+                    {
+                        blog.title
+                    }
+                </span>
+                <span>
+                    {
+                        blog.author.name
+                    }
+                    {
+                        `  (${(new Date(Number(blog.publishedOn))).toLocaleDateString()})`
+                    }
+                </span>
             </div>
-            {/* <div className="flex h-[10vh] w-full justify-start items-center"> */}
-            <div className="grid grid-cols-2 h-[15vh] w-full">
-                <div className="flex justify-start items-center mx-4">
-                    <p className="font-[700] font-complementry text-3xl">{blog.title}</p>
-                </div>
-                <div className="flex justify-end">
-                    <div className="grid grid-rows-2 justify-center items-center mx-4 gap-2 font-bold">
-                        <div className="flex items-end justify-end h-full w-full">
-                            <p className="">
-                                {(new Date(Number(blog.publishedOn))).toLocaleDateString()}
-                            </p>
-                        </div>
-                        <div className="flex items-start h-full w-full">
-                            <p className="">
-                                {blog.author.name}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {/* </div> */}
         </div>
     </a>
 }
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const token = context.req.cookies?.token;
+    // const token = context.req.cookies?.token;
     const prisma = new PrismaClient()
     const blogCount = 3;
-    let loggedIn = false;
-    if (token) {
-        const dbToken = await prisma.token.findFirst({ where: { value: token } });
-        if (dbToken) {
-            loggedIn = true;
-        }
-    }
     const latestBlogs = await prisma.blog.findMany({ where: { isTemp: false }, orderBy: { publishedOn: "desc" }, include: { author: { select: { name: true } } } })
 
     return {
         props: {
-            loggedIn,
             blogs: latestBlogs.reverse().slice(0 - blogCount).reverse()
         }
     }
 }
+
