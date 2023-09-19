@@ -23,6 +23,7 @@ type PageProps = {
 }
 export default function NewIndex(props: PageProps) {
     // const blogs = props.blogs;
+    //for build
     const [blogs, setBlogs] = useState(props.blogs);
     const [isNavShown, setIsNavShown] = useState(false);
     const loadMoreMutation = trpc.blog.getBlogs.useMutation({
