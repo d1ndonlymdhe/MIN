@@ -53,7 +53,7 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
             const y = window.scrollY;
             setScrollPos({ x, y });
         }
-    }, [isShown])
+    }, [isShown, setScrollPos])
     useEffect(() => {
         console.log(window.scrollY);
         const onEsc = (e: KeyboardEvent) => {
@@ -63,7 +63,7 @@ export default function ModalWithBackdrop(props: PropsWithChildren<ModalWithBack
             }
         };
         window.addEventListener("keydown", onEsc);
-    }, []);
+    }, [onClick]);
     return <>
         {
             isShown && <div className={`absolute h-screen w-screen left-0 z-[100] top-0 flex justify-center items-center backdrop-blur-sm overflow-hidden`} onClick={() => { onClick && onClick() }}>

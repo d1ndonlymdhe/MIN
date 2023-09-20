@@ -1,9 +1,8 @@
-import type { PropsWithChildren } from "react"
 import { Carousel as C } from "react-responsive-carousel"
 import Button from "./Button"
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/solid"
 
-export default function Carousel(props: PropsWithChildren) {
+export default function Carousel() {
     return (
         <div className="mt">
             <C

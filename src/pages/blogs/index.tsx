@@ -107,7 +107,7 @@ type LoadButtonProps = {
 }
 
 function LoadButton(props: LoadButtonProps) {
-    let { isLoading, onClick } = props;
+    const { isLoading, onClick } = props;
     return <Button className="bg-secondary mx-2 w-full py-4 md:py-2" onClick={() => {
         if (!isLoading) {
             onClick();
@@ -127,7 +127,7 @@ function LoadButton(props: LoadButtonProps) {
 
 
 function BlogThumbnail(props: ThumbnailProps) {
-    let { blog } = props;
+    const { blog } = props;
     return <a href={`/blogs/${blog.titleLowered.replaceAll(" ", "_")}`}>
         <div className="w-full rounded-md flex gap-4 flex-col justify-end h-[30rem]" style={{
             backgroundImage: `url(${getBlogImage(blog.id)})`,

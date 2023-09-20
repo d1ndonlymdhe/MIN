@@ -1,6 +1,6 @@
 import { type Blog, PrismaClient } from "@prisma/client";
 import { type GetServerSideProps } from "next";
-import React, { SetStateAction, useRef, useState } from "react";
+import React, { type SetStateAction, useRef, useState } from "react";
 import uuid from "react-uuid";
 import { trpc } from "../utils/trpc";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
@@ -32,20 +32,20 @@ export default function OuterMain(props: PageProps) {
 
 function Main(props: PageProps) {
     //may need to create a global context for blogs
-    const { username, blogs, editThis, hasEdit } = props;
+    const { blogs, editThis, hasEdit } = props;
     const [publishedBlogs, setPublishedBlogs] = useState(blogs.filter(b => !b.isTemp))
     const [unPublishedBlogs, setUnPublishedBlogs] = useState(blogs.filter(b => b.isTemp))
     const [blogView, SetBlogView] = useState(false);
     const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
     const [createMode, setCreateMode] = useState(hasEdit);
-    const [modalShown, setModalShown] = useState(false);
+    const [modalShown] = useState(false);
     //was new blog now whatever blog is being edited
     const [nBlog, setNblog] = useState<Blog | null>(hasEdit ? editThis : null)
     // const modalState = useModalContext()
     const createEBlog = trpc.blog.createEmptyBlog.useMutation({
         onSuccess: (data) => {
             setCreateMode(true)
-            setNblog(data.newBlog);
+            // setNblog(data.newBlog);
             setUnPublishedBlogs([...unPublishedBlogs, data.newBlog])
         },
     })
