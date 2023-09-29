@@ -43,7 +43,7 @@ const Alumni = () => {
         </style>
       </Head>
       <Intro setModalShown={setModalShown} activeTab="Alumni"></Intro>
-      <section className=" bg-white">
+      <section className="  bg-slate-100">
         <AlumniCard />
         <AlumniCard />
         <AlumniCard />

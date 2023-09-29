@@ -44,10 +44,13 @@ const About = () => {
         <MemberCard />
       </div>
 
+
       <div className="flex flex-col justify-evenly md:flex-row my-10">
         <MemberCard />
         <MemberCard />
       </div>
+
+      <hr className="border-b w-full"/>
 
       <div className="mt-[2em] md:mt-[6em] mb-[5em]">
         <h1 className="z-1 flex text-2xl items-center justify-center font-secondary  font-bold text-white md:text-4xl">
@@ -73,6 +76,8 @@ const About = () => {
         <MemberCard />
       </div>
 
+      <hr className="border-b w-full"/>
+
       <div className="mt-[2em] md:mt-[6em] mb-[5em]">
         <h1 className="z-1 flex text-2xl items-center justify-center font-secondary  font-bold text-white md:text-4xl">
           Event Department
@@ -96,6 +101,9 @@ const About = () => {
         <MemberCard />
         <MemberCard />
       </div>
+
+
+      <hr className="border-b w-full"/>
 
       <div className="mt-[2em] md:mt-[6em] mb-[5em]">
         <h1 className="z-1 flex text-2xl items-center justify-center font-secondary  font-bold text-white md:text-4xl">

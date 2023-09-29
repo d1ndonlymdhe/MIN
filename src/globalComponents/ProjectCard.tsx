@@ -14,12 +14,18 @@ const ProjectCard = () => {
           />
         </div>
 
-        <div className="flex flex-row items-center justify-center md:w-4/5 p-10">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-          aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
-          Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
-          venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
-          vulputate est congue.
+        <div className="flex flex-col justify-center md:w-3/5 p-10">
+          <div className="text-4xl justify-left pb-8">
+            Title
+          </div>
+          <div>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
+            aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
+            Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
+            venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
+            vulputate est congue.
+          </div>
+
         </div>
 
 
@@ -34,12 +40,18 @@ const ProjectCard = () => {
             alt="Alumni Image"
           />
         </div>
-        <div className="flex flex-row items-center justify-center md:w-4/5 p-10">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-          aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
-          Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
-          venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
-          vulputate est congue.
+        <div className="flex flex-col justify-center md:w-3/5 p-10">
+          <div className="text-4xl justify-left pb-8">
+            Title
+          </div>
+          <div>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
+            aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
+            Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
+            venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
+            vulputate est congue.
+          </div>
+
         </div>
       </div>
     </>
