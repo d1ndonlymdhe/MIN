@@ -207,7 +207,7 @@ function BlogControls(props: BlogControlsProps) {
 
     return <div className="bg-pink-400 flex flex-row gap-4 px-4 py-2 rounded-md">
         {/* wrapping in a to allow working like normal link */}
-        <a href={`/admin?editThis=${blog.id}`} onClick={(e) => {
+        <a href={`/adminofmin?editThis=${blog.id}`} onClick={(e) => {
             e.stopPropagation()
             e.preventDefault();
             alert("Preventing default")
@@ -519,7 +519,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     }
     return {
         redirect: {
-            destination: "/adminLogin",
+            destination: "/",
             permanent: false,
         },
     };

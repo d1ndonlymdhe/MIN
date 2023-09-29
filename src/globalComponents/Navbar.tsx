@@ -75,11 +75,11 @@ export default function Navbar(props: NavbarProps) {
   return (
     <>
       <nav className="hidden lg:grid lg:grid-cols-2 relative z-10">
-        <div className="flex items-center justify-start font-secondary font-bold ml-5">
-          <Link href="/">
+        <div className="flex items-center my-auto justify-start font-secondary font-bold ml-5">
+          <Link href="/" className="mt-4 ml-4">
             <Image
               src={MinLogoX.src}
-              alt="Picture of the author"
+              alt="MIN Logo"
               width={150}
               height={75}
             />

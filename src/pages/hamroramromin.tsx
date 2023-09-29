@@ -25,8 +25,8 @@ export default function Main() {
   const signupPasswordRef = useRef<HTMLInputElement>(null);
   const signupNameRef = useRef<HTMLInputElement>(null);
   return (
-    <main className="grid h-screen w-screen grid-rows-[2fr_8fr]">
-      <div className="h-full w-full text-center">
+    <main className="grid h-screen w-screen grid-rows-[2fr_8fr] p-8">
+      <div className="h-full w-full text-center font-bold text-white pt-10">
         Mathmatics Initiatives in Nepal
       </div>
       <div className="grid grid-cols-2">
@@ -49,25 +49,25 @@ export default function Main() {
           }}
         >
           <div className="flex flex-col">
-            <div>LOGIN FORM</div>
-            <label>
-              Username
+            <div className="py-2 font-bold text-white">LOGIN FORM</div>
+            <label className="text-white">
+              Username: 
               <input
                 ref={loginUsernameRef}
                 type={"text"}
-                className="border border-solid border-black"
+                className="border border-solid border-black text-black"
               ></input>
             </label>
-            <label>
-              Password
+            <label className="text-white py-4">
+              Password: 
               <input
                 ref={loginPasswordRef}
                 type={"password"}
-                className="border border-solid border-black"
+                className="border border-solid border-black text-black"
               ></input>
             </label>
             <button
-              className="w-fit border border-solid border-black"
+              className="w-fit border border-solid bg-purple-600 py-1 px-2 text-white rounded-md"
               type="submit"
             >
               Login
@@ -92,25 +92,25 @@ export default function Main() {
           }}
         >
           <div className="flex flex-col">
-            <div>SIGNUP FORM</div>
-            <label>
-              Username
+            <div className="py-2 font-bold text-white">SIGNUP FORM</div>
+            <label className="text-white">
+              Username: 
               <input
                 ref={signupUsernameRef}
                 type={"text"}
-                className="border border-solid border-black"
+                className="border border-solid border-black text-black"
               ></input>
             </label>
-            <label>
-              Full Name:
+            <label  className="text-white">
+              Full Name: 
               <input
                 type={"text"}
                 ref={signupNameRef}
-                className="border border-solid border-black"
+                className="border border-solid border-black text-black"
               ></input>
             </label>
-            <label>
-              Password
+            <label className="text-white py-4">
+              Password: 
               <input
                 ref={signupPasswordRef}
                 type={"password"}
@@ -118,7 +118,7 @@ export default function Main() {
               ></input>
             </label>
             <button
-              className="w-fit border border-solid border-black"
+              className="w-fit border border-solid bg-purple-600 py-1 px-2 text-white rounded-md"
               type="submit"
             >
               Sign up
@@ -143,7 +143,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       //if logged in redirect to homepage (admin page)
       return {
         redirect: {
-          destination: `/admin`,
+          destination: `/adminofmin`,
           permanent: false,
         },
       };

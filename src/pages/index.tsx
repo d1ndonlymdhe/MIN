@@ -110,7 +110,7 @@ function ProjectHighlights() {
         <Carousel2></Carousel2>
       </div>
     </div>
-    <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[25vh] border-y-white border-y">
+    <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[35vh] border-y-white border-y">
       <div className="flex flex-col">
         <span className="text-4xl text-center md:text-8xl font-[700]">1000<span className="text-complementary">+</span></span>
         <span className="font-[500] text-lg text-center md:text-4xl">Students Reached</span>
@@ -147,20 +147,20 @@ function Testimonials() {
 function Newsletter() {
   return <>
     <div className="hidden md:block">
-      <div className="font-complementry w-full h-96 relative bg-[#352f79] mt-10">
+      <div className="font-complementry w-full h-96 relative bg-[#352f79] mt-10 ">
         <div className="absolute left-0 top-0 bg-white w-[60vw] flex flex-row justify-center items-center z-[3] h-96" style={{
           clipPath: "polygon(0 0,80% 0%,100% 100%,0% 100%)"
         }}>
-          <div className="flex flex-col  md:gap-10">
+          <div className="flex flex-col  md:gap-10 ml-8">
             <p className=" font-[500] text-5xl">Subscribe Newsletter</p>
-            <p className="text-gray-400">We will not promote spam</p>
+            <p className="text-gray-500">Sign Up for Newsletter to get upto date info about our organizations plan and event.</p>
           </div>
           <div className="w-[20vw]">
           </div>
         </div>
         <div className="flex justify-end  items-center h-full ">
-          <div className="h-fit w-fit -translate-x-[30rem] z-[4] shadow-2xl shadow-black rounded-md">
-            <input className="bg-yellow-500 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black placeholder:text-xl " placeholder="Enter your email address"></input>
+          <div className="h-fit w-fit -translate-x-[15rem] z-[4] shadow-2xl shadow-black rounded-md">
+            <input className="bg-slate-300 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black  " placeholder="Enter your email address"></input>
             <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">Subscribe</button>
           </div>
         </div>
@@ -171,8 +171,8 @@ function Newsletter() {
         Newsletter
       </div>
       <div className="flex flex-col items-center gap-4">
-        <div className="text-center text-lg text-white font-complementry">
-          We Will not promote spam
+        <div className="text-center text-lg text-white font-complementry mx-4">
+          Sign Up for Newsletter to get upto date info about our organizations plan and event.
         </div>
         <input className="w-[60%] rounded-md py-4 pl-4 placeholder:text-[#bcbcbc] placeholder:font-complementry" placeholder="Enter your email.">
         </input>
@@ -262,23 +262,23 @@ function Carousel2() {
       {
         parentArr.map((p, i) => {
           return <div key={i} className="flex w-full h-fit justify-center text-black">
-            <div className="bg-white flex flex-row w-[70vw] h-[60vh]">
-              <div className="w-[20vw] h-full" style={{
+            <div className="bg-white flex flex-row w-[70vw] h-auto">
+              <div className="w-[60vw] h-full invisible md:visible " style={{
                 backgroundImage: `url(${p.image})`,
                 backgroundSize: "cover"
               }}>
               </div>
-              <div className="w-[50vw] h-full flex flex-col px-10 py-10 items-start gap-4">
-                <p className="font-primary font-bold text-7xl text-left">
+              <div className="w-auto h-full flex flex-col sm:px-auto md:px-10 py-10 items-start gap-4">
+                <p className="font-primary font-bold text-3xl text-left">
                   Eric
                   <br></br>
                   Shrestha
                 </p>
-                <p className="font-secondary text-gray-500">
+                <p className="font-secondary text-gray-500 text-left">
                   Chief Operating Officer
                 </p>
-                <p className="text-left font-[600] font-complementry text-xl pt-10">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit non elit vitae varius. Sed egestas convallis vulputate. Aenean efficitur, leo nec sollicitudin tempus, orci massa commodo turpis, id dapibus ligula dui a nisl. Aliquam accumsan rhoncus tortor. Donec fermentum lacus ut odio hendrerit facilisis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut lobortis, risus vel posuere scelerisque, tellus lacus convallis mauris.
+                <p className="text-left font-[550] font-complementry text-lg sm:text-sm">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit non elit vitae varius. Sed egestas convallis vulputate. Aenean efficitur, leo nec sollicitudin tempus, orci massa commodo turpis, id dapibus ligula dui a nisl. 
                 </p>
               </div>
             </div>
@@ -352,17 +352,17 @@ function CCarousel() {
                   <img className="w-[80vw] md:w-[90vw] aspect-square rounded-md" src={p.image}>
                   </img>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <span className="w-full flex justify-end pr-4">
+                <div className="flex flex-col gap-4 ">
+                  <span className="flex justify-end pr-4">
                     {/* <div> */}
                     <Quote className="md:h-16 md:w-16 h-10 w-10"></Quote>
                     {/* </div> */}
                   </span>
-                  <span className="text-lg md:text-2xl md:pl-6 pr-8 leading-relaxed text-left">
+                  <span className="text-lg md:text-xl box-content md:pl-6 pr-8 leading-relaxed text-left">
                     {p.text}
                   </span>
                   <div className="flex flex-col gap-2 md:pl-6">
-                    <span className="font-bold text-lg md:text-4xl text-left w-full">
+                    <span className="font-bold text-lg md:text-2xl text-left w-full">
                       Chad Bahadur
                     </span>
                     <p className="text-lg text-left w-full">

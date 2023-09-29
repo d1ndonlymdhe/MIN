@@ -39,7 +39,7 @@ const AlumniCard = () => {
               Eric Shrestha 
 
             </div>
-
+            <hr className="border-b w-full mt-8"/>
             
           </div>
         </div>
