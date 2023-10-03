@@ -1,8 +1,9 @@
 import Image from "next/image"
 
-const ProjectCard = () => {
+const ProjectCard = ({Title1,Title2,Disc1,Disc2}) => {
   return (
     <>
+    
       <div className="md:mx-[14em] mx-4 flex flex-col items-center justify-center md:flex-row bg-white mb-[8em] mt-[30px]">
 
         <div className="mx-10 my-[-20px]">
@@ -16,14 +17,10 @@ const ProjectCard = () => {
 
         <div className="flex flex-col justify-center md:w-3/5 p-10">
           <div className="text-4xl justify-left pb-8">
-            Title
+            {Title1}
           </div>
           <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-            aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
-            Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
-            venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
-            vulputate est congue.
+            {Disc1}
           </div>
 
         </div>
@@ -42,14 +39,10 @@ const ProjectCard = () => {
         </div>
         <div className="flex flex-col justify-center md:w-3/5 p-10">
           <div className="text-4xl justify-left pb-8">
-            Title
+          {Title2}
           </div>
           <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-            aliquet quam et dolor tincidunt, rhoncus ornare metus tempor.
-            Vestibulum quis lacus massa. Aenean eget maximus elit, suscipit
-            venenatis purus. Quisque malesuada ipsum a turpis volutpat, ut
-            vulputate est congue.
+            {Disc2}
           </div>
 
         </div>

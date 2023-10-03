@@ -1,7 +1,7 @@
 import Image from "next/image"
 import saint from "../../public/images/member.png";
 
-const MemberCard = () => {
+const MemberCard = ({Name}) => {
   return (
     <>
     <div className="flex flex-col justify-center items-center mb-[4em] md:mb-0">
@@ -14,7 +14,7 @@ const MemberCard = () => {
             />
           </div>
           <div className="text-white text-left mt-2">
-            Paul Atreides
+            {Name}
           </div>
         </div>
     </>
