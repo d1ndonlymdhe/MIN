@@ -1,13 +1,13 @@
 import { GetServerSideProps } from "next";
-import { BlogReaction, CommentReaction, PrismaClient } from "@prisma/client"
+import { BlogReaction, PrismaClient } from "@prisma/client"
 
 
 import { remark } from 'remark'
 import html from 'remark-html'
 import remarkGfm from "remark-gfm";
-import { PaperAirplaneIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, TrashIcon } from "@heroicons/react/24/solid";
 import Navbar from "../../globalComponents/Navbar";
-import { createContext, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import Input from "../../globalComponents/Input";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../../globalComponents/Spinner";
@@ -35,7 +35,7 @@ export default function Post(props: PageProps) {
         <div className={`${modalShown && "h-screen w-screen overflow-hidden"}`}>
             <Navbar setModalShown={setModalShown} activeTab="Blogs"></Navbar>
             <div className="w-full h-fit flex flex-col items-center my-10 text-white gap-5">
-                <div className="flex flex-row items-center justify-center text-white text-[6rem] font-primary font-[700] w-[60vw] h-[50vh] rounded-md" style={{
+                <div className="flex flex-row items-center justify-center text-white text-[6rem] font-primary font-[700] w-[90vw] lg:w-[60vw] h-[50vh] rounded-md" style={{
                     backgroundImage: `url(${getBlogImage(blogId)})`,
                     backgroundSize: "cover"
                 }}>
@@ -43,7 +43,7 @@ export default function Post(props: PageProps) {
                         {title}
                     </p>
                 </div>
-                <div className="w-[60vw] flex gap-2 items-center font-inter text-xl">
+                <div className="w-[90vw] lg:w-[60vw] flex gap-2 items-center font-inter text-xl">
                     <p className="text-[#FFB700]">
                         {author}
                     </p>
@@ -53,7 +53,7 @@ export default function Post(props: PageProps) {
                         {/* {new Date(publishedOn).toDateString()} */}
                     </p>
                 </div>
-                <div className="w-[60vw]">
+                <div className="w-[90vw] lg:w-[60vw]">
                     <Blog content={blog}></Blog>
                 </div>
                 <Comment comments={comments} blogId={blogId} setComments={setComments} userId={userId} username={name} authorId={authorId} setModalShown={setModalShown}></Comment>
@@ -94,7 +94,7 @@ function Comment(props: CommentProps) {
     const nameRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     return <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[60vw] py-4 px-20">
+        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[90vw] lg:w-[60vw] py-4 px-4 lg:px-20">
             <div className="flex flex-row gap-4 justify-center">
                 <form className="h-fit w-full flex flex-col gap-4" onSubmit={(e) => {
                     e.preventDefault()
@@ -139,23 +139,24 @@ function Comment(props: CommentProps) {
                 </form>
             </div>
         </div>
-        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[60vw] py-4 px-20">
+        <div className="flex flex-col gap-4 rounded-md bg-secondary max-h-[50vh] w-[90vw] lg:w-[60vw] py-4 px-4 lg:px-20">
 
             <div className="flex flex-col gap-4">
                 {
-                    comments.map(c => {
-                        return <div key={c.id} className="flex flex-col gap-4 items-start">
-                            <p>
-                                {c.authorName} says:
-                            </p>
-                            <div className="flex flex-row w-full gap-4">
-                                <div className="font-complementry text-xl">
-                                    {c.content}
+                    (comments.length > 0 &&
+                        comments.map(c => {
+                            return <div key={c.id} className="flex flex-col gap-4 items-start">
+                                <p>
+                                    {c.authorName} says:
+                                </p>
+                                <div className="flex flex-row w-full gap-4 justify-between">
+                                    <div className="font-complementry text-xl">
+                                        {c.content}
+                                    </div>
+                                    {userId == authorId && <CommentDeleteButton {...{ blogId, commentId: c.id, comments, setComments, setModalShown }}></CommentDeleteButton>}
                                 </div>
-                                {userId == authorId && <CommentDeleteButton {...{ blogId, commentId: c.id, comments, setComments, setModalShown }}></CommentDeleteButton>}
                             </div>
-                        </div>
-                    })
+                        })) || <p>No Comments Yet..</p>
                 }
             </div>
         </div>
@@ -175,29 +176,31 @@ type deleteButtonProps = {
 function CommentDeleteButton(props: deleteButtonProps) {
     const { commentId, blogId, comments, setComments, setModalShown } = props;
     // const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useReducer((state: boolean, action: boolean) => {
-        setModalShown(action);
-        return action;
-    }, false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    function modal(state: boolean) {
+        setShowDeleteModal(state);
+        setModalShown(state);
+    }
     const deleteMutation = trpc.blog.comment.deleteComment.useMutation({
         onSuccess: (data) => {
             const temp = comments.filter(c => {
                 c.id != data.commentId;
             })
             setComments(temp);
-            setShowDeleteModal(false);
+            modal(false);
         }
     });
     const deleteHandler = () => {
         if (!deleteMutation.isLoading) {
-            setShowDeleteModal(true);
+            modal(true)
         }
     }
     return <div>
         <ModalWithBackdrop title="Delete Comment?" isShown={showDeleteModal} onClick={() => {
             if (!deleteMutation.isLoading) {
-                setShowDeleteModal(false);
+                modal(false)
             }
+
         }}>
             <p>
                 Are you sure you want to delete the comment?

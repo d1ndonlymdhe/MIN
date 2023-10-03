@@ -111,7 +111,7 @@ export default function Navbar(props: NavbarProps) {
         <div className="flex items-center justify-start font-primary text-[30px] font-[700] ml-5 mt-2">
           <Link href="/">
             <Image
-              src="/images/minLogox.png"
+              src={MinLogoX.src}
               alt="Picture of the author"
               width={150}
               height={75}

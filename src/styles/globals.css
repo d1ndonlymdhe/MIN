@@ -19,10 +19,10 @@ body {
     @apply font-primary text-white w-[60vw]
 }
 .blogContent img {
-    @apply rounded-lg mx-4
+    @apply rounded-lg lg:mx-4
 }
 .blogContent p {
-    @apply w-[60vw] text-left text-xl leading-8
+    @apply w-[90vw] lg:w-[60vw] text-left text-xl leading-8
 }
 
 .blogContent h1 {
