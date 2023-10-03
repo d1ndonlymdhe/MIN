@@ -88,7 +88,7 @@ export function Intro(props: {
               Mathmatics Initiatives in Nepal
             </p>
             <p className="text-sm">
-            MIN is an exceptional non-profit mathematics organization, fueled by a vibrant community of passionate students committed to enriching the mathematical landscape since its inception in October 2020. We wholeheartedly embrace the elegance of mathematics, igniting a transformative journey towards its highest potential. MIN is devoted to revolutionizing mathematics in Nepal through captivating online talk shows, exhilarating math events, raising awareness about Olympiads, and so much more. MIN is not merely an organization; it's a dynamic platform designed to ignite the mathematical minds of Nepal, fueling your mathematical curiosities and unleashing your prowess.
+              {"MIN is an exceptional non-profit mathematics organization, fueled by a vibrant community of passionate students committed to enriching the mathematical landscape since its inception in October 2020. We wholeheartedly embrace the elegance of mathematics, igniting a transformative journey towards its highest potential. MIN is devoted to revolutionizing mathematics in Nepal through captivating online talk shows, exhilarating math events, raising awareness about Olympiads, and so much more. MIN is not merely an organization; it's a dynamic platform designed to ignite the mathematical minds of Nepal, fueling your mathematical curiosities and unleashing your prowess."}
             </p>
           </div>
         </div>

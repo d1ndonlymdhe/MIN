@@ -81,10 +81,10 @@ function Intro(props: {
       <div className="grid  justify-center items-center font-secondary text-white h-fit w-fit md:gap-15 ">
         <div className=" flex flex-col gap-8  w-[15em] md:w-[40em] text-center">
           <p className="text-lg md:text-4xl  font-bold">
-            Mathmatics Initiatives in Nepal
+            {" Mathmatics Initiatives in Nepal"}
           </p>
           <p className="text-sm">
-          MIN is an exceptional non-profit mathematics organization, fueled by a vibrant community of passionate students committed to enriching the mathematical landscape since its inception in October 2020. We wholeheartedly embrace the elegance of mathematics, igniting a transformative journey towards its highest potential. MIN is devoted to revolutionizing mathematics in Nepal through captivating online talk shows, exhilarating math events, raising awareness about Olympiads, and so much more. MIN is not merely an organization; it's a dynamic platform designed to ignite the mathematical minds of Nepal, fueling your mathematical curiosities and unleashing your prowess.
+            {"MIN is an exceptional non-profit mathematics organization, fueled by a vibrant community of passionate students committed to enriching the mathematical landscape since its inception in October 2020. We wholeheartedly embrace the elegance of mathematics, igniting a transformative journey towards its highest potential. MIN is devoted to revolutionizing mathematics in Nepal through captivating online talk shows, exhilarating math events, raising awareness about Olympiads, and so much more. MIN is not merely an organization; it's a dynamic platform designed to ignite the mathematical minds of Nepal, fueling your mathematical curiosities and unleashing your prowess."}
           </p>
         </div>
       </div>
@@ -99,7 +99,7 @@ function ProjectHighlights() {
       <div className="flex flex-col gap-20">
         <div className="flex flex-col h-[20%] justify-center items-center">
           <p className="text-4xl md:text-6xl font-bold text-center text-complementary">
-            PROJECT HIGHLIGHTS
+            {" PROJECT HIGHLIGHTS"}
           </p>
         </div>
         <CCarousel></CCarousel>
@@ -108,17 +108,17 @@ function ProjectHighlights() {
     <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[25vh] border-y-white border-y">
       <div className="flex flex-col">
         <span className="text-4xl text-center md:text-8xl font-[700]">1000<span className="text-complementary">+</span></span>
-        <span className="font-[500] text-lg text-center md:text-4xl">Students Reached</span>
+        <span className="font-[500] text-lg text-center md:text-4xl">{"Students Reached"}</span>
       </div>
       <div className="flex flex-col">
         <span className="text-4xl  text-center md:text-8xl font-[700]">20<span className="text-complementary">+</span></span>
-        <span className="font-[500] text-lg text-center md:text-4xl">Projects Installed</span>
+        <span className="font-[500] text-lg text-center md:text-4xl">{"Projects Installed"}</span>
       </div>
       <div className="flex flex-col">
         <span className="text-4xl text-center md:text-8xl font-[700]">15<span className="text-complementary">+</span>
         </span>
         <span className="font-[500] text-lg text-center  md:text-4xl">
-          Partners & Collaborators
+          {"Partners & Collaborators"}
         </span>
       </div>
     </div>
@@ -129,7 +129,7 @@ function Testimonials() {
   return <div className="testimonials flex flex-col gap-10 mt-10">
     <div className="flex flex-col h-[20%] justify-center items-center">
       <p className="text-4xl md:text-6xl font-bold text-center text-complementary">
-        TESTIMONIALS
+        {"TESTIMONIALS"}
       </p>
     </div>
     <div className="flex flex-col">
@@ -147,8 +147,8 @@ function Newsletter() {
           clipPath: "polygon(0 0,80% 0%,100% 100%,0% 100%)"
         }}>
           <div className="flex flex-col  md:gap-10">
-            <p className=" font-[500] text-5xl">Subscribe Newsletter</p>
-            <p className="text-gray-400">We will not promote spam</p>
+            <p className=" font-[500] text-5xl">{"Subscribe Newsletter"}</p>
+            <p className="text-gray-400">{"We will not promote spam"}</p>
           </div>
           <div className="w-[20vw]">
           </div>
@@ -156,18 +156,18 @@ function Newsletter() {
         <div className="flex justify-end  items-center h-full ">
           <div className="h-fit w-fit -translate-x-[30rem] z-[4] shadow-2xl shadow-black rounded-md">
             <input className="bg-yellow-500 h-16 w-[20vw] rounded-l-md z-[4] focus:outline-[#352f79] pl-10 placeholder:text-black placeholder:text-xl " placeholder="Enter your email address"></input>
-            <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">Subscribe</button>
+            <button className="bg-[#3b3486] h-16 px-8 py-4 font-bold text-lg text-yellow-500  rounded-r-md">{"Subscribe"}</button>
           </div>
         </div>
       </div>
     </div>
     <div className="w-full grid grid-rows-[2fr_8fr] gap-4 mt-10 md:hidden border-y-2 border-y-complementary  py-10">
       <div className="text-4xl font-bold  w-full h-full text-complementary text-center">
-        Newsletter
+        {"Newsletter"}
       </div>
       <div className="flex flex-col items-center gap-4">
         <div className="text-center text-lg text-white font-complementry">
-          We Will not promote spam
+          {"We Will not promote spam"}
         </div>
         <input className="w-[60%] rounded-md py-4 pl-4 placeholder:text-[#bcbcbc] placeholder:font-complementry" placeholder="Enter your email.">
         </input>

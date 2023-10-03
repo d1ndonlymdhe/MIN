@@ -40,7 +40,7 @@ const About = () => {
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Manish Poudel"/>
+        <MemberCard name="Manish Poudel" />
       </div>
 
       <hr className="border-b w-full"/>
@@ -52,9 +52,9 @@ const About = () => {
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Apeel Subedi"/>
-        <MemberCard Name="Prachi Jha"/>
-        <MemberCard Name="Swikriti Acharya"/>
+        <MemberCard name="Apeel Subedi" />
+        <MemberCard name="Prachi Jha" />
+        <MemberCard name="Swikriti Acharya" />
       </div>
 
       <hr className="border-b w-full"/>
@@ -66,30 +66,30 @@ const About = () => {
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Prakash Pant"/>
-        <MemberCard Name="Bikash Shah"/>
+        <MemberCard name="Prakash Pant" />
+        <MemberCard name="Bikash Shah" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Shirjak Thokar"/>
-        <MemberCard Name="Sama Malla"/>
-        <MemberCard Name="Rahul Bhujel"/>
+        <MemberCard name="Shirjak Thokar" />
+        <MemberCard name="Sama Malla" />
+        <MemberCard name="Rahul Bhujel" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Swikar Lamsal"/>
-        <MemberCard Name="Sayam Shrestha"/>
-        <MemberCard Name="Sushank Poudel"/>
+        <MemberCard name="Swikar Lamsal" />
+        <MemberCard name="Sayam Shrestha" />
+        <MemberCard name="Sushank Poudel" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Atith Adhikari"/>
-        <MemberCard Name="Amash Khadka"/>
-        <MemberCard Name="Sinshiya KC"/>
+        <MemberCard name="Atith Adhikari" />
+        <MemberCard name="Amash Khadka" />
+        <MemberCard name="Sinshiya KC" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Nayam Barun"/>
+        <MemberCard name="Nayam Barun" />
       </div>
 
       <hr className="border-b w-full"/>
@@ -101,20 +101,20 @@ const About = () => {
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Anuj Subedi"/>
-        <MemberCard Name="Abhinav Acharya"/>
+        <MemberCard name="Anuj Subedi" />
+        <MemberCard name="Abhinav Acharya" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Drone Chaudhary"/>
-        <MemberCard Name="Krish Yadav"/>
-        <MemberCard Name="Resham Ghimire"/>
+        <MemberCard name="Drone Chaudhary" />
+        <MemberCard name="Krish Yadav" />
+        <MemberCard name="Resham Ghimire" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Abhisek Rana"/>
-        <MemberCard Name="Prabhat Mahato"/>
-        <MemberCard Name="Atharv Pathak"/>
+        <MemberCard name="Abhisek Rana" />
+        <MemberCard name="Prabhat Mahato" />
+        <MemberCard name="Atharv Pathak" />
       </div>
 
 
@@ -127,25 +127,25 @@ const About = () => {
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Shivam Sah"/>
-        <MemberCard Name="Sajani Sharma"/>
+        <MemberCard name="Shivam Sah" />
+        <MemberCard name="Sajani Sharma" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Amar Kushwaha"/>
-        <MemberCard Name="Munish Prasad Lohani"/>
-        <MemberCard Name="Sijan Khadka"/>
+        <MemberCard name="Amar Kushwaha" />
+        <MemberCard name="Munish Prasad Lohani" />
+        <MemberCard name="Sijan Khadka" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Kumud Raj Ghimire"/>
-        <MemberCard Name="Sakshyam Pokharel"/>
-        <MemberCard Name="Aayush Shah"/>
+        <MemberCard name="Kumud Raj Ghimire" />
+        <MemberCard name="Sakshyam Pokharel" />
+        <MemberCard name="Aayush Shah" />
       </div>
 
       <div className="flex flex-col justify-evenly md:flex-row my-10">
-        <MemberCard Name="Sandesh Shrestha"/>
-        <MemberCard Name="Rib En Ce"/>
+        <MemberCard name="Sandesh Shrestha" />
+        <MemberCard name="Rib En Ce" />
       </div>
       {/*  <Footer /> */}
       <Footer />
