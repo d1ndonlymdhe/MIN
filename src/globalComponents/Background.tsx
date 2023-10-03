@@ -23,6 +23,7 @@ const Background = (props: backgroundProps) => {
                     background-size: cover;
                     width: 100vw;
                     height: 80vh;
+                    // opacity: 0;
 
                 }
                 @media only screen and (min-width:768px){
@@ -33,6 +34,7 @@ const Background = (props: backgroundProps) => {
                         background-size: cover;
                         width: 100vw;
                         height: 100vh;
+                        // opacity: 0;
 
                     }
                 }`

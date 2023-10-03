@@ -88,7 +88,7 @@ export function Intro(props: {
               Mathmatics Initiatives in Nepal
             </p>
             <p className="text-sm">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, temporibus mollitia. Possimus eos pariatur reiciendis earum ut! Praesentium, unde. Exercitationem nemo modi ducimus quibusdam cumque maxime expedita, repellendus qui iste.
+            MIN is an exceptional non-profit mathematics organization, fueled by a vibrant community of passionate students committed to enriching the mathematical landscape since its inception in October 2020. We wholeheartedly embrace the elegance of mathematics, igniting a transformative journey towards its highest potential. MIN is devoted to revolutionizing mathematics in Nepal through captivating online talk shows, exhilarating math events, raising awareness about Olympiads, and so much more. MIN is not merely an organization; it's a dynamic platform designed to ignite the mathematical minds of Nepal, fueling your mathematical curiosities and unleashing your prowess.
             </p>
           </div>
         </div>
@@ -112,7 +112,7 @@ function ProjectHighlights() {
     </div>
     <div className="grid grid-cols-3 text-lg md:text-2xl text-center text-white font-secondary items-center justify-center h-[35vh] border-y-white border-y">
       <div className="flex flex-col">
-        <span className="text-4xl text-center md:text-8xl font-[700]">1000<span className="text-complementary">+</span></span>
+        <span className="text-4xl text-center md:text-8xl font-[700]">30K<span className="text-complementary">+</span></span>
         <span className="font-[500] text-lg text-center md:text-4xl">Students Reached</span>
       </div>
       <div className="flex flex-col">

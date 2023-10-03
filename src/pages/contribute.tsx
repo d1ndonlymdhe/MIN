@@ -46,14 +46,7 @@ const Contribute = () => {
           <div className="flex flex-col-reverse items-center  justify-evenly space-y-20 space-y-reverse md:flex-row md:space-y-0 px-6">
             <div className="flex flex-col space-y-12 justify-center">
               <p className="max-w-sm text-center font-primary font-[400] text-white md:text-left">
-                Nullam non sapien varius, venenatis neque sit amet, dignissim
-                nisi. Nam vel ex ac turpis lacinia iaculis. Fusce tincidunt, nisi
-                ac imperdiet gravida, ipsum dui ornare est, lacinia elementum elit
-                erat et dolor. Suspendisse potenti. Quisque consectetur mattis
-                sollicitudin. Praesent mattis tortor ante, id egestas lectus
-                faucibus pharetra. Mauris congue ipsum arcu, et mattis lacus
-                congue quis.Nullam non sapien varius, venenatis neque sit amet, dignissim
-                nisi. Nam vel ex ac turpis lacinia iaculis.
+                Ready to catalyze extraordinary change? Support Mathematics Initiatives in Nepal (MIN) and unlock the boundless potential of mathematics! Make your presence  to fuel our captivating events where passion and inspiration converge, igniting a transformative love for numbers that shapes lives. Invest in our innovative projects to empower individuals and shape a limitless future in math education. Take the leap today and be a driving force as a volunteer behind this captivating journey as we revolutionize the landscape of mathematics in Nepal. Together, let's create an equation for success, multiplying opportunities and leaving an indelible impact.
               </p>
               <div className="flex items-center justify-center max-w-sm md:justify-start">
                 <a
@@ -82,14 +75,7 @@ const Contribute = () => {
           <div className="flex flex-col-reverse items-center justify-evenly space-y-20 space-y-reverse md:flex-row px-6 md:space-y-0">
             <div className="flex flex-col space-y-12 justify-center md:order-2">
               <p className="max-w-sm text-center font-primary font-[400] text-white md:text-left">
-                Nullam non sapien varius, venenatis neque sit amet, dignissim
-                nisi. Nam vel ex ac turpis lacinia iaculis. Fusce tincidunt, nisi
-                ac imperdiet gravida, ipsum dui ornare est, lacinia elementum elit
-                erat et dolor. Suspendisse potenti. Quisque consectetur mattis
-                sollicitudin. Praesent mattis tortor ante, id egestas lectus
-                faucibus pharetra. Mauris congue ipsum arcu, et mattis lacus
-                congue quis.Nullam non sapien varius, venenatis neque sit amet, dignissim
-                nisi. Nam vel ex ac turpis lacinia iaculis.
+                Unleash the power of numbers with Mathematics Initiatives in Nepal (MIN)! As a vibrant organization, we are dedicated to promoting math in Nepal through exciting events, workshops, and competitions. Join our passionate community of math enthusiasts and embark on a thrilling journey that will ignite your love for numbers. Whether you're a student, educator, or simply captivated by the magic of mathematics, MIN offers an authentic platform to connect with like-minded individuals, collaborate on exciting projects, and unravel the mysteries of this incredible field. Don't miss out on the opportunity to be part of a vibrant mathematical community. Join MIN today and let's shape a brighter future through the magic of mathematics!
               </p>
               <div className="flex items-center justify-center max-w-sm md:justify-start">
                 <a
