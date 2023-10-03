@@ -93,40 +93,30 @@ export default function Post(props: any) {
                 }}>No</Button>
             </div>
         </ModalWithBackdrop>
-        <Navbar setModalShown={setModalShown} activeTab="Blogs"></Navbar>
-        <div className="w-full h-fit flex flex-col items-center my-10 text-white gap-5">
-            <div className="flex items-center justify-center text-white text-[6rem] font-primary font-[700] w-[60vw] h-[40vh] rounded-md" style={{
-                backgroundImage: `url(${getBlogImage(blogId)})`,
-                backgroundSize: "cover"
-            }}>
-                <p>
-                    {title}
-                </p>
-            </div>
-            <div className="w-[60vw] flex gap-2 items-center font-inter text-xl">
-                {/* TODO add user image */}
-                <div>
-                    <UserCircleIcon className="h-10 w-10"></UserCircleIcon>
+        <div className={`${modalShown && "h-screen w-screen overflow-hidden"}`}>
+            <Navbar setModalShown={setModalShown} activeTab="Blogs"></Navbar>
+            <div className="w-full h-fit flex flex-col items-center my-10 text-white gap-5">
+                <div className="flex flex-row items-center justify-center text-white text-[6rem] font-primary font-[700] w-[90vw] lg:w-[60vw] h-[50vh] rounded-md" style={{
+                    backgroundImage: `url(${getBlogImage(blogId)})`,
+                    backgroundSize: "cover"
+                }}>
+                    <p>
+                        {title}
+                    </p>
                 </div>
-                <p className="text-[#FFB700]">
-                    {author}
-                </p>
-                <p>
-                    {/* {ps} */}
-                    {(new Date(Number(publishedOn)).toDateString())}
-                    {/* {new Date(publishedOn).toDateString()} */}
-                </p>
-            </div>
-            <div className="w-[60vw]">
-                <Blog content={blog}></Blog>
-            </div>
-            <div className="flex flex-row items-center justify-center gap-4">
-                <Button className="bg-secondary" onClick={() => {
-                    setPublishModal(true);
-                    setModalShown(true);
-
-                }}>Publish</Button>
-                <Button className="bg-secondary">Delete</Button>
+                <div className="w-[90vw] lg:w-[60vw] flex gap-2 items-center font-inter text-xl">
+                    <p className="text-[#FFB700]">
+                        {author}
+                    </p>
+                    <p>
+                        {/* {ps} */}
+                        {(new Date(Number(publishedOn)).toDateString())}
+                        {/* {new Date(publishedOn).toDateString()} */}
+                    </p>
+                </div>
+                <div className="w-[90vw] lg:w-[60vw]">
+                    <Blog content={blog}></Blog>
+                </div>
             </div>
         </div>
     </div>
