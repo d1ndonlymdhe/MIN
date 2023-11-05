@@ -1,6 +1,21 @@
 // import uuid from "react-uuid";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
+import Quote from "../globalComponents/Quotes";
+
+import minLogo from "../../public/images/MINLogox.png"
+import homeImage from "../../public/images/homeImage.jpg";
+import homeImageL from "../../public/images/homeImageL.jpg";
+import Navbar from "../globalComponents/Navbar";
+import Head from "next/head";
+import Button from "../globalComponents/Button";
+import React, { SetStateAction, useState } from "react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
+import Footer from "../globalComponents/Footer";
+import Image from "next/image"
+
+
 import p1 from "../../public/images/people/p1.jpg"
 import p2 from "../../public/images/people/p2.jpg"
 import p3 from "../../public/images/people/p3.jpg"
@@ -8,26 +23,40 @@ import p4 from "../../public/images/people/p4.jpg"
 import p5 from "../../public/images/people/p5.jpg"
 import p6 from "../../public/images/people/p6.jpg"
 import p7 from "../../public/images/people/p7.jpg"
-import Button from "../globalComponents/Button";
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
-import Quote from "../globalComponents/Quotes";
+
+// PROJECT HIGHLIGHTS DATA
 const ps = [p1, p2, p3, p4, p5, p6, p7];
-import minLogo from "../../public/images/MINLogox.png"
-import homeImage from "../../public/images/homeImage.jpg";
-import homeImageL from "../../public/images/homeImageL.jpg";
-import Navbar from "../globalComponents/Navbar";
-import Head from "next/head";
-import React, { SetStateAction, useState } from "react";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
-import Footer from "../globalComponents/Footer";
-import Image from "next/image"
-const parentArr = ps.map(p => {
+const projectName = ["test","name2","name3 ok", "name5", "NAME6", "Name 7", "Active"]
+const projectMsg = ["ok no 1","ok no 2","ok no 3","ok ni 4","ok no 5","ok no 6","ok no k k k k k k kk k  k k k k k k k k k k k k k k7"]
+const parentArr = ps.map((p,i) => {
   return {
     image: p.src,
-    text: "Aut nihil mollitia deserunt quia sed rem. Quibusdam amet veniam rerum id rerum beatae. Quas rerum iste necessitatibus. At voluptates ad magnam blanditiis excepturi expedita aut. Aut repellat inventore qui minima illum est."
+    text: projectMsg[i],
+    name: projectName[i]
   }
 })
 
+import t1 from "../../public/images/people/p1.jpg"
+import t2 from "../../public/images/people/p2.jpg"
+import t3 from "../../public/images/people/p3.jpg"
+import t4 from "../../public/images/people/p4.jpg"
+import t5 from "../../public/images/people/p5.jpg"
+import t6 from "../../public/images/people/p6.jpg"
+import t7 from "../../public/images/people/p7.jpg"
+
+// TESTONOMIALS DATA
+const ts = [t1, t2, t3, t4, t5, t6, t7];
+const testoName = ["Person 1","Person 2","Person 3", "Person 4", "Person 5", "Person 6", "Person 7"]
+const testoMsg = ["Testo1","Testo no 2","Testo no 3","Testo ni 4","Testo no 5","Testo no 6","Testo k k k k k k k k k7"]
+const testoPosi = ["position1", "position12", "position13", "position14", "position5", "position6", "position7"]
+const parentArr2 = ts.map((t,i) => {
+  return {
+    image: t.src,
+    text: testoMsg[i],
+    name: testoName[i],
+    position: testoPosi[i]
+  }
+})
 
 
 
@@ -262,23 +291,21 @@ function Carousel2() {
       {
         parentArr.map((p, i) => {
           return <div key={i} className="flex w-full h-fit justify-center text-black">
-            <div className="bg-white flex flex-row w-[70vw] h-auto">
-              <div className="w-[60vw] h-full invisible md:visible " style={{
+            <div className=" flex flex-row w-[70vw] h-auto">
+              <div className="w-1/3 h-full md:visible " style={{
                 backgroundImage: `url(${p.image})`,
                 backgroundSize: "cover"
               }}>
               </div>
-              <div className="w-auto h-full flex flex-col sm:px-auto md:px-10 py-10 items-start gap-4">
-                <p className="font-primary font-bold text-3xl text-left">
-                  Eric
-                  <br></br>
-                  Shrestha
+              <div className="bg-white w-2/3 h-full flex flex-col sm:px-auto md:px-10 py-10 items-start gap-4 pl-4">
+                <p className="font-primary font-bold text-3xl text-left w-2">
+                  {p.name}
                 </p>
                 <p className="font-secondary text-gray-500 text-left">
                   Chief Operating Officer
                 </p>
                 <p className="text-left font-[550] font-complementry text-lg sm:text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit non elit vitae varius. Sed egestas convallis vulputate. Aenean efficitur, leo nec sollicitudin tempus, orci massa commodo turpis, id dapibus ligula dui a nisl. 
+                {p.text}
                 </p>
               </div>
             </div>
@@ -344,12 +371,12 @@ function CCarousel() {
 
     >
       {
-        parentArr.map((p, i) => {
+        parentArr2.map((t, i) => {
           return <div key={i} className="w-full flex items-center justify-center">
             <div className="w-[85vw] md:w-[70vw] h-fit mx-12 bg-white rounded-md">
               <div className="my-4 mx-4   flex flex-col md:grid  md:grid-cols-[30%_70%]">
                 <div className="py-2 md:py-4">
-                  <img className="w-[80vw] md:w-[90vw] aspect-square rounded-md" src={p.image}>
+                  <img className="w-[80vw] md:w-[90vw] aspect-square rounded-md" src={t.image}>
                   </img>
                 </div>
                 <div className="flex flex-col gap-4 ">
@@ -359,14 +386,14 @@ function CCarousel() {
                     {/* </div> */}
                   </span>
                   <span className="text-lg md:text-xl box-content md:pl-6 pr-8 leading-relaxed text-left">
-                    {p.text}
+                    {t.text}
                   </span>
                   <div className="flex flex-col gap-2 md:pl-6">
                     <span className="font-bold text-lg md:text-2xl text-left w-full">
-                      Chad Bahadur
+                    {t.name}
                     </span>
                     <p className="text-lg text-left w-full">
-                      CEO
+                      {t.position}
                     </p>
                   </div>
                 </div>

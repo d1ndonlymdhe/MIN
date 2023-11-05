@@ -1,21 +1,23 @@
 import Image from "next/image"
-import saint from "../../public/images/member.png";
 type MemberCardProps = {
-  name: string
+  name: string,
+  image: string
 }
 
 
 const MemberCard = (props: MemberCardProps) => {
-  const { name } = props;
+  const { name, image } = props;
   return (
     <>
       <div className="flex flex-col justify-center items-center mb-[4em] md:mb-0">
         <div>
+          {/* <img src={image} alt={name} height={200} width={200}></img> */}
           <Image
-            src={saint.src}
+            src={image}
             width={250}
             height={250}
-            alt="Hyper Conscious"
+            alt={`Image of ${name}`}
+            className="h-[250px] w-[250px] object-cover object-top border-2 rounded-md text-center text-indigo-200"
           />
         </div>
         <div className="text-white text-left mt-2">

@@ -1,4 +1,6 @@
 import Image from "next/image";
+const year = new Date();
+let yearNow = year.getFullYear();
 
 const Footer = () => {
   return (
@@ -20,7 +22,7 @@ const Footer = () => {
             </div>
             {/*  social links */}
             <div className="flex items-center mx-auto justify-center space-x-4">
-              <a href="#">
+              <a href="https://www.facebook.com/MathematicsInitiativesNepal/">
                 <Image
                   src="/images/icon-facebook.svg"
                   width={30}
@@ -29,7 +31,7 @@ const Footer = () => {
                   alt=""
                 />
               </a>
-              <a href="#">
+              <a href="https://twitter.com/nepal_min">
                 <Image
                   src="/images/icon-twitter.svg"
                   width={30}
@@ -38,7 +40,7 @@ const Footer = () => {
                   alt=""
                 />
               </a>
-              <a href="#">
+              <a href="https://www.youtube.com/@MathematicsInitiativesinNepal">
                 <Image
                   src="/images/icon-youtube.svg"
                   width={30}
@@ -56,7 +58,7 @@ const Footer = () => {
                   alt=""
                 />
               </a>
-              <a href="#">
+              <a href="https://www.instagram.com/min_nepal/">
                 <Image
                   src="/images/icon-instagram.svg"
                   width={30}
@@ -74,33 +76,33 @@ const Footer = () => {
                 <a href="#" className="hover:text-brightRed">
                   Home
                 </a>
-                <a href="#" className="hover:text-brightRed">
+                <a href="about" className="hover:text-brightRed">
                   About
                 </a>
-                <a href="#" className="hover:text-brightRed">
+                <a href="blog" className="hover:text-brightRed">
                   Blog
                 </a>
-                <a href="#" className="hover:text-brightRed">
+                <a href="alumni" className="hover:text-brightRed">
                   Alumni
                 </a>
               </div>
 
               <div className="flex flex-col space-y-3 text-white">
-                <a href="#" className="hover:text-brightRed">
+                <a href="contribute" className="hover:text-brightRed">
                   Join Us
                 </a>
-                <a href="#" className="hover:text-brightRed">
+                <a href="contribute" className="hover:text-brightRed">
                   Community
                 </a>
-                <a href="#" className="hover:text-brightRed">
+                {/* <a href="#" className="hover:text-brightRed">
                   Privacy Policy
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
         </div>
         <div className="flex justify-center border-t-2 border-[#FFE9B1] py-5 text-white text-center px-8">
-          Copyright © 2023 Mathematics Initiatives in Nepal
+          Copyright © {yearNow}  Mathematics Initiatives in Nepal
         </div>
       </footer>
     </>
