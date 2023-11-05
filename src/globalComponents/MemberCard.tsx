@@ -1,7 +1,7 @@
-import Image from "next/image"
+import Image, { StaticImageData } from "next/image"
 type MemberCardProps = {
   name: string,
-  image: string
+  image: StaticImageData
 }
 
 
@@ -13,7 +13,7 @@ const MemberCard = (props: MemberCardProps) => {
         <div>
           {/* <img src={image} alt={name} height={200} width={200}></img> */}
           <Image
-            src={image}
+            src={image.src}
             width={250}
             height={250}
             alt={`Image of ${name}`}

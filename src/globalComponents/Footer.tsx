@@ -1,6 +1,6 @@
 import Image from "next/image";
 const year = new Date();
-let yearNow = year.getFullYear();
+const yearNow = year.getFullYear();
 
 const Footer = () => {
   return (
