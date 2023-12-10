@@ -117,6 +117,14 @@ export default function Post(props: any) {
                 <div className="w-[90vw] lg:w-[60vw]">
                     <Blog content={blog}></Blog>
                 </div>
+                <div className="flex gap-10 text-2xl">
+                    <Button className="bg-secondary p-4" onClick={() => { setPublishModal(true); setModalShown(true) }}>
+                        PUBLISH
+                    </Button>
+                    <Button className="bg-red-400 p-4" onClick={() => { setDeleteModal(true); setModalShown(true) }}>
+                        Delete
+                    </Button>
+                </div>
             </div>
         </div>
     </div>
