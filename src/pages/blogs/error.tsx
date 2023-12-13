@@ -15,11 +15,8 @@ export default function Main() {
             {"  You might have the wrong address, or the page may have moved."}
           </p>
           <a
-            href="#"
+            href="/"
             className="btn btn-lg btn-light mb-2 mr-2 w-full rounded bg-purple-300 px-2 py-1 sm:mb-0 sm:w-auto"
-            onClick={() => {
-              window.history.back();
-            }}
           >
             {" Back to homepage"}
           </a>
