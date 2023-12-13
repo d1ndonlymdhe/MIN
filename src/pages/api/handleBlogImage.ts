@@ -41,6 +41,7 @@ export default async function UploadImage(req: NextApiRequest, res: NextApiRespo
                                 public_id: `blogs/${blogId}/blogImage`,
                                 format: "jpg"
                             }, async () => {
+                                console.log("called this");
                                 await prisma.blog.update({
                                     where: {
                                         id: blogId

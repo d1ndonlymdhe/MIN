@@ -82,6 +82,7 @@ export const blogRouter = router({
         const { prisma } = ctx;
         const { blogId, content, title, hasImage } = input;
         const token = ctx.req.cookies?.token;
+        console.log("here");
         if (token) {
             const dbToken = await prisma.token.findFirst({ where: { value: token }, include: { user: true } });
             if (dbToken) {
@@ -128,19 +129,6 @@ export const blogRouter = router({
             code: "BAD_REQUEST"
         })
     }),
-    // getS3UpUrl: publicProcedure.input(z.object({ blogId: z.string() })).mutation((async ({ input, ctx }) => {
-    //     const token = ctx.req.cookies?.token;
-    //     const prisma = ctx.prisma;
-    //     if (token) {
-    //         const dbToken = await prisma.token.findFirst({ where: { value: token } });
-    //         if (dbToken) {
-    //             // S3
-    //             const bucketName = "my-bucket";
-    //             const key = ``
-    //                 s3.createPresignedPost()
-    //         }
-    //     }
-    // })),
     publishBlog: publicProcedure.input(z.object({ blogId: z.string() })).mutation(async ({ input, ctx }) => {
         console.log("mutating")
         const prisma = ctx.prisma;

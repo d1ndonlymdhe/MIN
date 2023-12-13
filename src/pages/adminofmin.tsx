@@ -13,7 +13,7 @@ import dynamic from "next/dist/shared/lib/dynamic";
 import BlogRenderer from "../globalComponents/BlogRenderer";
 import ModalWithBackdrop from "../globalComponents/ModalWithBackdrop";
 import Input from "../globalComponents/Input";
-import { getBlogContentImage } from "./blogs/[underscoreBlogName]";
+import { getBlogContentImage, getBlogImage } from "./blogs/[underscoreBlogName]";
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor"),
     { ssr: false }
@@ -321,7 +321,8 @@ function CreateBlogView(props: CreateBlogViewProps) {
     // const [newBlog, setNewBlog] = useState(blog)
     const [title, setTitle] = useState(newBlog.title ? newBlog.title : "Title");
     const [imgSet, setImageSet] = useState(newBlog.coverFulfilled)
-    const [imgSrc, setImgSrc] = useState(newBlog.coverFulfilled ? `/api/getBlogImage?blogId=${newBlog.id}&authorId=${newBlog.authorId}` : "")
+
+    const [imgSrc, setImgSrc] = useState(newBlog.coverFulfilled ? getBlogImage(newBlog.id) : "")
     const imgInputRef = useRef<HTMLInputElement>(null)
     const [content, setContent] = useState(newBlog.content);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false)
